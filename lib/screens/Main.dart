@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dns_client/dns_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -34,6 +35,8 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
+
+    _resolveAndLoad();
 
     lastUrl = null;
 
@@ -125,6 +128,30 @@ class _MainState extends State<Main> {
                 ".banner, .banners, .afs_ads, .ad-placement, .ads, .ad, .advert")));
   }
 
+  Future<void> _resolveAndLoad() async {
+    final dohResolver = DnsOverHttps('https://dns.google/resolve');
+
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      // Resolve the domain tamilian.io
+      final response = await dohResolver.lookup('tamilian.io');
+      print('Resolved IPs: ${response}');
+
+      if (response.isNotEmpty) {
+        // Load the WebView once DNS resolution is successful
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        print('No IPs resolved for tamilian.io');
+      }
+    } catch (e) {
+      print('Failed to resolve DNS: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String genreJS = '''
@@ -132,11 +159,25 @@ class _MainState extends State<Main> {
       menu.classList.add('active')
       menu.style.height = '100vh'
       menu.style.paddingTop = '50px'
+      menu.style.background = 'linear-gradient(black, #001111)'
       document.querySelector('#menu-item-44').style.display = 'none';
       document.querySelector('#menu-item-43').style.display = 'none';
       document.querySelector('#menu-item-11').style.display = 'initial';
+      document.querySelector('#menu-item-11 a').style.color = 'white';
       document.querySelector('#menu-item-65').style.display = 'none';
       document.querySelector('#menu-item-120').style.display = 'none';
+
+      var subContainer = document.querySelector('#menu-item-11 .sub-container')
+      subContainer.style.marginTop = '20px'
+
+       var li = document.querySelectorAll('#menu-item-11 .sub-container .sub-menu li')
+      li.forEach(e => {
+        e.style.background = '#001515'
+        e.style.margin = '10px'
+        e.style.padding = '10px'
+        e.style.borderRadius = '10px'
+        e.style.width = 'calc(33.333% - 20px)'
+      })
     ''';
 
     String yearJS = '''
@@ -144,12 +185,27 @@ class _MainState extends State<Main> {
       menu.classList.add('active')
       menu.style.height = '100vh'
       menu.style.paddingTop = '50px'
+      menu.style.background = 'linear-gradient(black, #001111)'
       document.querySelector('#menu').classList.add('active')
       document.querySelector('#menu-item-44').style.display = 'none';
       document.querySelector('#menu-item-43').style.display = 'none';
       document.querySelector('#menu-item-11').style.display = 'none';
       document.querySelector('#menu-item-65').style.display = 'initial';
+      document.querySelector('#menu-item-65 a').style.color = 'white';
       document.querySelector('#menu-item-120').style.display = 'none';
+
+      var subContainer = document.querySelector('#menu-item-65 .sub-container')
+      subContainer.style.marginTop = '20px'
+
+      var li = document.querySelectorAll('#menu-item-65 .sub-container .sub-menu li')
+      li.forEach(e => {
+        e.style.background = '#001515'
+        e.style.margin = '10px'
+        e.style.padding = '10px'
+        e.style.borderRadius = '10px'
+        e.style.width = 'calc(33.333% - 20px)'
+      })
+
     ''';
 
     String closeJS = '''
@@ -180,7 +236,7 @@ class _MainState extends State<Main> {
 
       if (currentUrl.contains("jimkimble")) {
         webViewController?.evaluateJavascript(source: '''
-          document.body.style.background = 'linear-gradient(#0c0c0c, #061300)'
+          document.body.style.background = 'linear-gradient(#0c0c0c, #001111)'
           document.body.style.backgroundAttachment = 'fixed'
 
           document.querySelector('.brand-logo').style.display = 'none'
@@ -208,7 +264,7 @@ class _MainState extends State<Main> {
       // });
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
 
-      document.body.style.background = 'linear-gradient(#030a00, #0e110d, #0e110d, black)'
+      document.body.style.background = 'linear-gradient(#030a00, #0e110d)'
       document.body.style.backgroundAttachment = 'fixed'
 
       var head = document.createElement('div')
@@ -232,18 +288,31 @@ class _MainState extends State<Main> {
       document.querySelector('.mobile-menu').style.display = 'none';
       document.querySelector('.mobile-search').style.display = 'none'
 
+      var searchForm = document.querySelector('#searchform')
+      searchForm.style.padding = '10px'
+      searchForm.style.background = '#011818'
+      searchForm.style.borderRadius = '15px'
       var search = document.querySelector('#search')
       search.style.paddingTop = '15px'
-      search.style.background = '#1c1c1c'
+      search.style.background = '#030a00'
       search.classList.add('active')
       search.style.marginTop = "-50px"
       var searchInput = document.querySelector('#search input')
-      searchInput.style.background = "#272727"
+      searchInput.style.background = "#011818"
       searchInput.style.borderRadius = "10px"
+      document.querySelector('#searchform .fa').style.color = 'white'
+
+      // var container = document.querySelector('.container')
+      var pagination = document.querySelector('#pagination')
+      pagination.style.marginTop = '30px'
+      // container.append(pagination)
+
 
       document.querySelector('footer').style.display = 'none'
 
       document.querySelector('.comentarios').style.display = 'none'
+
+      
 
     ''');
 
@@ -285,7 +354,7 @@ class _MainState extends State<Main> {
           child: Scaffold(
         backgroundColor: Colors.black,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(255, 0, 17, 6),
+          backgroundColor: const Color.fromARGB(255, 0, 15, 15),
           selectedLabelStyle: const TextStyle(fontSize: 10),
           unselectedLabelStyle: const TextStyle(fontSize: 10),
           currentIndex: currentIndex,
@@ -390,9 +459,9 @@ class _MainState extends State<Main> {
                         height: MediaQuery.of(context).size.height,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 1)),
+                            color: Color.fromRGBO(0, 0, 0, 0.848)),
                         child: const CircularProgressIndicator(
-                            color: Color.fromARGB(255, 41, 165, 0)),
+                            color: Color.fromARGB(255, 5, 115, 91)),
                       )
                     : const SizedBox()
               ],

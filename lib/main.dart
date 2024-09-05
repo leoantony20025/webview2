@@ -1,3 +1,4 @@
+import 'package:dns_client/dns_client.dart';
 import 'package:flutter/material.dart';
 import 'screens/Main.dart';
 
@@ -11,15 +12,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsFlutterBinding.ensureInitialized();
+    // final dns = DnsOverHttps.google();
+    // final response = dns.lookup('tamilian.io');
     return MaterialApp(
       title: 'Movierulz',
       theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 0, 37, 60)),
-          useMaterial3: true,
-          highlightColor: const Color.fromARGB(255, 0, 31, 53),
-          splashColor: const Color.fromARGB(255, 0, 17, 34),
-          scaffoldBackgroundColor: const Color.fromARGB(255, 0, 31, 51)),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 0, 44, 44)),
+        useMaterial3: true,
+        highlightColor: const Color.fromARGB(255, 1, 46, 45),
+        splashColor: const Color.fromARGB(255, 0, 24, 23),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 0, 23, 22),
+      ),
       debugShowCheckedModeBanner: false,
       home: const Main(),
     );
