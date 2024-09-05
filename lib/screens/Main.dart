@@ -12,9 +12,9 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  String urlHome = "https://watchmovierulz.vet";
-  String urlMovie = "https://watchmovierulz.vet";
-  String urlTv = "https://watchmovierulz.vet";
+  String urlHome = "https://tamilian.io/movies/";
+  String urlMovie = "https://tamilian.io/movies/";
+  String urlTv = "https://tamilian.io/movies/";
 
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewController? webViewController;
@@ -62,6 +62,12 @@ class _MainState extends State<Main> {
       ".*.histats.com/.*",
       ".*.prd.jwpltx.com/.*",
       ".*.icon_.*",
+      ".*.instant.page/.*",
+      ".*.imasdk.googleapis.com/.*",
+      ".*.delivery.r2b2.cz/.*",
+      ".*.pubfuture-ad.com/.*",
+      ".*.netpub.media/.*",
+      ".*.delivery.r2b2.cz/.*",
     ];
     final youtubeUrlFilters = [
       ".*.static.doubleclick.net/.*",
@@ -121,6 +127,36 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
+    String genreJS = '''
+      var menu = document.querySelector('#menu')
+      menu.classList.add('active')
+      menu.style.height = '100vh'
+      menu.style.paddingTop = '50px'
+      document.querySelector('#menu-item-44').style.display = 'none';
+      document.querySelector('#menu-item-43').style.display = 'none';
+      document.querySelector('#menu-item-11').style.display = 'initial';
+      document.querySelector('#menu-item-65').style.display = 'none';
+      document.querySelector('#menu-item-120').style.display = 'none';
+    ''';
+
+    String yearJS = '''
+      var menu = document.querySelector('#menu')
+      menu.classList.add('active')
+      menu.style.height = '100vh'
+      menu.style.paddingTop = '50px'
+      document.querySelector('#menu').classList.add('active')
+      document.querySelector('#menu-item-44').style.display = 'none';
+      document.querySelector('#menu-item-43').style.display = 'none';
+      document.querySelector('#menu-item-11').style.display = 'none';
+      document.querySelector('#menu-item-65').style.display = 'initial';
+      document.querySelector('#menu-item-120').style.display = 'none';
+    ''';
+
+    String closeJS = '''
+      var menu = document.querySelector('#menu')
+      menu.classList.remove('active')
+    ''';
+
     void updateNav() async {
       WebUri? uri = await webViewController?.getUrl();
       String? currentUrl = uri.toString();
@@ -142,93 +178,101 @@ class _MainState extends State<Main> {
         }
       }
 
-      if (currentUrl == urlHome) {
+      if (currentUrl.contains("jimkimble")) {
         webViewController?.evaluateJavascript(source: '''
-          document.querySelectorAll('.tray-container').item(0).style.display = 'none';
-          document.querySelectorAll('.tray-container').item(5).style.display = 'none';
-          document.querySelectorAll('.tray-container').item(12).style.display = 'none';
+          document.body.style.background = 'linear-gradient(#0c0c0c, #061300)'
+          document.body.style.backgroundAttachment = 'fixed'
 
-          // const element = document.querySelector('.nav-link .home'); 
-          // element.classList.remove('home'); 
-          // element.classList.add('home_filled'); 
+          document.querySelector('.brand-logo').style.display = 'none'
+          document.querySelector('#top_buttons').style.display = 'none'
+          document.querySelector('#instructions').style.display = 'none'
+
+          var main = document.querySelector('.main-container')
+          main.lastElementChild.style.display = 'none'
+          document.querySelector('.pb-6').style.display = 'none'
+          document.querySelector('.brand-logo').style.display = 'none'
+
+          document.querySelector('#left').style.marginTop = "50px"
+          var list = document.querySelector('.list')
+          list.lastElementChild.click()
+
         ''');
       }
-
-      // if (currentUrl == urlMovie) {
-      //   webViewController?.evaluateJavascript(source: '''
-      //     const element = document.querySelector('.nav-link .movies');
-      //     element.classList.remove('movies');
-      //     element.classList.add('movies_filled');
-      //   ''');
-      // }
-
-      // if (currentUrl == urlTv) {
-      //   webViewController?.evaluateJavascript(source: '''
-      //     const element = document.querySelector('.nav-link .tv');
-      //     element.classList.remove('tv');
-      //     element.classList.add('tv_filled');
-      //   ''');
-      // }
     }
 
     updateNav();
 
     webViewController?.evaluateJavascript(source: '''
-      window.addEventListener('focus', function() {
-        window.blur();
-      });
+      // window.addEventListener('focus', function() {
+      //   window.blur();
+      // });
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
-      document.querySelector('.ott-list').style.display = 'none';
-      document.querySelector('.note-msg').style.display = 'none';
-      document.querySelector('.account').style.display = 'none';
-      document.querySelector('#hhide').style.display = 'none';
-      document.querySelector('.play-btn-s').style.display = 'none';
-      document.querySelector('.model-btn-download').style.display = 'none';
-      document.querySelector('.model-rating-box').style.display = 'none';
-      document.querySelector('#search-input').style.boxShadow = 'none';
-      document.querySelector('.footer').style.display = 'none';
-      document.querySelector('.btn-close-moveable').style.display = 'none';
-      document.querySelector('.btn-close2').style.padding = '15px';
-      document.querySelector('.btn-search-close').style.padding = '15px';
 
+      document.body.style.background = 'linear-gradient(#030a00, #0e110d, #0e110d, black)'
+      document.body.style.backgroundAttachment = 'fixed'
+
+      var head = document.createElement('div')
+      var header = document.querySelector('header')
+      header.append(head)
+      head.append(document.querySelector('header .container'))
+      head.style.position = 'fixed'
+      head.style.top = 0
+      head.style.left = 0
+      head.style.width = '100vw'
+      head.style.height = '0px'
+      head.style.background = '#151515'
       
+
+      header.style.transform = "translateX('-100%')"
+      header.style.height = '0px'
+      head.style.transform = "translateX('-100%')"
+      
+
+      document.querySelector('.header-logo').style.display = 'none';
+      document.querySelector('.mobile-menu').style.display = 'none';
+      document.querySelector('.mobile-search').style.display = 'none'
+
+      var search = document.querySelector('#search')
+      search.style.paddingTop = '15px'
+      search.style.background = '#1c1c1c'
+      search.classList.add('active')
+      search.style.marginTop = "-50px"
+      var searchInput = document.querySelector('#search input')
+      searchInput.style.background = "#272727"
+      searchInput.style.borderRadius = "10px"
+
+      document.querySelector('footer').style.display = 'none'
+
+      document.querySelector('.comentarios').style.display = 'none'
 
     ''');
 
-    // webViewController?.addJavaScriptHandler(
-    //     handlerName: 'modalHandler',
-    //     callback: (args) {
-    //       bool isModalOpen = args[0]; // The value passed from JavaScript
-    //       setState(() {
-    //         this.isModalOpen = isModalOpen;
-    //       });
-    //     });
-
     void nav(int index) {
-      webViewController?.stopLoading();
+      // webViewController?.stopLoading();
       setState(() {
         currentIndex = index;
       });
-      String url = index == 0
-          ? urlHome
-          : index == 1
-              ? urlMovie
-              : index == 2
-                  ? urlTv
-                  : urlHome;
-      webViewController?.loadUrl(
-          urlRequest: URLRequest(
-              url: WebUri(url),
-              cachePolicy: URLRequestCachePolicy.RETURN_CACHE_DATA_ELSE_LOAD));
+
+      if (index != 0) {
+        webViewController?.evaluateJavascript(
+            source: index == 1 ? genreJS : yearJS);
+      } else {
+        webViewController?.loadUrl(
+            urlRequest: URLRequest(
+                url: WebUri(urlHome),
+                cachePolicy:
+                    URLRequestCachePolicy.RETURN_CACHE_DATA_ELSE_LOAD));
+      }
     }
 
     return WillPopScope(
       onWillPop: () async {
-        if (isModalOpen) {
-          // webViewController?.evaluateJavascript(source: modalJS);
+        if (currentIndex != 0) {
           setState(() {
+            currentIndex = 0;
             resourceLoad = 0;
           });
+          webViewController?.evaluateJavascript(source: closeJS);
           return false;
         }
         if (await webViewController!.canGoBack()) {
@@ -241,9 +285,7 @@ class _MainState extends State<Main> {
           child: Scaffold(
         backgroundColor: Colors.black,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color.fromARGB(255, 21, 21, 21),
-          // showSelectedLabels: false,
-          // showUnselectedLabels: false,
+          backgroundColor: Color.fromARGB(255, 0, 17, 6),
           selectedLabelStyle: const TextStyle(fontSize: 10),
           unselectedLabelStyle: const TextStyle(fontSize: 10),
           currentIndex: currentIndex,
@@ -264,21 +306,21 @@ class _MainState extends State<Main> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.movie_outlined,
+                Icons.category_outlined,
               ),
               activeIcon: Icon(
-                Icons.movie_rounded,
+                Icons.category_rounded,
               ),
-              label: "Movies",
+              label: "Genres",
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.smart_display_outlined,
+                Icons.timeline_outlined,
               ),
               activeIcon: Icon(
-                Icons.smart_display_rounded,
+                Icons.timeline_rounded,
               ),
-              label: "Series",
+              label: "Years",
             ),
           ],
         ),
@@ -348,9 +390,9 @@ class _MainState extends State<Main> {
                         height: MediaQuery.of(context).size.height,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 0.915)),
+                            color: Color.fromRGBO(0, 0, 0, 1)),
                         child: const CircularProgressIndicator(
-                            color: Color.fromARGB(255, 59, 59, 59)),
+                            color: Color.fromARGB(255, 41, 165, 0)),
                       )
                     : const SizedBox()
               ],
