@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class Main extends StatefulWidget {
@@ -10,9 +11,9 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  String urlHome = "https://www.bolly2tolly.love/category/tamil-movies";
-  String urlMovie = "https://www.bolly2tolly.love/category/tamil-movies";
-  String urlTv = "https://www.bolly2tolly.love/category/tamil-movies";
+  String urlHome = "https://www.bolly2tolly.land/category/tamil-movies";
+  String urlMovie = "https://www.bolly2tolly.land/category/tamil-movies";
+  String urlTv = "https://www.bolly2tolly.land/category/tamil-movies";
 
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewController? webViewController;
@@ -66,6 +67,17 @@ class _MainState extends State<Main> {
       ".*.marazma.com/.*",
       ".*.popmansion.com/.*",
       ".*.videocdnmetrika.com/.*",
+      ".*.s3.us-east-1.amazonaws.com/.*",
+      ".*.amazonaws.com/.*",
+      ".*.cloudfront.net/.*",
+      ".*.parimatch/.*",
+      ".*.rz.systpelew.top/.*",
+      ".*.win.pm-bet.in/.*",
+      // ".*.funkiaproofed.shop/.*",
+      // ".*.ak.itponytaa.com/.*",
+      ".*.go-mpulse.net/.*",
+      ".*.chennaiexch.online/.*",
+      ".*.rockiertaar.com/.*",
     ];
     final youtubeUrlFilters = [
       ".*.static.doubleclick.net/.*",
@@ -134,11 +146,6 @@ class _MainState extends State<Main> {
 
     ''';
 
-    String closeJS = '''
-      // var menu = document.querySelector('#menu')
-      // menu.classList.remove('active')
-    ''';
-
     void updateNav() async {
       WebUri? uri = await webViewController?.getUrl();
       String? currentUrl = uri.toString();
@@ -154,49 +161,41 @@ class _MainState extends State<Main> {
 
       if (currentUrl == urlHome) {
         webViewController?.evaluateJavascript(source: '''
-          // var head = document.createElement('div')
-          // var header = document.querySelector('header')
-          // header.append(head)
-          // head.append(document.querySelector('header .container'))
-          // head.style.position = 'fixed'
-          // head.style.top = 0
-          // head.style.left = 0
-          // head.style.width = '100vw'
-          // head.style.height = '0px'
-          // head.style.background = '#151515'
 
-          // header.style.transform = "translateX('-100%')"
-          // header.style.height = '0px'
-          // head.style.transform = "translateX('-100%')"
+          document.querySelector('.AZList').style.display = 'none'
 
-          // document.querySelector('.header-logo').style.display = 'none';
-          // document.querySelector('.mobile-menu').style.display = 'none';
-          // document.querySelector('.mobile-search').style.display = 'none'
+          document.querySelector('.Top').style.display = 'flex'
+          document.querySelector('.Top').style.alignItems = 'center'
+          document.querySelector('.Top').style.marginTop = '-30px'
+          var title = document.querySelector('.Title')
+          title.innerText = "Tamil"
+          title.style.color = '#fcf2fd5e'
+          title.style.fontSize = 'small'
+          title.style.flex = 1
 
-          // var searchForm = document.querySelector('#searchform')
-          // searchForm.style.padding = '10px'
-          // searchForm.style.background = '#011818'
-          // searchForm.style.borderRadius = '15px'
-          // var search = document.querySelector('#search')
-          // search.style.paddingTop = '15px'
-          // search.style.background = '#030a00'
-          // search.classList.add('active')
-          // search.style.marginTop = "-50px"
-          // var searchInput = document.querySelector('#search input')
-          // searchInput.style.background = "#011818"
-          // searchInput.style.borderRadius = "10px"
-          // document.querySelector('#searchform .fa').style.color = 'white'
+          document.querySelector('.current').style.backgroundColor = '#8a00a6'
+        ''');
+      }
 
-          // document.querySelector('#social_side_links').style.display = 'none'
+      if (currentUrl.contains("/movie/")) {
+        webViewController?.evaluateJavascript(source: '''
+          document.querySelector('.Footer').style.display = 'none'
+          document.querySelector('#ads_singlem_top').style.display = 'none'
+          var wng = document.querySelectorAll('.has-wpur-alert')
+          wng.forEach(e => {
+            e.style.display = 'none'
+          })
 
-          // var pagination = document.querySelector('#pagination')
-          // pagination.style.marginTop = '30px'
+          var servers = document.querySelector('.TPlayerNv')
+          servers.childNodes[0].classList.remove('Current')
+          servers.childNodes[0].style.display = 'none'
+          servers.childNodes[1].classList.add('Current')
+          // servers.childNodes[1].click()
+
+          document.querySelector('.Current').style.backgroundColor = '#8a00a6'
 
 
-          // document.querySelector('footer').style.display = 'none'
 
-          // document.querySelector('.comentarios').style.display = 'none'   
-          
         ''');
       }
     }
@@ -209,31 +208,34 @@ class _MainState extends State<Main> {
       // });
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
 
-      document.body.style.background = 'linear-gradient(#13001c, black)'
+      document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
       document.body.style.backgroundAttachment = 'fixed'
       document.body.style.backgroundColor = 'transparent'
       document.body.style.color = 'white'
+      
       document.querySelector('.Content').style.background = 'transparent'
       document.querySelector('.Content').style.backgroundColor = 'transparent'
       document.querySelector('footer').style.display = 'none'
 
-      document.querySelector('.AZList').style.display = 'none'
-      var title = document.querySelector('.Title')
-      title.style.color = 'white'
-      title.style.fontSize = 'small'
-
-      // document.querySelector('#Tp-Wp').classList.add('show')
-      // document.querySelector('.MenuBtn').classList.remove('on')
-      // document.querySelector('.Right').style.left = '0'
-      // document.querySelector('.Right').style.opacity = '1'
+      document.querySelector('.Header').style.display = 'none'
+      document.querySelector('aside').style.display = 'none'
 
       var search = document.querySelector('.Search')
-      // search.style.position = 'fixed'
-      // search.style.top = '10px'
-      // search.style.left = '0'
+      search.style.position = 'fixed'
+      search.style.top = '10px'
+      search.style.left = '0'
+      search.style.zIndex = '10'
+      search.style.width = 'calc(100% - 40px)'
+      search.style.margin = '20px'
+      var inp = document.querySelector('.Search .Form-Icon input')
+      inp.style.backgroundColor = '#290037'
+      inp.style.border = '1px solid #6400a6'
+      inp.style.borderRadius = '10px !important'
+      inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
       document.body.appendChild(search)
-      
-      document.querySelector('.Header').style.display = 'none'
+      document.querySelector('#searchsubmit').style.boxShadow = 'none'
+
+      document.querySelector('footer').style.display = 'none'
 
     ''');
 
@@ -257,14 +259,6 @@ class _MainState extends State<Main> {
 
     return WillPopScope(
       onWillPop: () async {
-        if (currentIndex != 0) {
-          setState(() {
-            currentIndex = 0;
-            resourceLoad = 0;
-          });
-          webViewController?.evaluateJavascript(source: closeJS);
-          return false;
-        }
         if (await webViewController!.canGoBack()) {
           webViewController!.goBack();
           return false;
@@ -275,7 +269,7 @@ class _MainState extends State<Main> {
           child: Scaffold(
         backgroundColor: Colors.black,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(255, 21, 21, 21),
+          backgroundColor: Color.fromARGB(255, 9, 0, 23),
           selectedLabelStyle: const TextStyle(fontSize: 10),
           unselectedLabelStyle: const TextStyle(fontSize: 10),
           currentIndex: currentIndex,
@@ -331,8 +325,10 @@ class _MainState extends State<Main> {
                     cacheMode: CacheMode.LOAD_CACHE_ELSE_NETWORK,
                     verticalScrollBarEnabled: false,
                     horizontalScrollBarEnabled: false,
-                    iframeAllowFullscreen: false,
+                    iframeAllowFullscreen: true,
                     isTextInteractionEnabled: false,
+                    useHybridComposition: true,
+                    hardwareAcceleration: true,
                   ),
                   onWebViewCreated: (controller) {
                     webViewController = controller;
