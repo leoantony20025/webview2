@@ -194,6 +194,15 @@ class _MainState extends State<Main> {
       WebUri? uri = await webViewController?.getUrl();
       String? currentUrl = uri.toString();
 
+      if (lastUrl != currentUrl) {
+        lastUrl = currentUrl;
+        if (currentUrl == urlHome) {
+          setState(() {
+            currentIndex = 0;
+          });
+        }
+      }
+
       if (currentUrl.contains("beycats")) {
         await webViewController?.evaluateJavascript(source: '''
           document.body.style.background = 'linear-gradient(#0c0c0c, #001111)'
