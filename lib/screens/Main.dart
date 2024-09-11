@@ -10,9 +10,9 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  String urlHome = "https://tamilplay.co/movies/";
-  String urlMovie = "https://tamilplay.co/movies/";
-  String urlTv = "https://tamilplay.co/movies/";
+  String urlHome = "https://www.bolly2tolly.love/category/tamil-movies";
+  String urlMovie = "https://www.bolly2tolly.love/category/tamil-movies";
+  String urlTv = "https://www.bolly2tolly.love/category/tamil-movies";
 
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewController? webViewController;
@@ -54,24 +54,18 @@ class _MainState extends State<Main> {
       ".*.count-server.sharethis.com/.*",
       ".*.mc.yandex.ru/.*",
       // ".*.be6721.rcr72.waw04.cdn112.com/.*",
-      ".*.precedelaxative.com/.*",
-      ".*.platform-cdn.sharethis.com/.*",
-      ".*.lashahib.net/.*",
-      ".*.histats.com/.*",
-      ".*.prd.jwpltx.com/.*",
-      ".*.icon_.*",
-      ".*.instant.page/.*",
-      ".*.imasdk.googleapis.com/.*",
-      ".*.delivery.r2b2.cz/.*",
-      ".*.pubfuture-ad.com/.*",
-      ".*.netpub.media/.*",
       ".*.delivery.r2b2.cz/.*",
       ".*.cloudflareinsights.com/.*",
       ".*.pixfuture.com/.*",
       ".*.ping.gif/.*",
-      ".*.delivery.r2b2.cz/.*",
-      ".*.delivery.r2b2.cz/.*",
-      ".*.delivery.r2b2.cz/.*",
+      ".*.cancriberths.com/.*",
+      ".*.equalditchcentered.com/.*",
+      ".*.stats.wp.com/.*",
+      ".*.goingkinch.com/.*",
+      ".*.fuckadblock/.*",
+      ".*.marazma.com/.*",
+      ".*.popmansion.com/.*",
+      ".*.videocdnmetrika.com/.*",
     ];
     final youtubeUrlFilters = [
       ".*.static.doubleclick.net/.*",
@@ -132,62 +126,17 @@ class _MainState extends State<Main> {
   @override
   Widget build(BuildContext context) {
     String genreJS = '''
-      var menu = document.querySelector('#menu')
-      menu.classList.add('active')
-      menu.style.height = '100vh'
-      menu.style.paddingTop = '50px'
-      menu.style.background = 'linear-gradient(black, #001111)'
-      document.querySelector('#menu-item-37').style.display = 'none';
-      document.querySelector('#menu-item-38').style.display = 'none';
-      document.querySelector('#menu-item-39').style.display = 'initial';
-      document.querySelector('#menu-item-39 a').style.color = 'white';
-      document.querySelector('#menu-item-60').style.display = 'none';
-      document.querySelector('#menu-item-40').style.display = 'none';
-
-      var subContainer = document.querySelector('#menu-item-39 .sub-container')
-      subContainer.style.marginTop = '20px'
-
-       var li = document.querySelectorAll('#menu-item-39 .sub-container .sub-menu li')
-      li.forEach(e => {
-        e.style.background = '#001515'
-        e.style.margin = '10px'
-        e.style.padding = '10px'
-        e.style.borderRadius = '10px'
-        e.style.width = 'calc(33.333% - 20px)'
-      })
+      
     ''';
 
     String yearJS = '''
-      var menu = document.querySelector('#menu')
-      menu.classList.add('active')
-      menu.style.height = '100vh'
-      menu.style.paddingTop = '50px'
-      menu.style.background = 'linear-gradient(black, #001111)'
-      document.querySelector('#menu').classList.add('active')
-      document.querySelector('#menu-item-37').style.display = 'none';
-      document.querySelector('#menu-item-38').style.display = 'none';
-      document.querySelector('#menu-item-39').style.display = 'none';
-      document.querySelector('#menu-item-60').style.display = 'initial';
-      document.querySelector('#menu-item-60 a').style.color = 'white';
-      document.querySelector('#menu-item-40').style.display = 'none';
-
-      var subContainer = document.querySelector('#menu-item-60 .sub-container')
-      subContainer.style.marginTop = '20px'
-
-      var li = document.querySelectorAll('#menu-item-60 .sub-container .sub-menu li')
-      li.forEach(e => {
-        e.style.background = '#001515'
-        e.style.margin = '10px'
-        e.style.padding = '10px'
-        e.style.borderRadius = '10px'
-        e.style.width = 'calc(33.333% - 20px)'
-      })
+      
 
     ''';
 
     String closeJS = '''
-      var menu = document.querySelector('#menu')
-      menu.classList.remove('active')
+      // var menu = document.querySelector('#menu')
+      // menu.classList.remove('active')
     ''';
 
     void updateNav() async {
@@ -203,109 +152,90 @@ class _MainState extends State<Main> {
         }
       }
 
-      if (currentUrl.contains("beycats")) {
-        await webViewController?.evaluateJavascript(source: '''
-          document.body.style.background = 'linear-gradient(#0c0c0c, #001111)'
-          document.body.style.backgroundAttachment = 'fixed'
-
-          var body = document.body
-
-          var video = body.children[4]
-          video.style.height = '100vw'
-          video.style.height = '100vh'
-          // video.style.position = 'absolute'
-          // video.style.top = '0'
-          // video.style.left = '0'
-          video.style.display = 'flex'
-          video.style.alignItems = 'center'
-          video.style.justifyContent = 'center'
-
-          body.children[0].style.display = 'none'
-          body.children[1].style.display = 'none'
-          body.children[2].style.display = 'none'
-          body.children[3].style.display = 'none'
-          body.children[5].style.display = 'none'
-          body.children[6].style.display = 'none'
-          body.children[7].style.display = 'none'
-          body.children[8].style.display = 'none'
-          body.children[9].style.display = 'none'
-          body.children[10].style.display = 'none'
-          body.children[11].style.display = 'none'
-          body.children[12].style.display = 'none'
-          body.children[13].style.display = 'none'
-          body.children[14].style.display = 'none'
-          body.children[15].style.display = 'none'
-          
-          var vid = document.querySelector('video')
-          // vid.style.zIndex = 1000
-          vid.style.boxShadow = '5px 20px 60px #00ff801d'
-
-          document.querySelector('footer').style.display = 'none'
-
-          
-        ''');
-
-        setState(() {
-          // currentIndex = 1;
-        });
-      } else {
+      if (currentUrl == urlHome) {
         webViewController?.evaluateJavascript(source: '''
-          // window.addEventListener('focus', function() {
-          //   window.blur();
-          // });
-          document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
+          // var head = document.createElement('div')
+          // var header = document.querySelector('header')
+          // header.append(head)
+          // head.append(document.querySelector('header .container'))
+          // head.style.position = 'fixed'
+          // head.style.top = 0
+          // head.style.left = 0
+          // head.style.width = '100vw'
+          // head.style.height = '0px'
+          // head.style.background = '#151515'
 
-          document.body.style.background = 'linear-gradient(#030a00, #0e110d)'
-          document.body.style.backgroundAttachment = 'fixed'
+          // header.style.transform = "translateX('-100%')"
+          // header.style.height = '0px'
+          // head.style.transform = "translateX('-100%')"
 
-          var head = document.createElement('div')
-          var header = document.querySelector('header')
-          header.append(head)
-          head.append(document.querySelector('header .container'))
-          head.style.position = 'fixed'
-          head.style.top = 0
-          head.style.left = 0
-          head.style.width = '100vw'
-          head.style.height = '0px'
-          head.style.background = '#151515'
+          // document.querySelector('.header-logo').style.display = 'none';
+          // document.querySelector('.mobile-menu').style.display = 'none';
+          // document.querySelector('.mobile-search').style.display = 'none'
 
-          header.style.transform = "translateX('-100%')"
-          header.style.height = '0px'
-          head.style.transform = "translateX('-100%')"
+          // var searchForm = document.querySelector('#searchform')
+          // searchForm.style.padding = '10px'
+          // searchForm.style.background = '#011818'
+          // searchForm.style.borderRadius = '15px'
+          // var search = document.querySelector('#search')
+          // search.style.paddingTop = '15px'
+          // search.style.background = '#030a00'
+          // search.classList.add('active')
+          // search.style.marginTop = "-50px"
+          // var searchInput = document.querySelector('#search input')
+          // searchInput.style.background = "#011818"
+          // searchInput.style.borderRadius = "10px"
+          // document.querySelector('#searchform .fa').style.color = 'white'
 
-          document.querySelector('.header-logo').style.display = 'none';
-          document.querySelector('.mobile-menu').style.display = 'none';
-          document.querySelector('.mobile-search').style.display = 'none'
+          // document.querySelector('#social_side_links').style.display = 'none'
 
-          var searchForm = document.querySelector('#searchform')
-          searchForm.style.padding = '10px'
-          searchForm.style.background = '#011818'
-          searchForm.style.borderRadius = '15px'
-          var search = document.querySelector('#search')
-          search.style.paddingTop = '15px'
-          search.style.background = '#030a00'
-          search.classList.add('active')
-          search.style.marginTop = "-50px"
-          var searchInput = document.querySelector('#search input')
-          searchInput.style.background = "#011818"
-          searchInput.style.borderRadius = "10px"
-          document.querySelector('#searchform .fa').style.color = 'white'
-
-          document.querySelector('#social_side_links').style.display = 'none'
-
-          var pagination = document.querySelector('#pagination')
-          pagination.style.marginTop = '30px'
+          // var pagination = document.querySelector('#pagination')
+          // pagination.style.marginTop = '30px'
 
 
-          document.querySelector('footer').style.display = 'none'
+          // document.querySelector('footer').style.display = 'none'
 
-          document.querySelector('.comentarios').style.display = 'none'   
+          // document.querySelector('.comentarios').style.display = 'none'   
           
         ''');
       }
     }
 
     updateNav();
+
+    webViewController?.evaluateJavascript(source: '''
+      // window.addEventListener('focus', function() {
+      //   window.blur();
+      // });
+      document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
+
+      document.body.style.background = 'linear-gradient(#13001c, black)'
+      document.body.style.backgroundAttachment = 'fixed'
+      document.body.style.backgroundColor = 'transparent'
+      document.body.style.color = 'white'
+      document.querySelector('.Content').style.background = 'transparent'
+      document.querySelector('.Content').style.backgroundColor = 'transparent'
+      document.querySelector('footer').style.display = 'none'
+
+      document.querySelector('.AZList').style.display = 'none'
+      var title = document.querySelector('.Title')
+      title.style.color = 'white'
+      title.style.fontSize = 'small'
+
+      // document.querySelector('#Tp-Wp').classList.add('show')
+      // document.querySelector('.MenuBtn').classList.remove('on')
+      // document.querySelector('.Right').style.left = '0'
+      // document.querySelector('.Right').style.opacity = '1'
+
+      var search = document.querySelector('.Search')
+      // search.style.position = 'fixed'
+      // search.style.top = '10px'
+      // search.style.left = '0'
+      document.body.appendChild(search)
+      
+      document.querySelector('.Header').style.display = 'none'
+
+    ''');
 
     void nav(int index) {
       // webViewController?.stopLoading();
@@ -345,7 +275,7 @@ class _MainState extends State<Main> {
           child: Scaffold(
         backgroundColor: Colors.black,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(255, 0, 20, 20),
+          backgroundColor: Color.fromARGB(255, 21, 21, 21),
           selectedLabelStyle: const TextStyle(fontSize: 10),
           unselectedLabelStyle: const TextStyle(fontSize: 10),
           currentIndex: currentIndex,
@@ -450,9 +380,9 @@ class _MainState extends State<Main> {
                         height: MediaQuery.of(context).size.height,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 1)),
+                            color: Color.fromRGBO(0, 0, 0, 0.874)),
                         child: const CircularProgressIndicator(
-                            color: Color.fromARGB(255, 27, 151, 5)),
+                            color: Color.fromARGB(255, 123, 2, 154)),
                       )
                     : const SizedBox()
               ],
