@@ -204,9 +204,9 @@ class _MainState extends State<Main> {
           var video = body.children[4]
           video.style.height = '100vw'
           video.style.height = '100vh'
-          video.style.position = 'fixed !important'
-          video.style.top = '0'
-          video.style.left = '0'
+          // video.style.position = 'absolute'
+          // video.style.top = '0'
+          // video.style.left = '0'
           video.style.display = 'flex'
           video.style.alignItems = 'center'
           video.style.justifyContent = 'center'
@@ -228,7 +228,7 @@ class _MainState extends State<Main> {
           body.children[15].style.display = 'none'
           
           var vid = document.querySelector('video')
-          vid.style.zIndex = 1000
+          // vid.style.zIndex = 1000
           vid.style.boxShadow = '5px 20px 60px #00ff801d'
 
           document.querySelector('footer').style.display = 'none'
@@ -237,11 +237,9 @@ class _MainState extends State<Main> {
         ''');
 
         setState(() {
-          currentIndex = 0;
+          // currentIndex = 1;
         });
-      }
-
-      if (currentUrl == urlHome) {
+      } else {
         webViewController?.evaluateJavascript(source: '''
           // window.addEventListener('focus', function() {
           //   window.blur();
@@ -338,7 +336,7 @@ class _MainState extends State<Main> {
           child: Scaffold(
         backgroundColor: Colors.black,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color.fromARGB(255, 0, 15, 15),
+          backgroundColor: Color.fromARGB(255, 0, 20, 20),
           selectedLabelStyle: const TextStyle(fontSize: 10),
           unselectedLabelStyle: const TextStyle(fontSize: 10),
           currentIndex: currentIndex,
