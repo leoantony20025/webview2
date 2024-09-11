@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:dns_client/dns_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -13,9 +10,9 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  String urlHome = "https://tamilian.io/movies/";
-  String urlMovie = "https://tamilian.io/movies/";
-  String urlTv = "https://tamilian.io/movies/";
+  String urlHome = "https://tamilplay.co/movies/";
+  String urlMovie = "https://tamilplay.co/movies/";
+  String urlTv = "https://tamilplay.co/movies/";
 
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewController? webViewController;
@@ -35,8 +32,6 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
-
-    _resolveAndLoad();
 
     lastUrl = null;
 
@@ -70,6 +65,12 @@ class _MainState extends State<Main> {
       ".*.delivery.r2b2.cz/.*",
       ".*.pubfuture-ad.com/.*",
       ".*.netpub.media/.*",
+      ".*.delivery.r2b2.cz/.*",
+      ".*.cloudflareinsights.com/.*",
+      ".*.pixfuture.com/.*",
+      ".*.ping.gif/.*",
+      ".*.delivery.r2b2.cz/.*",
+      ".*.delivery.r2b2.cz/.*",
       ".*.delivery.r2b2.cz/.*",
     ];
     final youtubeUrlFilters = [
@@ -128,30 +129,6 @@ class _MainState extends State<Main> {
                 ".banner, .banners, .afs_ads, .ad-placement, .ads, .ad, .advert")));
   }
 
-  Future<void> _resolveAndLoad() async {
-    final dohResolver = DnsOverHttps('https://dns.google/resolve');
-
-    try {
-      setState(() {
-        isLoading = true;
-      });
-      // Resolve the domain tamilian.io
-      final response = await dohResolver.lookup('tamilian.io');
-      print('Resolved IPs: ${response}');
-
-      if (response.isNotEmpty) {
-        // Load the WebView once DNS resolution is successful
-        setState(() {
-          isLoading = false;
-        });
-      } else {
-        print('No IPs resolved for tamilian.io');
-      }
-    } catch (e) {
-      print('Failed to resolve DNS: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     String genreJS = '''
@@ -160,17 +137,17 @@ class _MainState extends State<Main> {
       menu.style.height = '100vh'
       menu.style.paddingTop = '50px'
       menu.style.background = 'linear-gradient(black, #001111)'
-      document.querySelector('#menu-item-44').style.display = 'none';
-      document.querySelector('#menu-item-43').style.display = 'none';
-      document.querySelector('#menu-item-11').style.display = 'initial';
-      document.querySelector('#menu-item-11 a').style.color = 'white';
-      document.querySelector('#menu-item-65').style.display = 'none';
-      document.querySelector('#menu-item-120').style.display = 'none';
+      document.querySelector('#menu-item-37').style.display = 'none';
+      document.querySelector('#menu-item-38').style.display = 'none';
+      document.querySelector('#menu-item-39').style.display = 'initial';
+      document.querySelector('#menu-item-39 a').style.color = 'white';
+      document.querySelector('#menu-item-60').style.display = 'none';
+      document.querySelector('#menu-item-40').style.display = 'none';
 
-      var subContainer = document.querySelector('#menu-item-11 .sub-container')
+      var subContainer = document.querySelector('#menu-item-39 .sub-container')
       subContainer.style.marginTop = '20px'
 
-       var li = document.querySelectorAll('#menu-item-11 .sub-container .sub-menu li')
+       var li = document.querySelectorAll('#menu-item-39 .sub-container .sub-menu li')
       li.forEach(e => {
         e.style.background = '#001515'
         e.style.margin = '10px'
@@ -187,17 +164,17 @@ class _MainState extends State<Main> {
       menu.style.paddingTop = '50px'
       menu.style.background = 'linear-gradient(black, #001111)'
       document.querySelector('#menu').classList.add('active')
-      document.querySelector('#menu-item-44').style.display = 'none';
-      document.querySelector('#menu-item-43').style.display = 'none';
-      document.querySelector('#menu-item-11').style.display = 'none';
-      document.querySelector('#menu-item-65').style.display = 'initial';
-      document.querySelector('#menu-item-65 a').style.color = 'white';
-      document.querySelector('#menu-item-120').style.display = 'none';
+      document.querySelector('#menu-item-37').style.display = 'none';
+      document.querySelector('#menu-item-38').style.display = 'none';
+      document.querySelector('#menu-item-39').style.display = 'none';
+      document.querySelector('#menu-item-60').style.display = 'initial';
+      document.querySelector('#menu-item-60 a').style.color = 'white';
+      document.querySelector('#menu-item-40').style.display = 'none';
 
-      var subContainer = document.querySelector('#menu-item-65 .sub-container')
+      var subContainer = document.querySelector('#menu-item-60 .sub-container')
       subContainer.style.marginTop = '20px'
 
-      var li = document.querySelectorAll('#menu-item-65 .sub-container .sub-menu li')
+      var li = document.querySelectorAll('#menu-item-60 .sub-container .sub-menu li')
       li.forEach(e => {
         e.style.background = '#001515'
         e.style.margin = '10px'
@@ -217,104 +194,111 @@ class _MainState extends State<Main> {
       WebUri? uri = await webViewController?.getUrl();
       String? currentUrl = uri.toString();
 
-      if (lastUrl != currentUrl) {
-        lastUrl = currentUrl;
-        if (currentUrl == urlHome) {
-          setState(() {
-            currentIndex = 0;
-          });
-        } else if (currentUrl == urlMovie) {
-          setState(() {
-            currentIndex = 1;
-          });
-        } else if (currentUrl == urlTv) {
-          setState(() {
-            currentIndex = 2;
-          });
-        }
-      }
-
-      if (currentUrl.contains("jimkimble")) {
-        webViewController?.evaluateJavascript(source: '''
+      if (currentUrl.contains("beycats")) {
+        await webViewController?.evaluateJavascript(source: '''
           document.body.style.background = 'linear-gradient(#0c0c0c, #001111)'
           document.body.style.backgroundAttachment = 'fixed'
 
-          document.querySelector('.brand-logo').style.display = 'none'
-          document.querySelector('#top_buttons').style.display = 'none'
-          document.querySelector('#instructions').style.display = 'none'
+          var body = document.body
 
-          var main = document.querySelector('.main-container')
-          main.lastElementChild.style.display = 'none'
-          document.querySelector('.pb-6').style.display = 'none'
-          document.querySelector('.brand-logo').style.display = 'none'
+          var video = body.children[4]
+          video.style.height = '100vw'
+          video.style.height = '100vh'
+          video.style.position = 'fixed !important'
+          video.style.top = '0'
+          video.style.left = '0'
+          video.style.display = 'flex'
+          video.style.alignItems = 'center'
+          video.style.justifyContent = 'center'
 
-          document.querySelector('#left').style.marginTop = "50px"
-          var list = document.querySelector('.list')
-          list.lastElementChild.click()
+          body.children[0].style.display = 'none'
+          body.children[1].style.display = 'none'
+          body.children[2].style.display = 'none'
+          body.children[3].style.display = 'none'
+          body.children[5].style.display = 'none'
+          body.children[6].style.display = 'none'
+          body.children[7].style.display = 'none'
+          body.children[8].style.display = 'none'
+          body.children[9].style.display = 'none'
+          body.children[10].style.display = 'none'
+          body.children[11].style.display = 'none'
+          body.children[12].style.display = 'none'
+          body.children[13].style.display = 'none'
+          body.children[14].style.display = 'none'
+          body.children[15].style.display = 'none'
+          
+          var vid = document.querySelector('video')
+          vid.style.zIndex = 1000
+          vid.style.boxShadow = '5px 20px 60px #00ff801d'
 
+          document.querySelector('footer').style.display = 'none'
+
+          
+        ''');
+
+        setState(() {
+          currentIndex = 0;
+        });
+      }
+
+      if (currentUrl == urlHome) {
+        webViewController?.evaluateJavascript(source: '''
+          // window.addEventListener('focus', function() {
+          //   window.blur();
+          // });
+          document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
+
+          document.body.style.background = 'linear-gradient(#030a00, #0e110d)'
+          document.body.style.backgroundAttachment = 'fixed'
+
+          var head = document.createElement('div')
+          var header = document.querySelector('header')
+          header.append(head)
+          head.append(document.querySelector('header .container'))
+          head.style.position = 'fixed'
+          head.style.top = 0
+          head.style.left = 0
+          head.style.width = '100vw'
+          head.style.height = '0px'
+          head.style.background = '#151515'
+
+          header.style.transform = "translateX('-100%')"
+          header.style.height = '0px'
+          head.style.transform = "translateX('-100%')"
+
+          document.querySelector('.header-logo').style.display = 'none';
+          document.querySelector('.mobile-menu').style.display = 'none';
+          document.querySelector('.mobile-search').style.display = 'none'
+
+          var searchForm = document.querySelector('#searchform')
+          searchForm.style.padding = '10px'
+          searchForm.style.background = '#011818'
+          searchForm.style.borderRadius = '15px'
+          var search = document.querySelector('#search')
+          search.style.paddingTop = '15px'
+          search.style.background = '#030a00'
+          search.classList.add('active')
+          search.style.marginTop = "-50px"
+          var searchInput = document.querySelector('#search input')
+          searchInput.style.background = "#011818"
+          searchInput.style.borderRadius = "10px"
+          document.querySelector('#searchform .fa').style.color = 'white'
+
+          document.querySelector('#social_side_links').style.display = 'none'
+
+          var pagination = document.querySelector('#pagination')
+          pagination.style.marginTop = '30px'
+
+
+          document.querySelector('footer').style.display = 'none'
+
+          document.querySelector('.comentarios').style.display = 'none'   
+          
         ''');
       }
     }
 
     updateNav();
-
-    webViewController?.evaluateJavascript(source: '''
-      // window.addEventListener('focus', function() {
-      //   window.blur();
-      // });
-      document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
-
-      document.body.style.background = 'linear-gradient(#030a00, #0e110d)'
-      document.body.style.backgroundAttachment = 'fixed'
-
-      var head = document.createElement('div')
-      var header = document.querySelector('header')
-      header.append(head)
-      head.append(document.querySelector('header .container'))
-      head.style.position = 'fixed'
-      head.style.top = 0
-      head.style.left = 0
-      head.style.width = '100vw'
-      head.style.height = '0px'
-      head.style.background = '#151515'
-      
-
-      header.style.transform = "translateX('-100%')"
-      header.style.height = '0px'
-      head.style.transform = "translateX('-100%')"
-      
-
-      document.querySelector('.header-logo').style.display = 'none';
-      document.querySelector('.mobile-menu').style.display = 'none';
-      document.querySelector('.mobile-search').style.display = 'none'
-
-      var searchForm = document.querySelector('#searchform')
-      searchForm.style.padding = '10px'
-      searchForm.style.background = '#011818'
-      searchForm.style.borderRadius = '15px'
-      var search = document.querySelector('#search')
-      search.style.paddingTop = '15px'
-      search.style.background = '#030a00'
-      search.classList.add('active')
-      search.style.marginTop = "-50px"
-      var searchInput = document.querySelector('#search input')
-      searchInput.style.background = "#011818"
-      searchInput.style.borderRadius = "10px"
-      document.querySelector('#searchform .fa').style.color = 'white'
-
-      // var container = document.querySelector('.container')
-      var pagination = document.querySelector('#pagination')
-      pagination.style.marginTop = '30px'
-      // container.append(pagination)
-
-
-      document.querySelector('footer').style.display = 'none'
-
-      document.querySelector('.comentarios').style.display = 'none'
-
-      
-
-    ''');
 
     void nav(int index) {
       // webViewController?.stopLoading();
@@ -459,9 +443,9 @@ class _MainState extends State<Main> {
                         height: MediaQuery.of(context).size.height,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 0.848)),
+                            color: Color.fromRGBO(0, 0, 0, 1)),
                         child: const CircularProgressIndicator(
-                            color: Color.fromARGB(255, 5, 115, 91)),
+                            color: Color.fromARGB(255, 27, 151, 5)),
                       )
                     : const SizedBox()
               ],

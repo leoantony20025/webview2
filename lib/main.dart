@@ -1,4 +1,3 @@
-import 'package:dns_client/dns_client.dart';
 import 'package:flutter/material.dart';
 import 'screens/Main.dart';
 
