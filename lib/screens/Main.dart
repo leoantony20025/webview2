@@ -11,16 +11,14 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
+  String url = "https://www.bolly2tolly.land";
   String urlHome = "https://www.bolly2tolly.land/category/tamil-movies";
-  String urlMovie = "https://www.bolly2tolly.land/category/tamil-movies";
-  String urlTv = "https://www.bolly2tolly.land/category/tamil-movies";
+  String urlLatest = "https://www.bolly2tolly.land/category/tamil-movies";
+  String urlMostViewed = "https://www.bolly2tolly.land/category/tamil-movies";
 
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewController? webViewController;
   CookieManager cookieManager = CookieManager.instance();
-  late PullToRefreshController? pullToRefreshController;
-  PullToRefreshSettings pullToRefreshSettings = PullToRefreshSettings(
-      color: const Color.fromRGBO(0, 32, 58, 1), enabled: true);
   final List<ContentBlocker> contentBlockers = [];
   bool isLoading = true;
   int progress = 0;
@@ -29,24 +27,13 @@ class _MainState extends State<Main> {
   bool toggle = false;
   bool isModalOpen = false;
   int resourceLoad = 0;
+  bool serverToggle = true;
 
   @override
   void initState() {
     super.initState();
 
     lastUrl = null;
-
-    pullToRefreshController = PullToRefreshController(
-      settings: pullToRefreshSettings,
-      onRefresh: () async {
-        if (defaultTargetPlatform == TargetPlatform.android) {
-          webViewController?.reload();
-        } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-          webViewController?.loadUrl(
-              urlRequest: URLRequest(url: await webViewController?.getUrl()));
-        }
-      },
-    );
 
     final hurawatchUrlFilters = [
       ".*.whos.amung.us/.*",
@@ -63,21 +50,33 @@ class _MainState extends State<Main> {
       ".*.equalditchcentered.com/.*",
       ".*.stats.wp.com/.*",
       ".*.goingkinch.com/.*",
-      ".*.fuckadblock/.*",
+      ".*.fuckadblock.*",
       ".*.marazma.com/.*",
       ".*.popmansion.com/.*",
       ".*.videocdnmetrika.com/.*",
       ".*.s3.us-east-1.amazonaws.com/.*",
       ".*.amazonaws.com/.*",
       ".*.cloudfront.net/.*",
-      ".*.parimatch/.*",
+      ".*.parimatch.*",
       ".*.rz.systpelew.top/.*",
       ".*.win.pm-bet.in/.*",
       // ".*.funkiaproofed.shop/.*",
       // ".*.ak.itponytaa.com/.*",
       ".*.go-mpulse.net/.*",
       ".*.chennaiexch.online/.*",
+      ".*.honourprecisionsuited.com/.*",
+      ".*.creative-stat1.com/.*",
+      ".*.exness.com/.*",
+      ".*.use.typekit.net/.*",
+      ".*.stats.wp.com/.*",
+      ".*.oyohd.one/cdn-cgi/trace.*",
+      ".*.profitableexactly.com/.*",
+      ".*.oyohd.one/js/video.counters/.*",
+      ".*.marazma.com/.*",
+      ".*.dexpredict.com/.*",
+      ".*.junkyadexchange.com/.*",
       ".*.rockiertaar.com/.*",
+      ".*.www.exness.com/.*",
     ];
     final youtubeUrlFilters = [
       ".*.static.doubleclick.net/.*",
@@ -137,13 +136,28 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    String genreJS = '''
-      
+    String latestJS = '''
+      document.querySelector('main').style.display = 'none'
+      document.querySelector('article').style.display = 'none'
+      var aside = document.querySelector('aside')
+      aside.style.display = 'initial'
+      aside.lastElementChild.style.display = 'none'
+      aside.firstElementChild.style.display = 'initial'
+      aside.firstElementChild.style.color = 'white'
+
+      document.querySelector('.Wdgt').style.width = '100vw'
+      document.querySelector('.Wdgt').style.backgroundColor = 'white'
+
     ''';
 
-    String yearJS = '''
-      
-
+    String mostViewedJS = '''
+      document.querySelector(' main').style.display = 'none'
+      document.querySelector('article').style.display = 'none'
+      var aside = document.querySelector('aside')
+      aside.style.display = 'initial'
+      aside.firstElementChild.style.display = 'none'
+      aside.lastElementChild.style.display = 'initial'
+    
     ''';
 
     void updateNav() async {
@@ -159,48 +173,60 @@ class _MainState extends State<Main> {
         }
       }
 
-      if (currentUrl == urlHome) {
+      if (currentIndex == 0) {
         webViewController?.evaluateJavascript(source: '''
-
-          document.querySelector('.AZList').style.display = 'none'
-
-          document.querySelector('.Top').style.display = 'flex'
-          document.querySelector('.Top').style.alignItems = 'center'
-          document.querySelector('.Top').style.marginTop = '-30px'
-          var title = document.querySelector('.Title')
-          title.innerText = "Tamil"
-          title.style.color = '#fcf2fd5e'
-          title.style.fontSize = 'small'
-          title.style.flex = 1
-
-          document.querySelector('.current').style.backgroundColor = '#8a00a6'
+          document.querySelector('aside').style.display = 'none'
+          document.querySelectorAll('.Objf').forEach(e => e.style.borderRadius = '20px !important')
         ''');
       }
 
+      if (currentIndex == 1) {
+        webViewController?.evaluateJavascript(source: latestJS);
+      }
+
+      if (currentIndex == 2) {
+        webViewController?.evaluateJavascript(source: mostViewedJS);
+      }
+
       if (currentUrl.contains("/movie/")) {
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+            var servers = document.querySelector('.TPlayerNv')
+            servers.childNodes.forEach(e => {
+              if (e.childNodes[0].innerText == 'Oyohd') {
+                e.style.display = 'none'
+              }
+              if (e.childNodes[0].innerText == 'Neohd') {
+                e.click()
+                e.style.backgroundColor = '#8a00a6'
+              } else {
+                servers.childNodes[1].click()
+                servers.childNodes[1].style.backgroundColor = '#8a00a6'
+              }
+            })
+              
+          ''');
+          print("COUNTTTTTTTTTTTTTTTTTTTTTTTTTT2222222222");
+        }
+
         webViewController?.evaluateJavascript(source: '''
           document.querySelector('.Footer').style.display = 'none'
           document.querySelector('#ads_singlem_top').style.display = 'none'
+          document.querySelector('.Wdgt').style.display = 'none'
           var wng = document.querySelectorAll('.has-wpur-alert')
           wng.forEach(e => {
             e.style.display = 'none'
           })
-
-          var servers = document.querySelector('.TPlayerNv')
-          servers.childNodes[0].classList.remove('Current')
-          servers.childNodes[0].style.display = 'none'
-          servers.childNodes[1].classList.add('Current')
-          // servers.childNodes[1].click()
-
-          document.querySelector('.Current').style.backgroundColor = '#8a00a6'
-
-
-
         ''');
       }
     }
 
     updateNav();
+
+    webViewController?.evaluateJavascript(source: '''
+      document.querySelector('.TPlayerNv li.Current').style.backgroundColor = '#8a00a6'
+      document.querySelector('.button').style.backgroundColor = 'grey'
+    ''');
 
     webViewController?.evaluateJavascript(source: '''
       // window.addEventListener('focus', function() {
@@ -218,7 +244,6 @@ class _MainState extends State<Main> {
       document.querySelector('footer').style.display = 'none'
 
       document.querySelector('.Header').style.display = 'none'
-      document.querySelector('aside').style.display = 'none'
 
       var search = document.querySelector('.Search')
       search.style.position = 'fixed'
@@ -228,14 +253,33 @@ class _MainState extends State<Main> {
       search.style.width = 'calc(100% - 40px)'
       search.style.margin = '20px'
       var inp = document.querySelector('.Search .Form-Icon input')
-      inp.style.backgroundColor = '#290037'
-      inp.style.border = '1px solid #6400a6'
+      inp.style.backgroundColor = '#3a003c'
+      inp.style.border = '1px solid #730077'
       inp.style.borderRadius = '10px !important'
       inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
       document.body.appendChild(search)
       document.querySelector('#searchsubmit').style.boxShadow = 'none'
 
       document.querySelector('footer').style.display = 'none'
+
+      var title = document.querySelector('.Title')
+      title.style.color = '#fee4ff'
+      title.style.fontSize = '22px'
+      title.style.flex = 1
+
+      document.querySelectorAll('.TPostMv .Title').forEach(e => e.style.color = '#fff8ff3b')
+
+      if (window.location.pathname === '/category/tamil-movies') {
+        document.querySelector('.AZList').style.display = 'none'
+        var title = document.querySelector('.Title')
+        title.innerText = "Tamil"
+        document.querySelector('.Top').style.display = 'flex'
+        document.querySelector('.Top').style.alignItems = 'center'
+        document.querySelector('.Top').style.marginTop = '-30px'
+        document.querySelector('.current').style.backgroundColor = '#8a00a6'
+      }
+
+      document.querySelector('.AZList').style.display = 'none'
 
     ''');
 
@@ -245,16 +289,22 @@ class _MainState extends State<Main> {
         currentIndex = index;
       });
 
-      if (index != 0) {
-        webViewController?.evaluateJavascript(
-            source: index == 1 ? genreJS : yearJS);
-      } else {
-        webViewController?.loadUrl(
-            urlRequest: URLRequest(
-                url: WebUri(urlHome),
-                cachePolicy:
-                    URLRequestCachePolicy.RETURN_CACHE_DATA_ELSE_LOAD));
-      }
+      // if (index != 0) {
+      //   webViewController?.evaluateJavascript(
+      //       source: index == 1 ? latestJS : mostViewedJS);
+      // } else {
+      String urlChange = currentIndex == 0
+          ? urlHome
+          : currentIndex == 1
+              ? urlLatest
+              : currentIndex == 2
+                  ? urlMostViewed
+                  : urlHome;
+      webViewController?.loadUrl(
+          urlRequest: URLRequest(
+              url: WebUri(urlChange),
+              cachePolicy: URLRequestCachePolicy.RETURN_CACHE_DATA_ELSE_LOAD));
+      // }
     }
 
     return WillPopScope(
@@ -268,108 +318,125 @@ class _MainState extends State<Main> {
       child: SafeArea(
           child: Scaffold(
         backgroundColor: Colors.black,
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(255, 9, 0, 23),
-          selectedLabelStyle: const TextStyle(fontSize: 10),
-          unselectedLabelStyle: const TextStyle(fontSize: 10),
-          currentIndex: currentIndex,
-          onTap: (value) => nav(value),
-          type: BottomNavigationBarType.fixed,
-          unselectedItemColor: const Color.fromRGBO(53, 53, 53, 1),
-          selectedItemColor: Colors.white,
-          elevation: 20,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home_outlined,
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [
+            Color.fromARGB(41, 25, 1, 31),
+            Color.fromARGB(163, 47, 1, 58)
+          ])),
+          child: BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            selectedLabelStyle: const TextStyle(fontSize: 10),
+            unselectedLabelStyle: const TextStyle(fontSize: 10),
+            currentIndex: currentIndex,
+            onTap: (value) => nav(value),
+            type: BottomNavigationBarType.fixed,
+            unselectedItemColor: Color.fromARGB(37, 219, 186, 232),
+            selectedItemColor: Colors.white,
+            elevation: 20,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home_outlined,
+                ),
+                activeIcon: Icon(
+                  Icons.home_filled,
+                ),
+                label: "Home",
               ),
-              activeIcon: Icon(
-                Icons.home_filled,
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.category_outlined,
+                ),
+                activeIcon: Icon(
+                  Icons.category_rounded,
+                ),
+                label: "Genres",
               ),
-              label: "Home",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.category_outlined,
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.timeline_outlined,
+                ),
+                activeIcon: Icon(
+                  Icons.timeline_rounded,
+                ),
+                label: "Years",
               ),
-              activeIcon: Icon(
-                Icons.category_rounded,
-              ),
-              label: "Genres",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.timeline_outlined,
-              ),
-              activeIcon: Icon(
-                Icons.timeline_rounded,
-              ),
-              label: "Years",
-            ),
-          ],
+            ],
+          ),
         ),
         body: Column(children: <Widget>[
           Expanded(
             child: Stack(
               children: [
-                InAppWebView(
-                  key: webViewKey,
-                  pullToRefreshController: pullToRefreshController,
-                  initialUrlRequest: URLRequest(url: WebUri(urlHome)),
-                  initialSettings: InAppWebViewSettings(
-                    contentBlockers: contentBlockers,
-                    allowBackgroundAudioPlaying: true,
-                    allowsPictureInPictureMediaPlayback: true,
-                    useOnLoadResource: true,
-                    cacheEnabled: true,
-                    cacheMode: CacheMode.LOAD_CACHE_ELSE_NETWORK,
-                    verticalScrollBarEnabled: false,
-                    horizontalScrollBarEnabled: false,
-                    iframeAllowFullscreen: true,
-                    isTextInteractionEnabled: false,
-                    useHybridComposition: true,
-                    hardwareAcceleration: true,
-                  ),
-                  onWebViewCreated: (controller) {
-                    webViewController = controller;
-                  },
-                  onLoadStart: (controller, url) {
-                    setState(() {
-                      isLoading = true;
-                    });
-                  },
-                  onReceivedError: (controller, request, error) {
-                    pullToRefreshController?.endRefreshing();
-                    if (error.type == WebResourceErrorType.UNSUPPORTED_SCHEME) {
-                      controller.goBack();
-                    }
-                  },
-                  onLoadStop: (controller, url) {
-                    setState(() {
-                      isLoading = false;
-                      resourceLoad = 0;
-                    });
-                    pullToRefreshController?.endRefreshing();
-                  },
-                  onTitleChanged: (controller, title) {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  },
-                  onProgressChanged: (controller, progress) {
-                    if (progress == 100) {
-                      pullToRefreshController?.endRefreshing();
-                    }
-                    setState(() {
-                      this.progress = progress;
-                    });
-                  },
-                  onLoadResource: (controller, resource) {
-                    if (resourceLoad < 5) {
-                      // webViewController?.evaluateJavascript(source: closeJS);
-                    }
-                  },
-                ),
+                currentIndex != 3
+                    ? InAppWebView(
+                        key: webViewKey,
+                        initialUrlRequest: URLRequest(url: WebUri(urlHome)),
+                        initialSettings: InAppWebViewSettings(
+                          contentBlockers: contentBlockers,
+                          allowBackgroundAudioPlaying: true,
+                          allowsPictureInPictureMediaPlayback: true,
+                          useOnLoadResource: true,
+                          cacheEnabled: true,
+                          cacheMode: CacheMode.LOAD_CACHE_ELSE_NETWORK,
+                          verticalScrollBarEnabled: false,
+                          horizontalScrollBarEnabled: false,
+                          iframeAllowFullscreen: true,
+                          isTextInteractionEnabled: false,
+                          useHybridComposition: true,
+                          hardwareAcceleration: true,
+                        ),
+                        onWebViewCreated: (controller) {
+                          webViewController = controller;
+                        },
+                        onReceivedError: (controller, request, error) {
+                          if (error.type ==
+                                  WebResourceErrorType.UNSUPPORTED_SCHEME ||
+                              error.type ==
+                                  WebResourceErrorType.BAD_SERVER_RESPONSE) {
+                            controller.goBack();
+                          }
+                        },
+                        onReceivedHttpError:
+                            (controller, request, errorResponse) async {
+                          WebUri? uri = await webViewController?.getUrl();
+                          String? currentUrl = uri.toString();
+                          if (currentUrl.contains("junkyadexchange") ||
+                              currentUrl.contains("exness") ||
+                              currentUrl.contains("win.pm-bet.in")) {
+                            controller.goBack();
+                          }
+                        },
+                        onLoadStop: (controller, url) {
+                          setState(() {
+                            isLoading = false;
+                            resourceLoad = 0;
+                          });
+                        },
+                        onTitleChanged: (controller, title) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        },
+                        onProgressChanged: (controller, progress) {
+                          if (progress == 100) {}
+                          setState(() {
+                            this.progress = progress;
+                          });
+                        },
+                        onLoadResource: (controller, resource) {
+                          if (resourceLoad < 5) {
+                            // webViewController?.evaluateJavascript(source: closeJS);
+                          }
+                        },
+                        onEnterFullscreen: (controller) {
+                          setState(() {
+                            serverToggle = false;
+                          });
+                        },
+                      )
+                    : Container(),
                 progress < 100
                     ? Container(
                         width: MediaQuery.of(context).size.width,
