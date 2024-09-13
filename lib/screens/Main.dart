@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class Main extends StatefulWidget {
@@ -13,8 +11,8 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   String url = "https://www.bolly2tolly.land";
   String urlHome = "https://www.bolly2tolly.land/category/tamil-movies";
-  String urlLatest = "https://www.bolly2tolly.land/category/tamil-movies";
-  String urlMostViewed = "https://www.bolly2tolly.land/category/tamil-movies";
+  String urlLatest = "https://www.bolly2tolly.land/category/malayalam-movies";
+  String urlMostViewed = "https://www.bolly2tolly.land/category/english-movies";
 
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewController? webViewController;
@@ -24,9 +22,6 @@ class _MainState extends State<Main> {
   int progress = 0;
   int currentIndex = 0;
   String? lastUrl;
-  bool toggle = false;
-  bool isModalOpen = false;
-  int resourceLoad = 0;
   bool serverToggle = true;
 
   @override
@@ -140,23 +135,55 @@ class _MainState extends State<Main> {
       document.querySelector('main').style.display = 'none'
       document.querySelector('article').style.display = 'none'
       var aside = document.querySelector('aside')
-      aside.style.display = 'initial'
+      aside.style.display = 'inherit'
       aside.lastElementChild.style.display = 'none'
-      aside.firstElementChild.style.display = 'initial'
+      aside.firstElementChild.style.display = 'inherit'
       aside.firstElementChild.style.color = 'white'
 
-      document.querySelector('.Wdgt').style.width = '100vw'
-      document.querySelector('.Wdgt').style.backgroundColor = 'white'
+      var title = document.querySelector('.Wdgt .Title')
+      title.style.color = '#fee4ff'
+      title.style.fontSize = '22px'
+
+      var list = document.querySelector('.TpSbList')
+      list.style.maxWidth = '100%'
+      var movies = document.querySelectorAll('.MovieList li')
+      movies.forEach(e => {
+        // e.style.backgroundColor = "#322839c0"
+        e.style.borderRadius = "0px"
+        e.style.padding = "20px"
+        e.style.margin = "0px"
+        e.querySelector('a').style.color = 'white'
+      })
+
+      document.querySelector('.Wdgt').style.backgroundColor = 'transparent'
+
 
     ''';
 
     String mostViewedJS = '''
-      document.querySelector(' main').style.display = 'none'
+      document.querySelector('main').style.display = 'none'
       document.querySelector('article').style.display = 'none'
       var aside = document.querySelector('aside')
-      aside.style.display = 'initial'
+      aside.style.display = 'inherit'
       aside.firstElementChild.style.display = 'none'
-      aside.lastElementChild.style.display = 'initial'
+      aside.lastElementChild.style.display = 'inherit'
+
+      var title = aside.lastElementChild.querySelector('.Title')
+      title.style.color = '#fee4ff'
+      title.style.fontSize = '22px'
+
+      var list = document.querySelector('.TpSbList')
+      list.style.maxWidth = '100%'
+      var movies = document.querySelectorAll('.MovieList li')
+      movies.forEach(e => {
+        e.style.backgroundColor = "#322839c0"
+        e.style.borderRadius = "0px"
+        e.style.padding = "0px"
+        e.style.margin = "8%"
+      })
+
+      document.querySelector('.Wdgt').style.backgroundColor = 'transparent'
+
     
     ''';
 
@@ -165,12 +192,20 @@ class _MainState extends State<Main> {
       String? currentUrl = uri.toString();
 
       if (lastUrl != currentUrl) {
-        lastUrl = currentUrl;
         if (currentUrl == urlHome) {
           setState(() {
             currentIndex = 0;
           });
+        } else if (currentUrl == urlLatest) {
+          setState(() {
+            currentIndex = 1;
+          });
+        } else if (currentUrl == urlMostViewed) {
+          setState(() {
+            currentIndex = 2;
+          });
         }
+        lastUrl = currentUrl;
       }
 
       if (currentIndex == 0) {
@@ -210,6 +245,9 @@ class _MainState extends State<Main> {
         }
 
         webViewController?.evaluateJavascript(source: '''
+          document.querySelector('main').style.display = 'inherit'
+          document.querySelector('article').style.display = 'inherit'
+          document.querySelector('aside').style.display = 'none'
           document.querySelector('.Footer').style.display = 'none'
           document.querySelector('#ads_singlem_top').style.display = 'none'
           document.querySelector('.Wdgt').style.display = 'none'
@@ -284,15 +322,11 @@ class _MainState extends State<Main> {
     ''');
 
     void nav(int index) {
-      // webViewController?.stopLoading();
+      webViewController?.stopLoading();
       setState(() {
         currentIndex = index;
       });
 
-      // if (index != 0) {
-      //   webViewController?.evaluateJavascript(
-      //       source: index == 1 ? latestJS : mostViewedJS);
-      // } else {
       String urlChange = currentIndex == 0
           ? urlHome
           : currentIndex == 1
@@ -304,7 +338,6 @@ class _MainState extends State<Main> {
           urlRequest: URLRequest(
               url: WebUri(urlChange),
               cachePolicy: URLRequestCachePolicy.RETURN_CACHE_DATA_ELSE_LOAD));
-      // }
     }
 
     return WillPopScope(
@@ -351,7 +384,7 @@ class _MainState extends State<Main> {
                 activeIcon: Icon(
                   Icons.category_rounded,
                 ),
-                label: "Genres",
+                label: "New Release",
               ),
               BottomNavigationBarItem(
                 icon: Icon(
@@ -360,7 +393,16 @@ class _MainState extends State<Main> {
                 activeIcon: Icon(
                   Icons.timeline_rounded,
                 ),
-                label: "Years",
+                label: "Most Viewed",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.settings_outlined,
+                ),
+                activeIcon: Icon(
+                  Icons.settings_rounded,
+                ),
+                label: "Options",
               ),
             ],
           ),
@@ -411,12 +453,12 @@ class _MainState extends State<Main> {
                         onLoadStop: (controller, url) {
                           setState(() {
                             isLoading = false;
-                            resourceLoad = 0;
                           });
                         },
                         onTitleChanged: (controller, title) {
                           setState(() {
                             isLoading = false;
+                            serverToggle = true;
                           });
                         },
                         onProgressChanged: (controller, progress) {
@@ -425,25 +467,28 @@ class _MainState extends State<Main> {
                             this.progress = progress;
                           });
                         },
-                        onLoadResource: (controller, resource) {
-                          if (resourceLoad < 5) {
-                            // webViewController?.evaluateJavascript(source: closeJS);
-                          }
-                        },
                         onEnterFullscreen: (controller) {
                           setState(() {
                             serverToggle = false;
                           });
                         },
                       )
-                    : Container(),
+                    : Container(
+                        child: Text("hi"),
+                      ),
                 progress < 100
                     ? Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 0.874)),
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                              Color.fromARGB(255, 23, 0, 28),
+                              Colors.black
+                            ])),
                         child: const CircularProgressIndicator(
                             color: Color.fromARGB(255, 123, 2, 154)),
                       )
