@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:theater/prefs.dart';
 import 'screens/Main.dart';
 
-void main() {
+void main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await initPref();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
   runApp(const MyApp());
+  FlutterNativeSplash.remove();
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
-    WidgetsFlutterBinding.ensureInitialized();
-    // final dns = DnsOverHttps.google();
-    // final response = dns.lookup('tamilian.io');
     return MaterialApp(
-      title: 'Theatre',
+      title: 'Theater',
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 44, 0, 44)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 44, 0, 44)),
         useMaterial3: true,
         highlightColor: const Color.fromARGB(255, 31, 1, 46),
         splashColor: const Color.fromARGB(255, 22, 0, 24),
