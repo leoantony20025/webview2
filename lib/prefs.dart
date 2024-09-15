@@ -45,6 +45,6 @@ Future<void> addToWishList(Movie movie) async {
 
 Future<void> removeFromWishList(Movie movie) async {
   final List<Movie> wishList = await getWishList();
-  wishList.removeWhere((movie) => movie == movie);
+  wishList.removeWhere((e) => e.url == movie.url);
   await saveWishList(wishList);
 }

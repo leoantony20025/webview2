@@ -22,7 +22,7 @@ class _MainState extends State<Main> {
   int currentIndex = 0;
   String? lastUrl;
   bool serverToggle = true;
-  int wishCount = 0;
+  // int wishCount = 0;
   List<Movie> wishList = [];
 
   @override
@@ -258,24 +258,41 @@ class _MainState extends State<Main> {
       img.src = "https://img.icons8.com/ios-glyphs/20/FFEFFF/plus-math.png"
       img.style.margin = '0 10px'
       var h6 = document.createElement('h5');
-      h6.innerText = "Add To Wishlist"
+      h6.innerText = "Add To Watchlist"
       h6.style.margin = '0'
       wl.appendChild(img)
       wl.appendChild(h6)
 
-      var name = document.querySelector('.SubTitle').innerHTML.toString()
-      var photo = document.querySelector('.attachment-thumbnail').src
-      var language = document.querySelectorAll('td')[3].querySelector('span').innerText
-      var url = window.location.href
-      var duration = document.querySelector('.Time').innerText
-      var year = document.querySelector('.Date').innerText
+      var currentUrl = document.location.href
+      var isMovie = currentUrl.includes('/movie/')
+      var isSeries = currentUrl.includes('/serie/')
+
+      if (isMovie){
+        var name = document.querySelector('.SubTitle').innerHTML.toString()
+        var photo = document.querySelector('.attachment-thumbnail').src
+        var language = document.querySelectorAll('td')[3].querySelector('span').innerText
+        var url = window.location.href
+        var duration = document.querySelector('.Time').innerText
+        var year = document.querySelector('.Date').innerText
+      }
+
+      if (isSeries) {
+        var name = document.querySelector('.Title').innerHTML.toString()
+        var photo = document.querySelector('.attachment-thumbnail').src
+        var language = ""
+        var url = window.location.href
+        var duration = ""
+        var year = ""
+      }
+
+      // AAIco-adjust
 
       wl.addEventListener('click', () => {
         window.flutter_inappwebview.callHandler('wishHandler', name, photo, language, url, duration, year);
       })
 
       var article = document.querySelector('article')
-      article.appendChild(wl)
+      article.append(wl)
 
     ''';
 
@@ -371,6 +388,85 @@ class _MainState extends State<Main> {
           })
         ''');
       }
+
+      if (currentUrl.contains("/serie/")) {
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+            // var servers = document.querySelector('.TPlayerNv')
+            // servers.childNodes.forEach(e => {
+            //   if (e.childNodes[0].innerText == 'Oyohd') {
+            //     e.style.display = 'none'
+            //   }
+            //   if (e.childNodes[0].innerText == 'Neohd') {
+            //     e.click()
+            //     e.style.backgroundColor = '#8a00a6'
+            //   } else {
+            //     servers.childNodes[1].click()
+            //     servers.childNodes[1].style.backgroundColor = '#8a00a6'
+            //   }
+            // })
+
+            // servers.style.display = 'none'
+            // document.querySelector('.TPlayerCn').style.display = 'none'
+              
+          ''');
+        }
+
+        webViewController?.evaluateJavascript(source: '''
+          document.querySelector('main').style.display = 'inherit'
+          document.querySelector('article').style.display = 'inherit'
+          document.querySelector('aside').style.display = 'none'
+          document.querySelector('.ListPOpt').style.display = 'none'
+          document.querySelector('.AA-Season').style.color = 'white'
+          document.querySelector('.Footer').style.display = 'none'
+          var titles = document.querySelectorAll('.MvTbTtl a')
+          titles.forEach(e => {
+            e.style.color = 'white'
+          })
+          document.querySelector('#ads_singlem_top').style.display = 'none'
+          document.querySelector('.Wdgt').style.display = 'none'
+          var wng = document.querySelectorAll('.has-wpur-alert')
+          wng.forEach(e => {
+            e.style.display = 'none'
+          })
+        ''');
+      }
+
+      if (currentUrl.contains("/episode/")) {
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+            var servers = document.querySelector('.TPlayerNv')
+            servers.childNodes.forEach(e => {
+              if (e.childNodes[0].innerText == 'Oyohd') {
+                e.style.display = 'none'
+              }
+              if (e.childNodes[0].innerText == 'Neohd') {
+                e.click()
+                e.style.backgroundColor = '#8a00a6'
+              } else {
+                servers.childNodes[1].click()
+                servers.childNodes[1].style.backgroundColor = '#8a00a6'
+              }
+            })
+
+            // servers.style.display = 'none'
+            // document.querySelector('.TPlayerCn').style.display = 'none'
+              
+          ''');
+        }
+
+        webViewController?.evaluateJavascript(source: '''
+          document.querySelector('main').style.display = 'inherit'
+          document.querySelector('article').style.display = 'inherit'
+          document.querySelector('aside').style.display = 'none'
+          document.querySelector('.Footer').style.display = 'none'
+          document.querySelector('.Wdgt').style.display = 'none'
+          var wng = document.querySelectorAll('.has-wpur-alert')
+          wng.forEach(e => {
+            e.style.display = 'none'
+          })
+        ''');
+      }
     }
 
     updateNav();
@@ -423,26 +519,28 @@ class _MainState extends State<Main> {
 
       document.querySelectorAll('.TPostMv .Title').forEach(e => e.style.color = '#fff8ff3b')
 
-      if (window.location.pathname === '/category/tamil-movies') {
+      var url = window.location.pathname
+
+      if (url.includes('/category/tamil-movies')) {
         var title = document.querySelector('.Title')
         title.innerText = "Tamil"
       }
-      if (window.location.pathname === '/category/english-movies') {
+      if (url.includes('/category/english-movies')) {
         title.innerText = "English"
       }
-      if (window.location.pathname === '/category/malayalam-movies') {
+      if (url.includes('/category/malayalam-movies')) {
         var title = document.querySelector('.Title')
         title.innerText = "Malayalam"
       }
-      if (window.location.pathname === '/category/telugu-movies') {
+      if (url.includes('/category/telugu-movies')) {
         var title = document.querySelector('.Title')
         title.innerText = "Telugu"
       }
-      if (window.location.pathname === '/category/kannada-movies') {
+      if (url.includes('/category/kannada-movies')) {
         var title = document.querySelector('.Title')
         title.innerText = "Kannada"
       }
-      if (window.location.pathname === '/category/hindi-movies') {
+      if (url.includes('/category/hindi-movies')) {
         var title = document.querySelector('.Title')
         title.innerText = "Hindi"
       }
@@ -453,6 +551,21 @@ class _MainState extends State<Main> {
       document.querySelector('.current').style.backgroundColor = '#8a00a6'
 
       document.querySelector('.AZList').style.display = 'none'
+      var result = document.querySelector('.Result')
+      result.style.background = "linear-gradient(120deg, #13001c, #0a000c)"
+      result.style.borderTop = 'none'
+      result.style.borderRadius = '10px'
+      result.style.width = '91%'
+      result.style.marginRight = '5%'
+      result.style.backdropFilter = 'blur(20px)'
+      document.querySelector('a.Button').style.backgroundColor = '#370039c9'
+      document.querySelector('a.Button').style.borderRadius = '10px'
+
+      var titles = document.querySelectorAll('.Title')
+      titles.forEach(e => {
+        e.style.color = 'white'
+      })
+
 
     ''');
 
@@ -557,7 +670,6 @@ class _MainState extends State<Main> {
           Expanded(
             child: Stack(
               children: [
-                // currentIndex != 3
                 InAppWebView(
                   key: webViewKey,
                   initialUrlRequest: URLRequest(url: WebUri(urlHome)),
@@ -607,7 +719,7 @@ class _MainState extends State<Main> {
                     });
                     WebUri? uri = await webViewController?.getUrl();
                     String? url = uri.toString();
-                    if (url.contains("/movie/")) {
+                    if (url.contains("/movie/") || url.contains("/serie/")) {
                       if (wishList.isNotEmpty) {
                         bool movieExists =
                             wishList.any((movie) => movie.url == url);
@@ -615,6 +727,9 @@ class _MainState extends State<Main> {
                           await webViewController?.evaluateJavascript(
                               source: wishJS);
                         }
+                      } else {
+                        await webViewController?.evaluateJavascript(
+                            source: wishJS);
                       }
                     }
                   },
@@ -630,10 +745,6 @@ class _MainState extends State<Main> {
                     });
                   },
                 ),
-                // : Container(
-                //     child: const Text("hi"),
-                //   ),
-
                 currentIndex == 3
                     ? Container(
                         width: MediaQuery.of(context).size.width,
@@ -664,7 +775,8 @@ class _MainState extends State<Main> {
                               const SizedBox(
                                 height: 20,
                               ),
-                              Column(
+                              Wrap(
+                                spacing: 20,
                                 children: languages.map((e) {
                                   return GestureDetector(
                                     onTap: () {
@@ -677,7 +789,11 @@ class _MainState extends State<Main> {
                                       }
                                     },
                                     child: Container(
-                                      height: 120,
+                                      width:
+                                          (MediaQuery.of(context).size.width /
+                                                  2) -
+                                              40,
+                                      height: 100,
                                       margin: const EdgeInsets.symmetric(
                                           vertical: 10),
                                       alignment: Alignment.center,
@@ -718,6 +834,7 @@ class _MainState extends State<Main> {
                                   );
                                 }).toList(),
                               ),
+
                               // WatchListComponent(watchList: wishList),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -928,11 +1045,21 @@ class _MainState extends State<Main> {
                                           alignment: Alignment.center,
                                           margin: const EdgeInsets.symmetric(
                                               vertical: 30),
-                                          child: const Text(
-                                            "Add movies to your watchlist",
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    72, 139, 1, 154)),
+                                          child: Column(
+                                            children: [
+                                              Image.asset(
+                                                "lib/assets/images/wish.png",
+                                                opacity:
+                                                    const AlwaysStoppedAnimation(
+                                                        .8),
+                                              ),
+                                              const Text(
+                                                "Add movies to your watchlist",
+                                                style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        75, 235, 199, 255)),
+                                              ),
+                                            ],
                                           ),
                                         )
                                 ],
@@ -941,7 +1068,6 @@ class _MainState extends State<Main> {
                           ),
                         ))
                     : const SizedBox(),
-
                 progress < 100
                     ? Container(
                         width: MediaQuery.of(context).size.width,
