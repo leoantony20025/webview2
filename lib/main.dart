@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:theater/prefs.dart';
+import 'package:theater/screens/Language.dart';
 import 'screens/Main.dart';
 
 void main() async {
@@ -23,6 +24,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Theater',
@@ -35,7 +41,11 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: const Color.fromARGB(255, 21, 0, 23),
       ),
       debugShowCheckedModeBanner: false,
-      home: const Main(),
+      initialRoute: '/',
+      routes: {
+        "/language": (context) => const Language(),
+        "/": (context) => const Main()
+      },
     );
   }
 }
