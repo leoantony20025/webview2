@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:theater/components/WatchList.dart';
 import 'package:theater/models/Movie.dart';
 import 'package:theater/prefs.dart';
-import 'package:theater/screens/WatchList.dart';
 
 class Main extends StatefulWidget {
   const Main({super.key});
@@ -25,6 +23,72 @@ class _MainState extends State<Main> {
   // int wishCount = 0;
   List<Movie> wishList = [];
 
+  final hurawatchUrlFilters = [
+    ".*.whos.amung.us/.*",
+    ".*.weepingcart.com/.*",
+    ".*.l.sharethis.com/.*",
+    ".*.count-server.sharethis.com/.*",
+    ".*.mc.yandex.ru/.*",
+    // ".*.be6721.rcr72.waw04.cdn112.com/.*",
+    ".*.delivery.r2b2.cz/.*",
+    ".*.cloudflareinsights.com/.*",
+    ".*.pixfuture.com/.*",
+    ".*.ping.gif/.*",
+    ".*.cancriberths.com/.*",
+    ".*.equalditchcentered.com/.*",
+    ".*.stats.wp.com/.*",
+    ".*.goingkinch.com/.*",
+    ".*.fuckadblock.*",
+    ".*.marazma.com/.*",
+    ".*.popmansion.com/.*",
+    ".*.videocdnmetrika.com/.*",
+    ".*.s3.us-east-1.amazonaws.com/.*",
+    ".*.amazonaws.com/.*",
+    ".*.cloudfront.net/.*",
+    ".*.parimatch.*",
+    ".*.rz.systpelew.top/.*",
+    ".*.win.pm-bet.in/.*",
+    // ".*.funkiaproofed.shop/.*",
+    // ".*.ak.itponytaa.com/.*",
+    ".*.go-mpulse.net/.*",
+    ".*.chennaiexch.online/.*",
+    ".*.honourprecisionsuited.com/.*",
+    ".*.creative-stat1.com/.*",
+    ".*.exness.com/.*",
+    ".*.use.typekit.net/.*",
+    ".*.stats.wp.com/.*",
+    ".*.oyohd.one/cdn-cgi/trace.*",
+    ".*.profitableexactly.com/.*",
+    ".*.oyohd.one/js/video.counters/.*",
+    ".*.marazma.com/.*",
+    ".*.dexpredict.com/.*",
+    ".*.junkyadexchange.com/.*",
+    ".*.rockiertaar.com/.*",
+    ".*.pb.bheestybaulk.top/.*",
+    ".*.rz.systpelew.top/.*",
+    ".*.diggingrebbes.com/.*",
+    "rz.systpelew.top.*",
+    ".*.pb.bheestybaulk.top.*",
+    ".*.tz.lannycucujus.top.*",
+    ".*.win.pm-bet.in.*",
+    ".*.win.pm-5753.com.*",
+    ".*.track.torarymor.world.*",
+    ".*.www.exness.com.*",
+    ".*.ixiadewaxed.click.*",
+    ".*.dexpredict.com.*"
+  ];
+  final youtubeUrlFilters = [
+    ".*.static.doubleclick.net/.*",
+    ".*.play.google.com/.*",
+    ".*.googleads.g.doubleclick.net/.*",
+    ".*.youtube.com/ptracking/.*",
+    ".*.doubleclick.net.*",
+    ".*.youtube.com/youtubei.*",
+    ".*.youtube.com/pagead.*",
+    ".*.youtube.com/api/stats/qoe.*",
+    ".*.doubleclick.net.*",
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -38,60 +102,6 @@ class _MainState extends State<Main> {
 
     lastUrl = null;
 
-    final hurawatchUrlFilters = [
-      ".*.whos.amung.us/.*",
-      ".*.weepingcart.com/.*",
-      ".*.l.sharethis.com/.*",
-      ".*.count-server.sharethis.com/.*",
-      ".*.mc.yandex.ru/.*",
-      // ".*.be6721.rcr72.waw04.cdn112.com/.*",
-      ".*.delivery.r2b2.cz/.*",
-      ".*.cloudflareinsights.com/.*",
-      ".*.pixfuture.com/.*",
-      ".*.ping.gif/.*",
-      ".*.cancriberths.com/.*",
-      ".*.equalditchcentered.com/.*",
-      ".*.stats.wp.com/.*",
-      ".*.goingkinch.com/.*",
-      ".*.fuckadblock.*",
-      ".*.marazma.com/.*",
-      ".*.popmansion.com/.*",
-      ".*.videocdnmetrika.com/.*",
-      ".*.s3.us-east-1.amazonaws.com/.*",
-      ".*.amazonaws.com/.*",
-      ".*.cloudfront.net/.*",
-      ".*.parimatch.*",
-      ".*.rz.systpelew.top/.*",
-      ".*.win.pm-bet.in/.*",
-      // ".*.funkiaproofed.shop/.*",
-      // ".*.ak.itponytaa.com/.*",
-      ".*.go-mpulse.net/.*",
-      ".*.chennaiexch.online/.*",
-      ".*.honourprecisionsuited.com/.*",
-      ".*.creative-stat1.com/.*",
-      ".*.exness.com/.*",
-      ".*.use.typekit.net/.*",
-      ".*.stats.wp.com/.*",
-      ".*.oyohd.one/cdn-cgi/trace.*",
-      ".*.profitableexactly.com/.*",
-      ".*.oyohd.one/js/video.counters/.*",
-      ".*.marazma.com/.*",
-      ".*.dexpredict.com/.*",
-      ".*.junkyadexchange.com/.*",
-      ".*.rockiertaar.com/.*",
-      ".*.www.exness.com/.*",
-    ];
-    final youtubeUrlFilters = [
-      ".*.static.doubleclick.net/.*",
-      ".*.play.google.com/.*",
-      ".*.googleads.g.doubleclick.net/.*",
-      ".*.youtube.com/ptracking/.*",
-      ".*.doubleclick.net.*",
-      ".*.youtube.com/youtubei.*",
-      ".*.youtube.com/pagead.*",
-      ".*.youtube.com/api/stats/qoe.*",
-      ".*.doubleclick.net.*",
-    ];
     final adUrlFilters = [
       ".*.doubleclick.net/.*",
       ".*.ads.pubmatic.com/.*",
@@ -115,6 +125,7 @@ class _MainState extends State<Main> {
       ...hurawatchUrlFilters,
       ...youtubeUrlFilters
     ];
+
     // for each Ad URL filter, add a Content Blocker to block its loading.
     for (final adUrlFilter in adUrlFilters) {
       contentBlockers.add(ContentBlocker(
@@ -184,7 +195,7 @@ class _MainState extends State<Main> {
     String urlMostViewed =
         "https://www.bolly2tolly.land/category/bengali-movies";
 
-    print("WHISHHHHHHHHHHHHH " + wishList.length.toString());
+    print("WHISHHHHHHHHHHHHH ${wishList.isNotEmpty ? wishList[0].url : ""}");
 
     String latestJS = '''
       document.querySelector('main').style.display = 'none'
@@ -339,8 +350,10 @@ class _MainState extends State<Main> {
 
       if (currentIndex == 0) {
         webViewController?.evaluateJavascript(source: '''
-          document.querySelector('aside').style.display = 'none'
           document.querySelectorAll('.Objf').forEach(e => e.style.borderRadius = '20px !important')
+          document.querySelector('aside').style.display = 'none'
+          document.querySelector('.pzeWz').style.display = 'none'
+          document.querySelector('.-o50L').style.display = 'none'
         ''');
       }
 
@@ -392,7 +405,7 @@ class _MainState extends State<Main> {
       if (currentUrl.contains("/serie/")) {
         if (serverToggle) {
           await webViewController?.evaluateJavascript(source: '''
-            // var servers = document.querySelector('.TPlayerNv')
+            var servers = document.querySelector('.TPlayerNv')
             // servers.childNodes.forEach(e => {
             //   if (e.childNodes[0].innerText == 'Oyohd') {
             //     e.style.display = 'none'
@@ -435,19 +448,19 @@ class _MainState extends State<Main> {
       if (currentUrl.contains("/episode/")) {
         if (serverToggle) {
           await webViewController?.evaluateJavascript(source: '''
-            var servers = document.querySelector('.TPlayerNv')
-            servers.childNodes.forEach(e => {
-              if (e.childNodes[0].innerText == 'Oyohd') {
-                e.style.display = 'none'
-              }
-              if (e.childNodes[0].innerText == 'Neohd') {
-                e.click()
-                e.style.backgroundColor = '#8a00a6'
-              } else {
-                servers.childNodes[1].click()
-                servers.childNodes[1].style.backgroundColor = '#8a00a6'
-              }
-            })
+            // var servers = document.querySelector('.TPlayerNv')
+            // servers.childNodes.forEach(e => {
+            //   if (e.childNodes[0].innerText == 'Oyohd') {
+            //     e.style.display = 'none'
+            //   }
+            //   if (e.childNodes[0].innerText == 'Neohd') {
+            //     e.click()
+            //     e.style.backgroundColor = '#8a00a6'
+            //   } else {
+            //     servers.childNodes[1].click()
+            //     servers.childNodes[1].style.backgroundColor = '#8a00a6'
+            //   }
+            // })
 
             // servers.style.display = 'none'
             // document.querySelector('.TPlayerCn').style.display = 'none'
@@ -472,14 +485,26 @@ class _MainState extends State<Main> {
     updateNav();
 
     webViewController?.evaluateJavascript(source: '''
+      var result = document.querySelector('.Result')
+      result.style.background = "linear-gradient(120deg, #13001c, #0a000c)"
+      result.style.borderTop = 'none'
+      result.style.borderRadius = '10px'
+      result.style.width = '91%'
+      result.style.marginRight = '5%'
+      result.style.backdropFilter = 'blur(20px)'
+      document.querySelector('a.Button').style.backgroundColor = '#370039c9'
+      document.querySelector('a.Button').style.borderRadius = '10px'
+      document.querySelector('.pzeWz').style.display = 'none'
       document.querySelector('.TPlayerNv li.Current').style.backgroundColor = '#8a00a6'
       document.querySelector('.button').style.backgroundColor = 'grey'
     ''');
 
     webViewController?.evaluateJavascript(source: '''
+      // window.alert = function() {};
       // window.addEventListener('focus', function() {
       //   window.blur();
       // });
+
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
 
       document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
@@ -514,7 +539,7 @@ class _MainState extends State<Main> {
 
       var title = document.querySelector('.Title')
       title.style.color = '#fee4ff'
-      title.style.fontSize = '22px'
+      title.style.fontSize = '20px'
       title.style.flex = 1
 
       document.querySelectorAll('.TPostMv .Title').forEach(e => e.style.color = '#fff8ff3b')
@@ -551,20 +576,12 @@ class _MainState extends State<Main> {
       document.querySelector('.current').style.backgroundColor = '#8a00a6'
 
       document.querySelector('.AZList').style.display = 'none'
-      var result = document.querySelector('.Result')
-      result.style.background = "linear-gradient(120deg, #13001c, #0a000c)"
-      result.style.borderTop = 'none'
-      result.style.borderRadius = '10px'
-      result.style.width = '91%'
-      result.style.marginRight = '5%'
-      result.style.backdropFilter = 'blur(20px)'
-      document.querySelector('a.Button').style.backgroundColor = '#370039c9'
-      document.querySelector('a.Button').style.borderRadius = '10px'
 
       var titles = document.querySelectorAll('.Title')
       titles.forEach(e => {
         e.style.color = 'white'
       })
+      
 
 
     ''');
@@ -594,6 +611,7 @@ class _MainState extends State<Main> {
       }
     }
 
+    print("toggleeeeeeeeeeeeeeeeeeeeeee" + serverToggle.toString());
     return WillPopScope(
       onWillPop: () async {
         if (await webViewController!.canGoBack()) {
@@ -686,9 +704,20 @@ class _MainState extends State<Main> {
                     isTextInteractionEnabled: false,
                     useHybridComposition: true,
                     hardwareAcceleration: true,
+                    useShouldOverrideUrlLoading: true,
                   ),
                   onWebViewCreated: (controller) {
                     webViewController = controller;
+                  },
+                  shouldOverrideUrlLoading:
+                      (controller, navigationAction) async {
+                    final uri = navigationAction.request.url!;
+                    print('hostttttTTTTTTTTTTT' + uri.host);
+                    var whiteList = ["www.bolly2tolly.land"];
+                    if (whiteList.contains(uri.host)) {
+                      return NavigationActionPolicy.ALLOW;
+                    }
+                    return NavigationActionPolicy.CANCEL;
                   },
                   onReceivedError: (controller, request, error) {
                     if (error.type == WebResourceErrorType.UNSUPPORTED_SCHEME ||
@@ -707,15 +736,36 @@ class _MainState extends State<Main> {
                       controller.goBack();
                     }
                   },
-                  onLoadStop: (controller, url) {
+                  onLoadStart: (controller, url) {
                     setState(() {
-                      isLoading = false;
+                      serverToggle = true;
                     });
                   },
+                  onPageCommitVisible: (controller, url) {
+                    setState(() {
+                      serverToggle = false;
+                    });
+                  },
+                  onLoadResource: (controller, resource) async {
+                    WebUri? uri = await controller.getUrl();
+                    String? currentUrl = uri.toString();
+                    if (currentUrl.contains("neohd") ||
+                        currentUrl.contains("ninjahd") ||
+                        currentUrl.contains("truhd")) {
+                      setState(() {
+                        serverToggle = false;
+                      });
+                    }
+                  },
+                  // onLoadStop: (controller, url) {
+                  //   setState(() {
+                  //     serverToggle = false;
+                  //   });
+                  // },
                   onTitleChanged: (controller, title) async {
                     setState(() {
                       isLoading = false;
-                      serverToggle = true;
+                      // serverToggle = true;
                     });
                     WebUri? uri = await webViewController?.getUrl();
                     String? url = uri.toString();
@@ -872,7 +922,7 @@ class _MainState extends State<Main> {
                                                       currentIndex = 0;
                                                       webViewController?.loadUrl(
                                                           urlRequest: URLRequest(
-                                                              url: WebUri(
+                                                              url: WebUri(url +
                                                                   movie.url)));
                                                     });
                                                   },

@@ -7,10 +7,6 @@ late SharedPreferences prefs;
 
 initPref() async {
   prefs = await SharedPreferences.getInstance();
-  // print("PREFFFFFFFFFFFFFFFFS" + prefs.getInt("lang").toString());
-  if (!prefs.containsKey("wishList")) {
-    prefs.setStringList("wishList", []);
-  }
 }
 
 Future<List<Movie>> getWishList() async {
