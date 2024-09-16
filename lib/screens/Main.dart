@@ -145,7 +145,7 @@ class _MainState extends State<Main> {
         action: ContentBlockerAction(
             type: ContentBlockerActionType.CSS_DISPLAY_NONE,
             selector:
-                ".banner, .banners, .afs_ads, .ad-placement, .ads, .ad, .advert")));
+                ".banner, .banners, .afs_ads, .ad-placement, .ads, .bnr, .ad, .advert")));
   }
 
   @override
@@ -191,20 +191,14 @@ class _MainState extends State<Main> {
     ];
     String url = "https://www.bolly2tolly.land";
     String urlHome = url + languages[(lang ?? 1) - 1]['path'];
-    String urlLatest = "https://www.bolly2tolly.land/category/tv-shows";
-    String urlMostViewed =
-        "https://www.bolly2tolly.land/category/bengali-movies";
-
-    print("WHISHHHHHHHHHHHHH ${wishList.isNotEmpty ? wishList[0].url : ""}");
+    String urlLatest = "https://www.bolly2tolly.land";
 
     String latestJS = '''
-      document.querySelector('main').style.display = 'none'
-      document.querySelector('article').style.display = 'none'
+      document.querySelector('.MovieListTopCn').style.display = 'none'
+      document.querySelector('.wp-pagenavi').style.display = 'none'
+      // document.querySelector('.Search').style.display = 'none'
       var aside = document.querySelector('aside')
-      aside.style.display = 'inherit'
-      aside.lastElementChild.style.display = 'none'
-      aside.firstElementChild.style.display = 'inherit'
-      aside.firstElementChild.style.color = 'white'
+      aside.firstElementChild.style.display = 'none'
 
       var title = document.querySelector('.Wdgt .Title')
       title.style.color = '#fee4ff'
@@ -212,7 +206,7 @@ class _MainState extends State<Main> {
 
       var list = document.querySelector('.TpSbList')
       list.style.maxWidth = '100%'
-      var movies = document.querySelectorAll('.MovieList li')
+      var movies = document.querySelectorAll('.Wdgt>ul>li')
       movies.forEach(e => {
         // e.style.backgroundColor = "#322839c0"
         e.style.borderRadius = "0px"
@@ -221,26 +215,7 @@ class _MainState extends State<Main> {
         e.querySelector('a').style.color = 'white'
       })
 
-      document.querySelector('.Wdgt').style.backgroundColor = 'transparent'
-
-
-    ''';
-
-    String mostViewedJS = '''
-      document.querySelector('main').style.display = 'none'
-      document.querySelector('article').style.display = 'none'
-      var aside = document.querySelector('aside')
-      aside.style.display = 'inherit'
-      aside.firstElementChild.style.display = 'none'
-      aside.lastElementChild.style.display = 'inherit'
-
-      var title = aside.lastElementChild.querySelector('.Title')
-      title.style.color = '#fee4ff'
-      title.style.fontSize = '22px'
-
-      var list = document.querySelector('.TpSbList')
-      list.style.maxWidth = '100%'
-      var movies = document.querySelectorAll('.MovieList li')
+      var movies = document.querySelectorAll('.TpSbList>.MovieList>li')
       movies.forEach(e => {
         e.style.backgroundColor = "#322839c0"
         e.style.borderRadius = "0px"
@@ -250,7 +225,6 @@ class _MainState extends State<Main> {
 
       document.querySelector('.Wdgt').style.backgroundColor = 'transparent'
 
-    
     ''';
 
     String wishJS = '''
@@ -311,22 +285,6 @@ class _MainState extends State<Main> {
       document.querySelector('#addToWishList').style.display = 'none'
     ''';
 
-    webViewController?.addJavaScriptHandler(
-        handlerName: 'wishHandler',
-        callback: (args) async {
-          Movie movie = Movie(
-              name: args[0] ?? "",
-              photo: args[1] ?? "",
-              language: args[2] ?? "",
-              url: args[3] ?? "",
-              duration: args[4] ?? "",
-              year: args[5] ?? "");
-
-          await addToWishList(movie);
-          wishList = await getWishList();
-          await webViewController?.evaluateJavascript(source: removeWishJS);
-        });
-
     void updateNav() async {
       WebUri? uri = await webViewController?.getUrl();
       String? currentUrl = uri.toString();
@@ -340,20 +298,37 @@ class _MainState extends State<Main> {
           setState(() {
             currentIndex = 1;
           });
-        } else if (currentUrl == urlMostViewed) {
-          setState(() {
-            currentIndex = 2;
-          });
         }
         lastUrl = currentUrl;
       }
 
       if (currentIndex == 0) {
         webViewController?.evaluateJavascript(source: '''
-          document.querySelectorAll('.Objf').forEach(e => e.style.borderRadius = '20px !important')
+          var index = 0
+          var post = document.querySelectorAll('.TPostMv')[index]
+          var name = post.querySelector('.Title').innerHTML.toString()
+          var photo = post.querySelector('.attachment-thumbnail').src
+          var url = post.querySelector('a').href
+          var duration = post.querySelector('.Time').innerText
+          var quality = post.querySelector('.Qlty').innerText
+          var desc = post.querySelector('.Description').childNodes[0].innerText
+
+          window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
+          var pop = document.querySelector('.-o50L') 
+          if (pop != null) {
+            pop.style.display = 'none'
+          }
+          var pop2 = document.querySelector('.pzeWz')
+          if (pop2 != null) {
+            pop2.style.display = 'none'
+          }
+          pop2.style.display = 'none'
+          var obj = document.querySelectorAll('.Objf')
+          if (obj != null) {
+            obj.forEach(e => e.style.borderRadius = '20px !important')
+          }
           document.querySelector('aside').style.display = 'none'
-          document.querySelector('.pzeWz').style.display = 'none'
-          document.querySelector('.-o50L').style.display = 'none'
+
         ''');
       }
 
@@ -361,34 +336,45 @@ class _MainState extends State<Main> {
         webViewController?.evaluateJavascript(source: latestJS);
       }
 
-      if (currentIndex == 2) {
-        webViewController?.evaluateJavascript(source: mostViewedJS);
-      }
-
       if (currentUrl.contains("/movie/")) {
         if (serverToggle) {
           await webViewController?.evaluateJavascript(source: '''
             var servers = document.querySelector('.TPlayerNv')
+
+            var count = 1
+            var isSel = false
             servers.childNodes.forEach(e => {
+              e.style.backgroundColor = '#320039'
               if (e.childNodes[0].innerText == 'Oyohd') {
                 e.style.display = 'none'
               }
               if (e.childNodes[0].innerText == 'Neohd') {
                 e.click()
-                e.style.backgroundColor = '#8a00a6'
-              } else {
-                servers.childNodes[1].click()
-                servers.childNodes[1].style.backgroundColor = '#8a00a6'
+                isSel = true
               }
+
+              if (e.childNodes[0].innerText != 'Oyohd') {
+                e.childNodes[0].innerText = "Server " + count
+                count++
+              }
+
+              
             })
+
+            if (!isSel) {
+              servers.childNodes[1].click()
+              isSel = true
+            }
 
             // servers.style.display = 'none'
             // document.querySelector('.TPlayerCn').style.display = 'none'
+
               
           ''');
         }
 
-        webViewController?.evaluateJavascript(source: '''
+        await webViewController?.evaluateJavascript(source: '''
+          // document.querySelector('.Button.STPb.Current').style.backgroundColor = '#c701ee'
           document.querySelector('main').style.display = 'inherit'
           document.querySelector('article').style.display = 'inherit'
           document.querySelector('aside').style.display = 'none'
@@ -399,29 +385,13 @@ class _MainState extends State<Main> {
           wng.forEach(e => {
             e.style.display = 'none'
           })
+
         ''');
       }
 
       if (currentUrl.contains("/serie/")) {
         if (serverToggle) {
           await webViewController?.evaluateJavascript(source: '''
-            var servers = document.querySelector('.TPlayerNv')
-            // servers.childNodes.forEach(e => {
-            //   if (e.childNodes[0].innerText == 'Oyohd') {
-            //     e.style.display = 'none'
-            //   }
-            //   if (e.childNodes[0].innerText == 'Neohd') {
-            //     e.click()
-            //     e.style.backgroundColor = '#8a00a6'
-            //   } else {
-            //     servers.childNodes[1].click()
-            //     servers.childNodes[1].style.backgroundColor = '#8a00a6'
-            //   }
-            // })
-
-            // servers.style.display = 'none'
-            // document.querySelector('.TPlayerCn').style.display = 'none'
-              
           ''');
         }
 
@@ -453,7 +423,7 @@ class _MainState extends State<Main> {
             //   if (e.childNodes[0].innerText == 'Oyohd') {
             //     e.style.display = 'none'
             //   }
-            //   if (e.childNodes[0].innerText == 'Neohd') {
+            //   if (e.childNodes[0].innerText == 'Ninjahd') {
             //     e.click()
             //     e.style.backgroundColor = '#8a00a6'
             //   } else {
@@ -484,19 +454,45 @@ class _MainState extends State<Main> {
 
     updateNav();
 
+    webViewController?.addJavaScriptHandler(
+        handlerName: 'homeHandler',
+        callback: (args) async {
+          print("homeeeeeeeeeeee " + args[3]);
+        });
+
+    webViewController?.addJavaScriptHandler(
+        handlerName: 'wishHandler',
+        callback: (args) async {
+          WebUri? uri = await webViewController?.getUrl();
+          String? currentUrl = uri.toString();
+          Movie movie = Movie(
+              name: args[0] ?? "",
+              photo: args[1] ?? "",
+              language: args[2] ?? "",
+              url: currentUrl,
+              duration: args[4] ?? "",
+              year: args[5] ?? "");
+
+          await addToWishList(movie);
+          wishList = await getWishList();
+          await webViewController?.evaluateJavascript(source: removeWishJS);
+        });
+
     webViewController?.evaluateJavascript(source: '''
+      var curr = document.querySelector('.Button.STPb.Current')
+      if (curr != null) {
+        curr.style.backgroundColor = '#8d0092'
+      }
       var result = document.querySelector('.Result')
       result.style.background = "linear-gradient(120deg, #13001c, #0a000c)"
       result.style.borderTop = 'none'
       result.style.borderRadius = '10px'
       result.style.width = '91%'
       result.style.marginRight = '5%'
-      result.style.backdropFilter = 'blur(20px)'
       document.querySelector('a.Button').style.backgroundColor = '#370039c9'
-      document.querySelector('a.Button').style.borderRadius = '10px'
       document.querySelector('.pzeWz').style.display = 'none'
-      document.querySelector('.TPlayerNv li.Current').style.backgroundColor = '#8a00a6'
       document.querySelector('.button').style.backgroundColor = 'grey'
+
     ''');
 
     webViewController?.evaluateJavascript(source: '''
@@ -504,6 +500,7 @@ class _MainState extends State<Main> {
       // window.addEventListener('focus', function() {
       //   window.blur();
       // });
+      
 
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
 
@@ -580,10 +577,13 @@ class _MainState extends State<Main> {
       var titles = document.querySelectorAll('.Title')
       titles.forEach(e => {
         e.style.color = 'white'
-      })
-      
+      })      
 
-
+      var no = document.querySelector('.Title-404')
+      if (no != null) {
+        no.style.fontSize = '20px'
+        no.style.fontWeight = '400'
+      }
     ''');
 
     void nav(int index) {
@@ -596,10 +596,8 @@ class _MainState extends State<Main> {
           ? urlHome
           : currentIndex == 1
               ? urlLatest
-              : currentIndex == 2
-                  ? urlMostViewed
-                  : "";
-      if (currentIndex != 3) {
+              : "";
+      if (currentIndex < 2) {
         webViewController?.loadUrl(
             urlRequest: URLRequest(
                 url: WebUri(urlChange),
@@ -611,17 +609,19 @@ class _MainState extends State<Main> {
       }
     }
 
-    print("toggleeeeeeeeeeeeeeeeeeeeeee" + serverToggle.toString());
+    // print("toggleeeeeeeeeeeeeeeeeeeeeee" + serverToggle.toString());
+
     return WillPopScope(
       onWillPop: () async {
         if (await webViewController!.canGoBack()) {
           webViewController!.goBack();
           return false;
         }
-        if (currentIndex == 3) {
+        if (currentIndex > 1) {
           setState(() {
             currentIndex = 0;
           });
+          return false;
         }
         return true;
       },
@@ -644,6 +644,7 @@ class _MainState extends State<Main> {
             unselectedItemColor: const Color.fromARGB(37, 219, 186, 232),
             selectedItemColor: Colors.white,
             elevation: 20,
+            iconSize: 30,
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(
@@ -665,21 +666,21 @@ class _MainState extends State<Main> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.timeline_outlined,
+                  Icons.playlist_play_rounded,
                 ),
                 activeIcon: Icon(
-                  Icons.timeline_rounded,
+                  Icons.playlist_play_rounded,
                 ),
-                label: "Most Viewed",
+                label: "Watchlist",
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.settings_outlined,
+                  Icons.translate_outlined,
                 ),
                 activeIcon: Icon(
-                  Icons.settings_rounded,
+                  Icons.translate_rounded,
                 ),
-                label: "Options",
+                label: "Language",
               ),
             ],
           ),
@@ -736,46 +737,39 @@ class _MainState extends State<Main> {
                       controller.goBack();
                     }
                   },
-                  onLoadStart: (controller, url) {
-                    setState(() {
-                      serverToggle = true;
-                    });
-                  },
-                  onPageCommitVisible: (controller, url) {
-                    setState(() {
-                      serverToggle = false;
-                    });
-                  },
-                  onLoadResource: (controller, resource) async {
+                  onPageCommitVisible: (controller, url) async {
                     WebUri? uri = await controller.getUrl();
                     String? currentUrl = uri.toString();
-                    if (currentUrl.contains("neohd") ||
-                        currentUrl.contains("ninjahd") ||
-                        currentUrl.contains("truhd")) {
+                    if (currentUrl.contains("/movie/") ||
+                        currentUrl.contains("/episode/")) {
                       setState(() {
-                        serverToggle = false;
+                        serverToggle = true;
                       });
+                      await Future.delayed(
+                        const Duration(seconds: 5),
+                        () {
+                          setState(() {
+                            serverToggle = false;
+                          });
+                        },
+                      );
                     }
                   },
-                  // onLoadStop: (controller, url) {
-                  //   setState(() {
-                  //     serverToggle = false;
-                  //   });
-                  // },
                   onTitleChanged: (controller, title) async {
-                    setState(() {
-                      isLoading = false;
-                      // serverToggle = true;
-                    });
                     WebUri? uri = await webViewController?.getUrl();
                     String? url = uri.toString();
                     if (url.contains("/movie/") || url.contains("/serie/")) {
                       if (wishList.isNotEmpty) {
-                        bool movieExists =
-                            wishList.any((movie) => movie.url == url);
+                        bool movieExists = wishList.any((movie) {
+                          print("existtttttttttttttt" + movie.url);
+                          return movie.url == url;
+                        });
+                        print("existtttttttttttttt" + movieExists.toString());
+
                         if (!movieExists) {
                           await webViewController?.evaluateJavascript(
                               source: wishJS);
+                          print("existtttttttttttttt DONE ");
                         }
                       } else {
                         await webViewController?.evaluateJavascript(
@@ -795,11 +789,241 @@ class _MainState extends State<Main> {
                     });
                   },
                 ),
+                currentIndex == 2
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        padding: const EdgeInsets.only(top: 50),
+                        alignment: Alignment.topCenter,
+                        decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                              Color.fromARGB(255, 23, 0, 28),
+                              Colors.black
+                            ])),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const Text(
+                                "Watch List",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              wishList.isNotEmpty
+                                  ? Wrap(
+                                      runSpacing: 20,
+                                      spacing: 20,
+                                      children: wishList.map((movie) {
+                                        return SizedBox(
+                                          width: (MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2) -
+                                              40,
+                                          height: 250,
+                                          child: Stack(children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  currentIndex = 0;
+                                                  webViewController?.loadUrl(
+                                                      urlRequest: URLRequest(
+                                                          url: WebUri(
+                                                              movie.url)));
+                                                });
+                                              },
+                                              child: Container(
+                                                width: (MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        2) -
+                                                    40,
+                                                height: 250,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        movie.photo),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                child: Container(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  decoration: const BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  15)),
+                                                      gradient: LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          colors: [
+                                                            Color.fromARGB(
+                                                                70, 66, 0, 97),
+                                                            Color.fromARGB(
+                                                                255, 19, 0, 21)
+                                                          ])),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 100,
+                                                              child: Text(
+                                                                movie.name,
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis),
+                                                              ),
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  movie
+                                                                      .language,
+                                                                  style: const TextStyle(
+                                                                      color: Color.fromARGB(
+                                                                          73,
+                                                                          255,
+                                                                          255,
+                                                                          255),
+                                                                      fontSize:
+                                                                          10),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Text(
+                                                                  movie.year,
+                                                                  style: const TextStyle(
+                                                                      color: Color.fromARGB(
+                                                                          73,
+                                                                          255,
+                                                                          255,
+                                                                          255),
+                                                                      fontSize:
+                                                                          10),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                await removeFromWishList(movie);
+                                                List<Movie> updatedWishlist =
+                                                    await getWishList();
+                                                setState(() {
+                                                  wishList = updatedWishlist;
+                                                });
+                                              },
+                                              child: Container(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                child: Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  margin:
+                                                      const EdgeInsets.all(8),
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius.all(
+                                                              Radius.circular(
+                                                                  10)),
+                                                      color:
+                                                          const Color
+                                                              .fromARGB(95, 29,
+                                                              0, 33),
+                                                      border:
+                                                          Border.all(
+                                                              color: const Color
+                                                                  .fromARGB(255,
+                                                                  48, 0, 62),
+                                                              width: 1)),
+                                                  child: const Icon(
+                                                    Icons
+                                                        .delete_outline_rounded,
+                                                    color: Color.fromARGB(
+                                                        87, 249, 131, 255),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ]),
+                                        );
+                                      }).toList(),
+                                    )
+                                  : Container(
+                                      alignment: Alignment.center,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 30),
+                                      child: Column(
+                                        children: [
+                                          Image.asset(
+                                            "lib/assets/images/wish.png",
+                                            opacity:
+                                                const AlwaysStoppedAnimation(
+                                                    .8),
+                                          ),
+                                          const Text(
+                                            "Add movies to your watchlist",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    75, 235, 199, 255)),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                            ],
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
                 currentIndex == 3
                     ? Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
-                        alignment: Alignment.topLeft,
+                        padding: const EdgeInsets.only(top: 50),
+                        alignment: Alignment.topCenter,
                         decoration: const BoxDecoration(
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
@@ -839,11 +1063,9 @@ class _MainState extends State<Main> {
                                       }
                                     },
                                     child: Container(
-                                      width:
-                                          (MediaQuery.of(context).size.width /
-                                                  2) -
-                                              40,
-                                      height: 100,
+                                      width: MediaQuery.of(context).size.width -
+                                          40,
+                                      height: 120,
                                       margin: const EdgeInsets.symmetric(
                                           vertical: 10),
                                       alignment: Alignment.center,
@@ -883,236 +1105,6 @@ class _MainState extends State<Main> {
                                     ),
                                   );
                                 }).toList(),
-                              ),
-
-                              // WatchListComponent(watchList: wishList),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  const Text(
-                                    "Watch List",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 30,
-                                  ),
-                                  wishList.isNotEmpty
-                                      ? Wrap(
-                                          runSpacing: 20,
-                                          spacing: 20,
-                                          children: wishList.map((movie) {
-                                            return SizedBox(
-                                              width: (MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      2) -
-                                                  40,
-                                              height: 250,
-                                              child: Stack(children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      currentIndex = 0;
-                                                      webViewController?.loadUrl(
-                                                          urlRequest: URLRequest(
-                                                              url: WebUri(url +
-                                                                  movie.url)));
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    width:
-                                                        (MediaQuery.of(context)
-                                                                    .size
-                                                                    .width /
-                                                                2) -
-                                                            40,
-                                                    height: 250,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                              Radius.circular(
-                                                                  15)),
-                                                      image: DecorationImage(
-                                                        image: NetworkImage(
-                                                            movie.photo),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                    child: Container(
-                                                      alignment: Alignment
-                                                          .bottomCenter,
-                                                      decoration: const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          15)),
-                                                          gradient: LinearGradient(
-                                                              begin: Alignment
-                                                                  .topCenter,
-                                                              end: Alignment
-                                                                  .bottomCenter,
-                                                              colors: [
-                                                                Color.fromARGB(
-                                                                    70,
-                                                                    66,
-                                                                    0,
-                                                                    97),
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    19,
-                                                                    0,
-                                                                    21)
-                                                              ])),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 100,
-                                                                  child: Text(
-                                                                    movie.name,
-                                                                    style: const TextStyle(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis),
-                                                                  ),
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      movie
-                                                                          .language,
-                                                                      style: const TextStyle(
-                                                                          color: Color.fromARGB(
-                                                                              73,
-                                                                              255,
-                                                                              255,
-                                                                              255),
-                                                                          fontSize:
-                                                                              10),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    Text(
-                                                                      movie
-                                                                          .year,
-                                                                      style: const TextStyle(
-                                                                          color: Color.fromARGB(
-                                                                              73,
-                                                                              255,
-                                                                              255,
-                                                                              255),
-                                                                          fontSize:
-                                                                              10),
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () async {
-                                                    await removeFromWishList(
-                                                        movie);
-                                                    List<Movie>
-                                                        updatedWishlist =
-                                                        await getWishList();
-                                                    setState(() {
-                                                      wishList =
-                                                          updatedWishlist;
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    alignment:
-                                                        Alignment.bottomRight,
-                                                    child: Container(
-                                                      width: 40,
-                                                      height: 40,
-                                                      margin:
-                                                          const EdgeInsets.all(
-                                                              8),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              const BorderRadius.all(
-                                                                  Radius.circular(
-                                                                      10)),
-                                                          color:
-                                                              const Color.fromARGB(
-                                                                  95,
-                                                                  29,
-                                                                  0,
-                                                                  33),
-                                                          border: Border.all(
-                                                              color: const Color
-                                                                  .fromARGB(255,
-                                                                  48, 0, 62),
-                                                              width: 1)),
-                                                      child: const Icon(
-                                                        Icons
-                                                            .delete_outline_rounded,
-                                                        color: Color.fromARGB(
-                                                            87, 249, 131, 255),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              ]),
-                                            );
-                                          }).toList(),
-                                        )
-                                      : Container(
-                                          alignment: Alignment.center,
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 30),
-                                          child: Column(
-                                            children: [
-                                              Image.asset(
-                                                "lib/assets/images/wish.png",
-                                                opacity:
-                                                    const AlwaysStoppedAnimation(
-                                                        .8),
-                                              ),
-                                              const Text(
-                                                "Add movies to your watchlist",
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        75, 235, 199, 255)),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                ],
                               ),
                             ],
                           ),
