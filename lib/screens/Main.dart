@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:theater/models/Movie.dart';
@@ -194,6 +196,11 @@ class _MainState extends State<Main> {
     String urlLatest = "https://www.bolly2tolly.land";
 
     String latestJS = '''
+
+      var tle = document.querySelector('.Title')
+      tle.style.marginTop = '-30px'
+
+      document.querySelector('.Header').style.display = 'none'
       document.querySelector('.MovieListTopCn').style.display = 'none'
       document.querySelector('.wp-pagenavi').style.display = 'none'
       // document.querySelector('.Search').style.display = 'none'
@@ -303,7 +310,27 @@ class _MainState extends State<Main> {
       }
 
       if (currentIndex == 0) {
-        webViewController?.evaluateJavascript(source: '''
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+          document.querySelector('aside').style.display = 'none'
+          
+          var search = document.querySelector('.Search')
+          search.style.position = 'fixed'
+          search.style.top = '0px'
+          search.style.left = '0'
+          search.style.zIndex = '10'
+          search.style.width = '100%'
+          search.style.padding = '25px 20px 0px 20px'
+          search.style.backgroundColor = '#13001c'
+          search.style.backdropFilter = 'blur(20px)'
+          var inp = document.querySelector('.Search .Form-Icon input')
+          inp.style.backgroundColor = '#3a003c'
+          inp.style.border = '1px solid #730077'
+          inp.style.borderRadius = '10px !important'
+          inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
+          document.body.appendChild(search)
+          document.querySelector('#searchsubmit').style.boxShadow = 'none'
+
           var index = 0
           var post = document.querySelectorAll('.TPostMv')[index]
           var name = post.querySelector('.Title').innerHTML.toString()
@@ -313,23 +340,10 @@ class _MainState extends State<Main> {
           var quality = post.querySelector('.Qlty').innerText
           var desc = post.querySelector('.Description').childNodes[0].innerText
 
-          window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
-          var pop = document.querySelector('.-o50L') 
-          if (pop != null) {
-            pop.style.display = 'none'
-          }
-          var pop2 = document.querySelector('.pzeWz')
-          if (pop2 != null) {
-            pop2.style.display = 'none'
-          }
-          pop2.style.display = 'none'
-          var obj = document.querySelectorAll('.Objf')
-          if (obj != null) {
-            obj.forEach(e => e.style.borderRadius = '20px !important')
-          }
-          document.querySelector('aside').style.display = 'none'
+          // window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
 
         ''');
+        }
       }
 
       if (currentIndex == 1) {
@@ -340,25 +354,21 @@ class _MainState extends State<Main> {
         if (serverToggle) {
           await webViewController?.evaluateJavascript(source: '''
             var servers = document.querySelector('.TPlayerNv')
-
             var count = 1
             var isSel = false
             servers.childNodes.forEach(e => {
               e.style.backgroundColor = '#320039'
-              if (e.childNodes[0].innerText == 'Oyohd') {
-                e.style.display = 'none'
-              }
+              // if (e.childNodes[0].innerText == 'Oyohd') {
+              //   e.style.display = 'none'
+              // }
               if (e.childNodes[0].innerText == 'Neohd') {
                 e.click()
                 isSel = true
               }
-
-              if (e.childNodes[0].innerText != 'Oyohd') {
+              // if (e.childNodes[0].innerText != 'Oyohd') {
                 e.childNodes[0].innerText = "Server " + count
                 count++
-              }
-
-              
+              // }
             })
 
             if (!isSel) {
@@ -368,6 +378,22 @@ class _MainState extends State<Main> {
 
             // servers.style.display = 'none'
             // document.querySelector('.TPlayerCn').style.display = 'none'
+            var search = document.querySelector('.Search')
+            search.style.position = 'fixed'
+            search.style.top = '0px'
+            search.style.left = '0'
+            search.style.zIndex = '10'
+            search.style.width = '100%'
+            search.style.padding = '25px 20px 0px 20px'
+            search.style.backgroundColor = '#13001c'
+            search.style.backdropFilter = 'blur(20px)'
+            var inp = document.querySelector('.Search .Form-Icon input')
+            inp.style.backgroundColor = '#3a003c'
+            inp.style.border = '1px solid #730077'
+            inp.style.borderRadius = '10px !important'
+            inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
+            document.body.appendChild(search)
+            document.querySelector('#searchsubmit').style.boxShadow = 'none'
 
               
           ''');
@@ -479,31 +505,7 @@ class _MainState extends State<Main> {
         });
 
     webViewController?.evaluateJavascript(source: '''
-      var curr = document.querySelector('.Button.STPb.Current')
-      if (curr != null) {
-        curr.style.backgroundColor = '#8d0092'
-      }
-      var result = document.querySelector('.Result')
-      result.style.background = "linear-gradient(120deg, #13001c, #0a000c)"
-      result.style.borderTop = 'none'
-      result.style.borderRadius = '10px'
-      result.style.width = '91%'
-      result.style.marginRight = '5%'
-      document.querySelector('a.Button').style.backgroundColor = '#370039c9'
-      document.querySelector('.pzeWz').style.display = 'none'
-      document.querySelector('.button').style.backgroundColor = 'grey'
-
-    ''');
-
-    webViewController?.evaluateJavascript(source: '''
-      // window.alert = function() {};
-      // window.addEventListener('focus', function() {
-      //   window.blur();
-      // });
-      
-
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
-
       document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
       document.body.style.backgroundAttachment = 'fixed'
       document.body.style.backgroundColor = 'transparent'
@@ -511,36 +513,49 @@ class _MainState extends State<Main> {
       
       document.querySelector('.Content').style.background = 'transparent'
       document.querySelector('.Content').style.backgroundColor = 'transparent'
-      document.querySelector('footer').style.display = 'none'
-
       document.querySelector('.Header').style.display = 'none'
+      document.querySelector('.Footer').style.display = 'none'
 
-      var search = document.querySelector('.Search')
-      search.style.position = 'fixed'
-      search.style.top = '0px'
-      search.style.left = '0'
-      search.style.zIndex = '10'
-      search.style.width = '100%'
-      search.style.padding = '25px 20px 0px 20px'
-      search.style.backgroundColor = '#13001c'
-      search.style.backdropFilter = 'blur(20px)'
-      var inp = document.querySelector('.Search .Form-Icon input')
-      inp.style.backgroundColor = '#3a003c'
-      inp.style.border = '1px solid #730077'
-      inp.style.borderRadius = '10px !important'
-      inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
-      document.body.appendChild(search)
-      document.querySelector('#searchsubmit').style.boxShadow = 'none'
+      var az = document.querySelector('.AZList')
+      if (az != null) {
+        az.style.display = 'none'
+      }
 
-      document.querySelector('footer').style.display = 'none'
+      document.querySelector('.Top').style.display = 'flex'
+      document.querySelector('.Top').style.alignItems = 'center'
+      document.querySelector('.Top').style.marginTop = '0'
+      document.querySelector('.current').style.backgroundColor = '#8a00a6'
 
       var title = document.querySelector('.Title')
       title.style.color = '#fee4ff'
       title.style.fontSize = '20px'
       title.style.flex = 1
 
-      document.querySelectorAll('.TPostMv .Title').forEach(e => e.style.color = '#fff8ff3b')
+      var titles = document.querySelectorAll('.Title')
+      titles.forEach(e => {
+        e.style.color = 'white'
+      })
 
+      var result = document.querySelector('.Result')
+      result.style.background = "linear-gradient(120deg, #13001c, #0a000c)"
+      result.style.borderTop = 'none'
+      result.style.borderRadius = '10px'
+      result.style.width = '91%'
+      result.style.marginRight = '5%'
+      if (result.classList.contains('On')) {
+        console.log("yess")
+        result.querySelector('a.Button').style.backgroundColor = '#370039c9'
+      }
+      console.log("yess end")
+      // document.querySelector('.Button').style.backgroundColor = '#370039c9'
+      var pzew = document.querySelector('.pzeWz')
+      if (pzew) {
+        pzew.style.display = 'none'
+      }
+      var curr = document.querySelector('.Button.STPb.Current')
+      if (curr != null) {
+        curr.style.backgroundColor = '#8d0092'
+      }
       var url = window.location.pathname
 
       if (url.includes('/category/tamil-movies')) {
@@ -566,24 +581,25 @@ class _MainState extends State<Main> {
         var title = document.querySelector('.Title')
         title.innerText = "Hindi"
       }
-
-      document.querySelector('.Top').style.display = 'flex'
-      document.querySelector('.Top').style.alignItems = 'center'
-      document.querySelector('.Top').style.marginTop = '-30px'
-      document.querySelector('.current').style.backgroundColor = '#8a00a6'
-
-      document.querySelector('.AZList').style.display = 'none'
-
-      var titles = document.querySelectorAll('.Title')
-      titles.forEach(e => {
-        e.style.color = 'white'
-      })      
-
+      
       var no = document.querySelector('.Title-404')
       if (no != null) {
         no.style.fontSize = '20px'
         no.style.fontWeight = '400'
       }
+      var pop = document.querySelector('.-o50L') 
+      if (pop != null) {
+        pop.style.display = 'none'
+      }
+      var pop2 = document.querySelector('.pzeWz')
+      if (pop2 != null) {
+        pop2.style.display = 'none'
+      }
+      var obj = document.querySelectorAll('.Objf')
+      if (obj != null) {
+        obj.forEach(e => e.style.borderRadius = '20px !important')
+      }
+      
     ''');
 
     void nav(int index) {
@@ -609,7 +625,7 @@ class _MainState extends State<Main> {
       }
     }
 
-    // print("toggleeeeeeeeeeeeeeeeeeeeeee" + serverToggle.toString());
+    print("toggleeeeeeeeeeeeeeeeeeeeeee" + serverToggle.toString());
 
     return WillPopScope(
       onWillPop: () async {
@@ -626,6 +642,7 @@ class _MainState extends State<Main> {
         return true;
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.black,
         bottomNavigationBar: Container(
           height: 70,
@@ -644,7 +661,7 @@ class _MainState extends State<Main> {
             unselectedItemColor: const Color.fromARGB(37, 219, 186, 232),
             selectedItemColor: Colors.white,
             elevation: 20,
-            iconSize: 30,
+            // iconSize: 30,
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(
@@ -703,7 +720,7 @@ class _MainState extends State<Main> {
                     horizontalScrollBarEnabled: false,
                     iframeAllowFullscreen: true,
                     isTextInteractionEnabled: false,
-                    useHybridComposition: true,
+                    // useHybridComposition: true,
                     hardwareAcceleration: true,
                     useShouldOverrideUrlLoading: true,
                   ),
@@ -713,7 +730,7 @@ class _MainState extends State<Main> {
                   shouldOverrideUrlLoading:
                       (controller, navigationAction) async {
                     final uri = navigationAction.request.url!;
-                    print('hostttttTTTTTTTTTTT' + uri.host);
+                    // print('hostttttTTTTTTTTTTT' + uri.host);
                     var whiteList = ["www.bolly2tolly.land"];
                     if (whiteList.contains(uri.host)) {
                       return NavigationActionPolicy.ALLOW;
@@ -738,22 +755,22 @@ class _MainState extends State<Main> {
                     }
                   },
                   onPageCommitVisible: (controller, url) async {
-                    WebUri? uri = await controller.getUrl();
-                    String? currentUrl = uri.toString();
-                    if (currentUrl.contains("/movie/") ||
-                        currentUrl.contains("/episode/")) {
-                      setState(() {
-                        serverToggle = true;
-                      });
-                      await Future.delayed(
-                        const Duration(seconds: 5),
-                        () {
-                          setState(() {
-                            serverToggle = false;
-                          });
-                        },
-                      );
-                    }
+                    // WebUri? uri = await controller.getUrl();
+                    // String? currentUrl = uri.toString();
+                    // if (currentUrl.contains("/movie/") ||
+                    //     currentUrl.contains("/episode/")) {
+                    setState(() {
+                      serverToggle = true;
+                    });
+                    await Future.delayed(
+                      const Duration(seconds: 5),
+                      () {
+                        setState(() {
+                          serverToggle = false;
+                        });
+                      },
+                    );
+                    // }
                   },
                   onTitleChanged: (controller, title) async {
                     WebUri? uri = await webViewController?.getUrl();
@@ -761,15 +778,15 @@ class _MainState extends State<Main> {
                     if (url.contains("/movie/") || url.contains("/serie/")) {
                       if (wishList.isNotEmpty) {
                         bool movieExists = wishList.any((movie) {
-                          print("existtttttttttttttt" + movie.url);
+                          // print("existtttttttttttttt" + movie.url);
                           return movie.url == url;
                         });
-                        print("existtttttttttttttt" + movieExists.toString());
+                        // print("existtttttttttttttt" + movieExists.toString());
 
                         if (!movieExists) {
                           await webViewController?.evaluateJavascript(
                               source: wishJS);
-                          print("existtttttttttttttt DONE ");
+                          // print("existtttttttttttttt DONE ");
                         }
                       } else {
                         await webViewController?.evaluateJavascript(
@@ -783,18 +800,19 @@ class _MainState extends State<Main> {
                       this.progress = progress;
                     });
                   },
-                  onEnterFullscreen: (controller) {
-                    setState(() {
-                      serverToggle = false;
-                    });
-                  },
+                  // onEnterFullscreen: (controller) {
+                  //   setState(() {
+                  //     serverToggle = false;
+                  //   });
+                  // },
                 ),
                 currentIndex == 2
                     ? Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
-                        padding: const EdgeInsets.only(top: 50),
-                        alignment: Alignment.topCenter,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 30, horizontal: 20),
+                        alignment: Alignment.topLeft,
                         decoration: const BoxDecoration(
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
@@ -811,7 +829,7 @@ class _MainState extends State<Main> {
                                 height: 20,
                               ),
                               const Text(
-                                "Watch List",
+                                "Watchlist",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 22,
@@ -993,10 +1011,14 @@ class _MainState extends State<Main> {
                                       }).toList(),
                                     )
                                   : Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height -
+                                              200,
                                       alignment: Alignment.center,
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 30),
                                       child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "lib/assets/images/wish.png",

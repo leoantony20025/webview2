@@ -39,7 +39,7 @@ class _LanguageState extends State<Language> {
         "path": "/category/telugu-movies"
       },
       {
-        "name": "Hindi",
+        "name": "kannada",
         "isSelected": lang == 5,
         "value": 5,
         "path": "/category/kannada-movies"
