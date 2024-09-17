@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:theater/models/Movie.dart';
@@ -331,19 +329,114 @@ class _MainState extends State<Main> {
           document.body.appendChild(search)
           document.querySelector('#searchsubmit').style.boxShadow = 'none'
 
-          var index = 0
+          // window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
+
+        ''');
+        }
+
+        webViewController?.evaluateJavascript(source: '''
+          var index = Math.floor(Math.random() * 20)
           var post = document.querySelectorAll('.TPostMv')[index]
-          var name = post.querySelector('.Title').innerHTML.toString()
+          var name = post.querySelector('.Title').innerHTML.toString().split('(')[0]
           var photo = post.querySelector('.attachment-thumbnail').src
           var url = post.querySelector('a').href
           var duration = post.querySelector('.Time').innerText
           var quality = post.querySelector('.Qlty').innerText
           var desc = post.querySelector('.Description').childNodes[0].innerText
+          var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
 
-          // window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
+          console.log("homeeeeeeeeeeeee ", url)
+
+          if (document.querySelector('#homeBanner') == null) {
+            var banner = document.createElement('div')
+            banner.id = 'homeBanner'
+            banner.style.position = 'absolute'
+            banner.style.top = '80px'
+            banner.style.left = '0'
+            banner.style.width = '100vw'
+            banner.style.height = '70vh'
+            banner.style.backgroundImage = 'url(' + photo + ')'
+            banner.style.backgroundSize = 'cover'
+            banner.style.backgroundPosition = 'center'
+            
+            var grad = document.createElement('div')
+            grad.style.width = '100vw'
+            grad.style.height = '70vh'
+            grad.style.marginTop = '-30px'
+            grad.style.background = 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
+
+            banner.appendChild(grad)
+
+            var content = document.createElement('div')
+            content.style.display = 'flex'
+            content.style.flexDirection = 'column'
+            content.style.gap = '10px'
+            content.style.margin = '30px 20px'
+            content.style.width = '80%'
+            content.style.height = '60vh'
+            content.style.alignItems = 'start'
+            content.style.justifyContent = 'flex-end'
+            var h2 = document.createElement('h2')
+            h2.innerText = name
+            h2.style.fontWeight = 'bolder'
+            h2.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
+            h2.style.backgroundClip = 'text'
+            h2.style.webkitBackgroundClip = 'text'
+            h2.style.color = 'transparent'
+            content.appendChild(h2)
+            var p = document.createElement('p')
+            p.innerText = desc
+            p.style.fontSize = 'small'
+            p.style.margin = '0'
+            content.appendChild(p)
+
+            var row = document.createElement('div')
+            row.style.display = 'flex'
+            row.style.alignItems = 'center'
+            row.style.justifyContent = 'center'
+
+            var span = document.createElement('span')
+            span.innerText = year
+            span.style.marginRight = '10px'
+            span.style.color = 'grey'
+            row.appendChild(span)
+            var span2 = document.createElement('span')
+            span2.innerText = duration
+            span2.style.marginRight = '10px'
+            span2.style.color = 'grey'
+            row.appendChild(span2)
+            var span3 = document.createElement('span')
+            span3.innerText = quality
+            span3.style.marginRight = '10px'
+            span3.style.color = 'grey'
+            row.appendChild(span3)
+
+            content.appendChild(row)
+
+            var button = document.createElement('a')
+            button.href = url
+            button.innerText = "Watch Now"
+            button.style.textDecoration = 'none'
+            button.style.color = '#fab1ffc5'
+            button.style.fontWeight = 'bold'
+            button.style.fontSize = 'small'
+            button.style.padding = '15px 40px'
+            button.style.borderRadius = '50px'
+            button.style.border = '1px solid #2c00318b'
+            button.style.background = 'linear-gradient(120deg, #65006cc5, #1e002cc7)'
+            button.style.margin = '10px 0 20px 0'
+            button.style.zIndex = 10
+
+            // button.addEventListener('click', () => window.location.href = url)
+
+            content.append(button)
+
+            grad.appendChild(content)
+
+            document.body.appendChild(banner)
+          }
 
         ''');
-        }
       }
 
       if (currentIndex == 1) {
@@ -505,6 +598,7 @@ class _MainState extends State<Main> {
         });
 
     webViewController?.evaluateJavascript(source: '''
+      // document.body.style.pointerEvents = 'none';
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
       document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
       document.body.style.backgroundAttachment = 'fixed'
@@ -523,7 +617,7 @@ class _MainState extends State<Main> {
 
       document.querySelector('.Top').style.display = 'flex'
       document.querySelector('.Top').style.alignItems = 'center'
-      document.querySelector('.Top').style.marginTop = '0'
+      document.querySelector('.Top').style.marginTop = '60vh'
       document.querySelector('.current').style.backgroundColor = '#8a00a6'
 
       var title = document.querySelector('.Title')
