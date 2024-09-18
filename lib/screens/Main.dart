@@ -191,6 +191,7 @@ class _MainState extends State<Main> {
     ];
     String url = "https://www.bolly2tolly.land";
     String urlHome = url + languages[(lang ?? 1) - 1]['path'];
+    String language = languages[(lang ?? 1) - 1]['name'];
     String urlLatest = "https://www.bolly2tolly.land";
 
     String latestJS = '''
@@ -322,34 +323,166 @@ class _MainState extends State<Main> {
           search.style.backgroundColor = '#13001c'
           search.style.backdropFilter = 'blur(20px)'
           var inp = document.querySelector('.Search .Form-Icon input')
-          inp.style.backgroundColor = '#3a003c'
+          inp.style.backgroundColor = '#1b001eda'
           inp.style.border = '1px solid #730077'
           inp.style.borderRadius = '10px !important'
           inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
           document.body.appendChild(search)
           document.querySelector('#searchsubmit').style.boxShadow = 'none'
 
+          document.querySelector('.NoBrdRa input').style.borderRadius = '50px'
+
           // window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
+          document.querySelectorAll('.TPost').forEach(e => {e.style.position = 'relative'})
+
+          var titles = document.querySelectorAll('.TPost .Title')
+          titles.forEach(e => {
+            let mName = e.innerHTML.split('(')[0] || e.innerHTML.toString()
+            e.innerHTML = mName
+            e.style.color = 'grey'
+            e.style.textAlign = 'left'
+            // e.style.width = '150px'
+            // e.style.overflow = 'hidden'
+
+            
+          })
 
         ''');
         }
 
         webViewController?.evaluateJavascript(source: '''
-          var index = Math.floor(Math.random() * 20)
-          var post = document.querySelectorAll('.TPostMv')[index]
-          var name = post.querySelector('.Title').innerHTML.toString().split('(')[0]
-          var photo = post.querySelector('.attachment-thumbnail').src
-          var url = post.querySelector('a').href
-          var duration = post.querySelector('.Time').innerText
-          var quality = post.querySelector('.Qlty').innerText
-          var desc = post.querySelector('.Description').childNodes[0].innerText
-          var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
-
-          console.log("homeeeeeeeeeeeee ", url)
+          var title = document.querySelector('.Title')
+          if (title != null) {
+            title.style.color = '#fee4ff'
+            title.style.fontSize = '20px'
+            title.style.flex = 1
+            title.style.fontWeight = '400'
+            title.innerText = "$language"
+          }
 
           if (document.querySelector('#homeBanner') == null) {
+            var index = Math.floor(Math.random() * 20)
+            var post = document.querySelectorAll('.TPostMv')[index]
+            var name = post.querySelector('.Title').innerHTML.toString().split('(')[0]
+            var photo = post.querySelector('.attachment-thumbnail').src
+            var url = post.querySelector('a').href
+            var duration = post.querySelector('.Time').innerText
+            var quality = post.querySelector('.Qlty').innerText
+            var desc = post.querySelector('.Description').childNodes[0].innerText
+            var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
+
+            console.log("homeeeeeeeeeeeee ", url)
+            
             var banner = document.createElement('div')
             banner.id = 'homeBanner'
+            banner.style.position = 'absolute'
+            banner.style.top = '80px'
+            banner.style.left = '0'
+            banner.style.width = '100vw'
+            banner.style.height = '70vh'
+            banner.style.backgroundImage = 'url(' + photo + ')'
+            banner.style.backgroundSize = 'cover'
+            banner.style.backgroundPosition = 'center'
+            
+            var grad = document.createElement('div')
+            grad.style.width = '100vw'
+            grad.style.height = '70vh'
+            grad.style.marginTop = '-30px'
+            grad.style.background = 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
+
+            banner.appendChild(grad)
+
+            var content = document.createElement('div')
+            content.style.display = 'flex'
+            content.style.flexDirection = 'column'
+            content.style.gap = '10px'
+            content.style.margin = '30px 20px'
+            content.style.width = '80%'
+            content.style.height = '60vh'
+            content.style.alignItems = 'start'
+            content.style.justifyContent = 'flex-end'
+            var h2 = document.createElement('span')
+            h2.innerText = name
+            h2.style.fontWeight = '800'
+            h2.style.fontSize = '22px'
+            h2.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
+            h2.style.backgroundClip = 'text'
+            h2.style.webkitBackgroundClip = 'text'
+            h2.style.color = 'transparent'
+            content.appendChild(h2)
+            var p = document.createElement('p')
+            p.innerText = desc
+            p.style.fontSize = 'small'
+            p.style.margin = '0'
+            content.appendChild(p)
+
+            var row = document.createElement('div')
+            row.style.display = 'flex'
+            row.style.alignItems = 'center'
+            row.style.justifyContent = 'center'
+
+            var span = document.createElement('span')
+            span.innerText = year
+            span.style.marginRight = '10px'
+            span.style.color = 'grey'
+            row.appendChild(span)
+            var span2 = document.createElement('span')
+            span2.innerText = duration
+            span2.style.marginRight = '10px'
+            span2.style.color = 'grey'
+            row.appendChild(span2)
+            var span3 = document.createElement('span')
+            span3.innerText = quality
+            span3.style.marginRight = '10px'
+            span3.style.color = 'grey'
+            row.appendChild(span3)
+
+            content.appendChild(row)
+
+            var button = document.createElement('a')
+            button.href = url
+            button.innerText = "Watch Now"
+            button.style.textDecoration = 'none'
+            button.style.color = '#fab1ffc5'
+            button.style.fontWeight = 'bold'
+            button.style.fontSize = 'small'
+            button.style.padding = '15px 40px'
+            button.style.borderRadius = '50px'
+            button.style.border = '1px solid #2c00318b'
+            button.style.background = 'linear-gradient(120deg, #65006cc5, #1e002cc7)'
+            button.style.margin = '10px 0 20px 0'
+            button.style.zIndex = 10
+
+            // button.addEventListener('click', () => window.location.href = url)
+
+            content.append(button)
+
+            grad.appendChild(content)
+
+            document.body.appendChild(banner)
+          }
+
+        ''');
+      }
+
+      if (currentIndex == 1) {
+        webViewController?.evaluateJavascript(source: '''
+          if (document.querySelector('#latestBanner') == null) {
+            var index = Math.floor(Math.random() * 7) + 8
+            console.log("homeeee randommm ", index)
+            var post = document.querySelectorAll('.TPostMv')[index]
+            var name = post.querySelector('.Title').innerHTML.toString().split('(')[0]
+            var photo = post.querySelector('.attachment-thumbnail').src
+            var url = post.querySelector('a').href
+            var duration = post.querySelector('.Time').innerText
+            var quality = post.querySelector('.Qlty').innerText
+            var desc = post.querySelector('.Description').childNodes[0].innerText
+            var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
+
+            console.log("homeeeeeeeeeeeee111111111111111 ", url)
+
+            var banner = document.createElement('div')
+            banner.id = 'latestBanner'
             banner.style.position = 'absolute'
             banner.style.top = '80px'
             banner.style.left = '0'
@@ -435,11 +568,8 @@ class _MainState extends State<Main> {
 
             document.body.appendChild(banner)
           }
-
         ''');
-      }
 
-      if (currentIndex == 1) {
         webViewController?.evaluateJavascript(source: latestJS);
       }
 
@@ -599,6 +729,13 @@ class _MainState extends State<Main> {
 
     webViewController?.evaluateJavascript(source: '''
       // document.body.style.pointerEvents = 'none';
+      var posts = document.querySelectorAll('.NoBrdRa .TPost .Image figure img')
+      posts.forEach(e => {
+        e.setAttribute('style', "border-radius: 20px !important;")
+      })
+      document.getElementById('tr_live_search').setAttribute('style', "border-radius: 50px  !important;")
+
+
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
       document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
       document.body.style.backgroundAttachment = 'fixed'
@@ -618,17 +755,20 @@ class _MainState extends State<Main> {
       document.querySelector('.Top').style.display = 'flex'
       document.querySelector('.Top').style.alignItems = 'center'
       document.querySelector('.Top').style.marginTop = '60vh'
-      document.querySelector('.current').style.backgroundColor = '#8a00a6'
 
-      var title = document.querySelector('.Title')
-      title.style.color = '#fee4ff'
-      title.style.fontSize = '20px'
-      title.style.flex = 1
-
-      var titles = document.querySelectorAll('.Title')
-      titles.forEach(e => {
-        e.style.color = 'white'
-      })
+      var pg = document.querySelectorAll('.page-numbers')
+      if (pg != null) {
+        pg.forEach(e => {
+          e.style.color = '#f9b8ffda'
+          e.style.fontWeight = '400'
+          e.style.backgroundColor = '#000000'
+          e.style.fontSize = 'small'
+          e.style.minWidth = '35px'
+          e.style.margin = '0px'
+          e.style.borderRadius = '3px'
+        })
+      }
+      document.querySelector('.current').style.backgroundColor = '#3c0041'
 
       var result = document.querySelector('.Result')
       result.style.background = "linear-gradient(120deg, #13001c, #0a000c)"
@@ -649,31 +789,6 @@ class _MainState extends State<Main> {
       var curr = document.querySelector('.Button.STPb.Current')
       if (curr != null) {
         curr.style.backgroundColor = '#8d0092'
-      }
-      var url = window.location.pathname
-
-      if (url.includes('/category/tamil-movies')) {
-        var title = document.querySelector('.Title')
-        title.innerText = "Tamil"
-      }
-      if (url.includes('/category/english-movies')) {
-        title.innerText = "English"
-      }
-      if (url.includes('/category/malayalam-movies')) {
-        var title = document.querySelector('.Title')
-        title.innerText = "Malayalam"
-      }
-      if (url.includes('/category/telugu-movies')) {
-        var title = document.querySelector('.Title')
-        title.innerText = "Telugu"
-      }
-      if (url.includes('/category/kannada-movies')) {
-        var title = document.querySelector('.Title')
-        title.innerText = "Kannada"
-      }
-      if (url.includes('/category/hindi-movies')) {
-        var title = document.querySelector('.Title')
-        title.innerText = "Hindi"
       }
       
       var no = document.querySelector('.Title-404')
@@ -943,7 +1058,7 @@ class _MainState extends State<Main> {
                                                       .size
                                                       .width /
                                                   2) -
-                                              40,
+                                              30,
                                           height: 250,
                                           child: Stack(children: [
                                             GestureDetector(
@@ -961,7 +1076,7 @@ class _MainState extends State<Main> {
                                                             .size
                                                             .width /
                                                         2) -
-                                                    40,
+                                                    30,
                                                 height: 250,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
