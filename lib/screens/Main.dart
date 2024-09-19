@@ -203,12 +203,10 @@ class _MainState extends State<Main> {
       document.querySelector('.MovieListTopCn').style.display = 'none'
       document.querySelector('.wp-pagenavi').style.display = 'none'
       // document.querySelector('.Search').style.display = 'none'
-      var aside = document.querySelector('aside')
-      aside.firstElementChild.style.display = 'none'
+      var aside = document.querySelector('aside').style.display = 'none'
 
-      var title = document.querySelector('.Wdgt .Title')
-      title.style.color = '#fee4ff'
-      title.style.fontSize = '22px'
+      var title = document.querySelector('.Title')
+      title.style.display = 'none'
 
       var list = document.querySelector('.TpSbList')
       list.style.maxWidth = '100%'
@@ -389,7 +387,7 @@ class _MainState extends State<Main> {
             h2.innerText = name
             h2.style.fontWeight = '800'
             h2.style.fontSize = '24px'
-            h2.style.lineHeight = '26px'
+            h2.style.lineHeight = '37px'
             h2.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
             h2.style.backgroundClip = 'text'
             h2.style.webkitBackgroundClip = 'text'
