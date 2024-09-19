@@ -1,4 +1,4 @@
-name: movirulz
+name: theater
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   flutter_inappwebview: ^6.0.0
   flutter_native_splash: ^2.2.19
+  shared_preferences: ^2.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -92,9 +93,12 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 
 flutter_native_splash:
-  color: "#002122"
-  # background_image: "lib/assets/images/icon.png"
+  # color: "#130015"
+  background_image: "lib/assets/images/splash.png"
+  fullscreen: true
+  android_gravity: fill
 
   android_12:
-    color: "#002122"
-    # image: "lib/assets/images/icon.png"
+    color: "#130015"
+    image: "lib/assets/images/icon.png"
+

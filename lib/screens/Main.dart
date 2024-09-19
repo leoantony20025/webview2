@@ -1,6 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:theater/models/Movie.dart';
+import 'package:theater/prefs.dart';
 
 class Main extends StatefulWidget {
   const Main({super.key});
@@ -10,80 +11,97 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  String urlHome = "https://tamilplay.co/movies/";
-  String urlMovie = "https://tamilplay.co/movies/";
-  String urlTv = "https://tamilplay.co/movies/";
-
   final GlobalKey webViewKey = GlobalKey();
   InAppWebViewController? webViewController;
   CookieManager cookieManager = CookieManager.instance();
-  late PullToRefreshController? pullToRefreshController;
-  PullToRefreshSettings pullToRefreshSettings = PullToRefreshSettings(
-      color: const Color.fromRGBO(0, 32, 58, 1), enabled: true);
   final List<ContentBlocker> contentBlockers = [];
   bool isLoading = true;
   int progress = 0;
   int currentIndex = 0;
   String? lastUrl;
-  bool toggle = false;
-  bool isModalOpen = false;
-  int resourceLoad = 0;
+  bool serverToggle = true;
+  // int wishCount = 0;
+  List<Movie> wishList = [];
+
+  final hurawatchUrlFilters = [
+    ".*.whos.amung.us/.*",
+    ".*.weepingcart.com/.*",
+    ".*.l.sharethis.com/.*",
+    ".*.count-server.sharethis.com/.*",
+    ".*.mc.yandex.ru/.*",
+    // ".*.be6721.rcr72.waw04.cdn112.com/.*",
+    ".*.delivery.r2b2.cz/.*",
+    ".*.cloudflareinsights.com/.*",
+    ".*.pixfuture.com/.*",
+    ".*.ping.gif/.*",
+    ".*.cancriberths.com/.*",
+    ".*.equalditchcentered.com/.*",
+    ".*.stats.wp.com/.*",
+    ".*.goingkinch.com/.*",
+    ".*.fuckadblock.*",
+    ".*.marazma.com/.*",
+    ".*.popmansion.com/.*",
+    ".*.videocdnmetrika.com/.*",
+    ".*.s3.us-east-1.amazonaws.com/.*",
+    ".*.amazonaws.com/.*",
+    ".*.cloudfront.net/.*",
+    ".*.parimatch.*",
+    ".*.rz.systpelew.top/.*",
+    ".*.win.pm-bet.in/.*",
+    // ".*.funkiaproofed.shop/.*",
+    // ".*.ak.itponytaa.com/.*",
+    ".*.go-mpulse.net/.*",
+    ".*.chennaiexch.online/.*",
+    ".*.honourprecisionsuited.com/.*",
+    ".*.creative-stat1.com/.*",
+    ".*.exness.com/.*",
+    ".*.use.typekit.net/.*",
+    ".*.stats.wp.com/.*",
+    ".*.oyohd.one/cdn-cgi/trace.*",
+    ".*.profitableexactly.com/.*",
+    ".*.oyohd.one/js/video.counters/.*",
+    ".*.marazma.com/.*",
+    ".*.dexpredict.com/.*",
+    ".*.junkyadexchange.com/.*",
+    ".*.rockiertaar.com/.*",
+    ".*.pb.bheestybaulk.top/.*",
+    ".*.rz.systpelew.top/.*",
+    ".*.diggingrebbes.com/.*",
+    "rz.systpelew.top.*",
+    ".*.pb.bheestybaulk.top.*",
+    ".*.tz.lannycucujus.top.*",
+    ".*.win.pm-bet.in.*",
+    ".*.win.pm-5753.com.*",
+    ".*.track.torarymor.world.*",
+    ".*.www.exness.com.*",
+    ".*.ixiadewaxed.click.*",
+    ".*.dexpredict.com.*"
+  ];
+  final youtubeUrlFilters = [
+    ".*.static.doubleclick.net/.*",
+    ".*.play.google.com/.*",
+    ".*.googleads.g.doubleclick.net/.*",
+    ".*.youtube.com/ptracking/.*",
+    ".*.doubleclick.net.*",
+    ".*.youtube.com/youtubei.*",
+    ".*.youtube.com/pagead.*",
+    ".*.youtube.com/api/stats/qoe.*",
+    ".*.doubleclick.net.*",
+  ];
 
   @override
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!prefs.containsKey("lang")) {
+        Navigator.pushNamed(context, '/language');
+      }
+      wishList = await getWishList();
+    });
+
     lastUrl = null;
 
-    pullToRefreshController = PullToRefreshController(
-      settings: pullToRefreshSettings,
-      onRefresh: () async {
-        if (defaultTargetPlatform == TargetPlatform.android) {
-          webViewController?.reload();
-        } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-          webViewController?.loadUrl(
-              urlRequest: URLRequest(url: await webViewController?.getUrl()));
-        }
-      },
-    );
-
-    final hurawatchUrlFilters = [
-      ".*.whos.amung.us/.*",
-      ".*.weepingcart.com/.*",
-      ".*.l.sharethis.com/.*",
-      ".*.count-server.sharethis.com/.*",
-      ".*.mc.yandex.ru/.*",
-      // ".*.be6721.rcr72.waw04.cdn112.com/.*",
-      ".*.precedelaxative.com/.*",
-      ".*.platform-cdn.sharethis.com/.*",
-      ".*.lashahib.net/.*",
-      ".*.histats.com/.*",
-      ".*.prd.jwpltx.com/.*",
-      ".*.icon_.*",
-      ".*.instant.page/.*",
-      ".*.imasdk.googleapis.com/.*",
-      ".*.delivery.r2b2.cz/.*",
-      ".*.pubfuture-ad.com/.*",
-      ".*.netpub.media/.*",
-      ".*.delivery.r2b2.cz/.*",
-      ".*.cloudflareinsights.com/.*",
-      ".*.pixfuture.com/.*",
-      ".*.ping.gif/.*",
-      ".*.delivery.r2b2.cz/.*",
-      ".*.delivery.r2b2.cz/.*",
-      ".*.delivery.r2b2.cz/.*",
-    ];
-    final youtubeUrlFilters = [
-      ".*.static.doubleclick.net/.*",
-      ".*.play.google.com/.*",
-      ".*.googleads.g.doubleclick.net/.*",
-      ".*.youtube.com/ptracking/.*",
-      ".*.doubleclick.net.*",
-      ".*.youtube.com/youtubei.*",
-      ".*.youtube.com/pagead.*",
-      ".*.youtube.com/api/stats/qoe.*",
-      ".*.doubleclick.net.*",
-    ];
     final adUrlFilters = [
       ".*.doubleclick.net/.*",
       ".*.ads.pubmatic.com/.*",
@@ -107,6 +125,7 @@ class _MainState extends State<Main> {
       ...hurawatchUrlFilters,
       ...youtubeUrlFilters
     ];
+
     // for each Ad URL filter, add a Content Blocker to block its loading.
     for (final adUrlFilter in adUrlFilters) {
       contentBlockers.add(ContentBlocker(
@@ -126,68 +145,150 @@ class _MainState extends State<Main> {
         action: ContentBlockerAction(
             type: ContentBlockerActionType.CSS_DISPLAY_NONE,
             selector:
-                ".banner, .banners, .afs_ads, .ad-placement, .ads, .ad, .advert")));
+                ".banner, .banners, .afs_ads, .ad-placement, .ads, .bnr, .ad, .advert")));
   }
 
   @override
   Widget build(BuildContext context) {
-    String genreJS = '''
-      var menu = document.querySelector('#menu')
-      menu.classList.add('active')
-      menu.style.height = '100vh'
-      menu.style.paddingTop = '50px'
-      menu.style.background = 'linear-gradient(black, #001111)'
-      document.querySelector('#menu-item-37').style.display = 'none';
-      document.querySelector('#menu-item-38').style.display = 'none';
-      document.querySelector('#menu-item-39').style.display = 'initial';
-      document.querySelector('#menu-item-39 a').style.color = 'white';
-      document.querySelector('#menu-item-60').style.display = 'none';
-      document.querySelector('#menu-item-40').style.display = 'none';
+    int? lang = prefs.getInt("lang");
+    List languages = [
+      {
+        "name": "Tamil",
+        "isSelected": lang == 1,
+        "value": 1,
+        "path": "/category/tamil-movies"
+      },
+      {
+        "name": "English",
+        "isSelected": lang == 2,
+        "value": 2,
+        "path": "/category/english-movies"
+      },
+      {
+        "name": "Malayalam",
+        "isSelected": lang == 3,
+        "value": 3,
+        "path": "/category/malayalam-movies"
+      },
+      {
+        "name": "Telugu",
+        "isSelected": lang == 4,
+        "value": 4,
+        "path": "/category/telugu-movies"
+      },
+      {
+        "name": "Kannada",
+        "isSelected": lang == 5,
+        "value": 5,
+        "path": "/category/kannada-movies"
+      },
+      {
+        "name": "Hindi",
+        "isSelected": lang == 6,
+        "value": 6,
+        "path": "/category/hindi-movies"
+      }
+    ];
+    String url = "https://www.bolly2tolly.land";
+    String urlHome = url + languages[(lang ?? 1) - 1]['path'];
+    String language = languages[(lang ?? 1) - 1]['name'];
+    String urlLatest = "https://www.bolly2tolly.land";
 
-      var subContainer = document.querySelector('#menu-item-39 .sub-container')
-      subContainer.style.marginTop = '20px'
+    String latestJS = '''
 
-       var li = document.querySelectorAll('#menu-item-39 .sub-container .sub-menu li')
-      li.forEach(e => {
-        e.style.background = '#001515'
-        e.style.margin = '10px'
-        e.style.padding = '10px'
-        e.style.borderRadius = '10px'
-        e.style.width = 'calc(33.333% - 20px)'
+      var tle = document.querySelector('.Title')
+      tle.style.marginTop = '-30px'
+
+      document.querySelector('.Header').style.display = 'none'
+      document.querySelector('.MovieListTopCn').style.display = 'none'
+      document.querySelector('.wp-pagenavi').style.display = 'none'
+      // document.querySelector('.Search').style.display = 'none'
+      var aside = document.querySelector('aside')
+      aside.firstElementChild.style.display = 'none'
+
+      var title = document.querySelector('.Wdgt .Title')
+      title.style.color = '#fee4ff'
+      title.style.fontSize = '22px'
+
+      var list = document.querySelector('.TpSbList')
+      list.style.maxWidth = '100%'
+      var movies = document.querySelectorAll('.Wdgt>ul>li')
+      movies.forEach(e => {
+        // e.style.backgroundColor = "#322839c0"
+        e.style.borderRadius = "0px"
+        e.style.padding = "20px"
+        e.style.margin = "0px"
+        e.querySelector('a').style.color = 'white'
       })
+
+      var movies = document.querySelectorAll('.TpSbList>.MovieList>li')
+      movies.forEach(e => {
+        e.style.backgroundColor = "#322839c0"
+        e.style.borderRadius = "0px"
+        e.style.padding = "0px"
+        e.style.margin = "8%"
+      })
+
+      document.querySelector('.Wdgt').style.backgroundColor = 'transparent'
+
     ''';
 
-    String yearJS = '''
-      var menu = document.querySelector('#menu')
-      menu.classList.add('active')
-      menu.style.height = '100vh'
-      menu.style.paddingTop = '50px'
-      menu.style.background = 'linear-gradient(black, #001111)'
-      document.querySelector('#menu').classList.add('active')
-      document.querySelector('#menu-item-37').style.display = 'none';
-      document.querySelector('#menu-item-38').style.display = 'none';
-      document.querySelector('#menu-item-39').style.display = 'none';
-      document.querySelector('#menu-item-60').style.display = 'initial';
-      document.querySelector('#menu-item-60 a').style.color = 'white';
-      document.querySelector('#menu-item-40').style.display = 'none';
+    String wishJS = '''
+      var wl = document.createElement('div')
+      wl.id = 'addToWishList'
+      wl.style.width = '100%'
+      wl.style.height = '50px'
+      wl.style.background = 'linear-gradient(120deg, #36014e8b, #2c00318b)'
+      wl.style.display = 'flex'
+      wl.style.alignItems = 'center'
+      wl.style.justifyContent = 'center'
+      wl.style.margin = '10px 0px'
+      wl.style.borderRadius = '10px'
+      
+      var img = document.createElement('img');
+      img.src = "https://img.icons8.com/ios-glyphs/20/FFEFFF/plus-math.png"
+      img.style.margin = '0 10px'
+      var h6 = document.createElement('h5');
+      h6.innerText = "Add To Watchlist"
+      h6.style.margin = '0'
+      wl.appendChild(img)
+      wl.appendChild(h6)
 
-      var subContainer = document.querySelector('#menu-item-60 .sub-container')
-      subContainer.style.marginTop = '20px'
+      var currentUrl = document.location.href
+      var isMovie = currentUrl.includes('/movie/')
+      var isSeries = currentUrl.includes('/serie/')
 
-      var li = document.querySelectorAll('#menu-item-60 .sub-container .sub-menu li')
-      li.forEach(e => {
-        e.style.background = '#001515'
-        e.style.margin = '10px'
-        e.style.padding = '10px'
-        e.style.borderRadius = '10px'
-        e.style.width = 'calc(33.333% - 20px)'
+      if (isMovie){
+        var name = document.querySelector('.SubTitle').innerHTML.toString()
+        var photo = document.querySelector('.attachment-thumbnail').src
+        var language = document.querySelectorAll('td')[3].querySelector('span').innerText
+        var url = window.location.href
+        var duration = document.querySelector('.Time').innerText
+        var year = document.querySelector('.Date').innerText
+      }
+
+      if (isSeries) {
+        var name = document.querySelector('.Title').innerHTML.toString()
+        var photo = document.querySelector('.attachment-thumbnail').src
+        var language = ""
+        var url = window.location.href
+        var duration = ""
+        var year = ""
+      }
+
+      // AAIco-adjust
+
+      wl.addEventListener('click', () => {
+        window.flutter_inappwebview.callHandler('wishHandler', name, photo, language, url, duration, year);
       })
+
+      var article = document.querySelector('article')
+      article.append(wl)
 
     ''';
 
-    String closeJS = '''
-      var menu = document.querySelector('#menu')
-      menu.classList.remove('active')
+    String removeWishJS = '''
+      document.querySelector('#addToWishList').style.display = 'none'
     ''';
 
     void updateNav() async {
@@ -195,194 +296,620 @@ class _MainState extends State<Main> {
       String? currentUrl = uri.toString();
 
       if (lastUrl != currentUrl) {
-        lastUrl = currentUrl;
         if (currentUrl == urlHome) {
           setState(() {
             currentIndex = 0;
           });
+        } else if (currentUrl == urlLatest) {
+          setState(() {
+            currentIndex = 1;
+          });
         }
+        lastUrl = currentUrl;
       }
 
-      if (currentUrl.contains("beycats")) {
-        await webViewController?.evaluateJavascript(source: '''
-          document.body.style.background = 'linear-gradient(#0c0c0c, #001111)'
-          document.body.style.backgroundAttachment = 'fixed'
-
-          var body = document.body
-
-          var video = body.children[4]
-          video.style.height = '100vw'
-          video.style.height = '100vh'
-          // video.style.position = 'absolute'
-          // video.style.top = '0'
-          // video.style.left = '0'
-          video.style.display = 'flex'
-          video.style.alignItems = 'center'
-          video.style.justifyContent = 'center'
-
-          body.children[0].style.display = 'none'
-          body.children[1].style.display = 'none'
-          body.children[2].style.display = 'none'
-          body.children[3].style.display = 'none'
-          body.children[5].style.display = 'none'
-          body.children[6].style.display = 'none'
-          body.children[7].style.display = 'none'
-          body.children[8].style.display = 'none'
-          body.children[9].style.display = 'none'
-          body.children[10].style.display = 'none'
-          body.children[11].style.display = 'none'
-          body.children[12].style.display = 'none'
-          body.children[13].style.display = 'none'
-          body.children[14].style.display = 'none'
-          body.children[15].style.display = 'none'
+      if (currentIndex == 0) {
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+          document.querySelector('aside').style.display = 'none'
           
-          var vid = document.querySelector('video')
-          // vid.style.zIndex = 1000
-          vid.style.boxShadow = '5px 20px 60px #00ff801d'
+          var search = document.querySelector('.Search')
+          search.style.position = 'fixed'
+          search.style.top = '0px'
+          search.style.left = '0'
+          search.style.zIndex = '10'
+          search.style.width = '100%'
+          search.style.padding = '25px 20px 0px 20px'
+          search.style.backgroundColor = '#13001c'
+          search.style.backdropFilter = 'blur(20px)'
+          var inp = document.querySelector('.Search .Form-Icon input')
+          inp.style.backgroundColor = '#1b001eda'
+          inp.style.border = '1px solid #730077'
+          inp.style.borderRadius = '10px !important'
+          inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
+          document.body.appendChild(search)
+          document.querySelector('#searchsubmit').style.boxShadow = 'none'
 
-          document.querySelector('footer').style.display = 'none'
+          document.querySelector('.NoBrdRa input').style.borderRadius = '50px'
 
-          
+          // window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
+          document.querySelectorAll('.TPost').forEach(e => {e.style.position = 'relative'})
+
+          var titles = document.querySelectorAll('.TPost .Title')
+          titles.forEach(e => {
+            let mName = e.innerHTML.split('(')[0] || e.innerHTML.toString()
+            e.innerHTML = mName
+            e.style.color = 'grey'
+            e.style.textAlign = 'left'
+            // e.style.width = '150px'
+            // e.style.overflow = 'hidden'
+
+            
+          })
+
+        ''');
+        }
+
+        webViewController?.evaluateJavascript(source: '''
+          var title = document.querySelector('.Title')
+          if (title != null) {
+            title.style.color = '#fee4ff'
+            title.style.fontSize = '20px'
+            title.style.flex = 1
+            title.style.fontWeight = '400'
+            title.innerText = "$language"
+          }
+
+          if (document.querySelector('#homeBanner') == null) {
+            var index = Math.floor(Math.random() * 20)
+            var post = document.querySelectorAll('.TPostMv')[index]
+            var name = post.querySelector('.Title').innerHTML.toString().split('(')[0]
+            var photo = post.querySelector('.attachment-thumbnail').src
+            var url = post.querySelector('a').href
+            var duration = post.querySelector('.Time').innerText
+            var quality = post.querySelector('.Qlty').innerText
+            var desc = post.querySelector('.Description').childNodes[0].innerText
+            var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
+
+            console.log("homeeeeeeeeeeeee ", url)
+            
+            var banner = document.createElement('div')
+            banner.id = 'homeBanner'
+            banner.style.position = 'absolute'
+            banner.style.top = '80px'
+            banner.style.left = '0'
+            banner.style.width = '100vw'
+            banner.style.height = '70vh'
+            banner.style.backgroundImage = 'url(' + photo + ')'
+            banner.style.backgroundSize = 'cover'
+            banner.style.backgroundPosition = 'center'
+            
+            var grad = document.createElement('div')
+            grad.style.width = '100vw'
+            grad.style.height = '70vh'
+            grad.style.marginTop = '-30px'
+            grad.style.background = 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
+
+            banner.appendChild(grad)
+
+            var content = document.createElement('div')
+            content.style.display = 'flex'
+            content.style.flexDirection = 'column'
+            content.style.gap = '10px'
+            content.style.margin = '30px 20px'
+            content.style.width = '80%'
+            content.style.height = '60vh'
+            content.style.alignItems = 'start'
+            content.style.justifyContent = 'flex-end'
+            var h2 = document.createElement('span')
+            h2.innerText = name
+            h2.style.fontWeight = '800'
+            h2.style.fontSize = '22px'
+            h2.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
+            h2.style.backgroundClip = 'text'
+            h2.style.webkitBackgroundClip = 'text'
+            h2.style.color = 'transparent'
+            content.appendChild(h2)
+            var p = document.createElement('p')
+            p.innerText = desc
+            p.style.fontSize = 'small'
+            p.style.margin = '0'
+            content.appendChild(p)
+
+            var row = document.createElement('div')
+            row.style.display = 'flex'
+            row.style.alignItems = 'center'
+            row.style.justifyContent = 'center'
+
+            var span = document.createElement('span')
+            span.innerText = year
+            span.style.marginRight = '10px'
+            span.style.color = 'grey'
+            row.appendChild(span)
+            var span2 = document.createElement('span')
+            span2.innerText = duration
+            span2.style.marginRight = '10px'
+            span2.style.color = 'grey'
+            row.appendChild(span2)
+            var span3 = document.createElement('span')
+            span3.innerText = quality
+            span3.style.marginRight = '10px'
+            span3.style.color = 'grey'
+            row.appendChild(span3)
+
+            content.appendChild(row)
+
+            var button = document.createElement('a')
+            button.href = url
+            button.innerText = "Watch Now"
+            button.style.textDecoration = 'none'
+            button.style.color = '#fab1ffc5'
+            button.style.fontWeight = 'bold'
+            button.style.fontSize = 'small'
+            button.style.padding = '15px 40px'
+            button.style.borderRadius = '50px'
+            button.style.border = '1px solid #2c00318b'
+            button.style.background = 'linear-gradient(120deg, #65006cc5, #1e002cc7)'
+            button.style.margin = '10px 0 20px 0'
+            button.style.zIndex = 10
+
+            // button.addEventListener('click', () => window.location.href = url)
+
+            content.append(button)
+
+            grad.appendChild(content)
+
+            document.body.appendChild(banner)
+          }
+
+        ''');
+      }
+
+      if (currentIndex == 1) {
+        webViewController?.evaluateJavascript(source: '''
+          if (document.querySelector('#latestBanner') == null) {
+            var index = Math.floor(Math.random() * 7) + 8
+            console.log("homeeee randommm ", index)
+            var post = document.querySelectorAll('.TPostMv')[index]
+            var name = post.querySelector('.Title').innerHTML.toString().split('(')[0]
+            var photo = post.querySelector('.attachment-thumbnail').src
+            var url = post.querySelector('a').href
+            var duration = post.querySelector('.Time').innerText
+            var quality = post.querySelector('.Qlty').innerText
+            var desc = post.querySelector('.Description').childNodes[0].innerText
+            var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
+
+            console.log("homeeeeeeeeeeeee111111111111111 ", url)
+
+            var banner = document.createElement('div')
+            banner.id = 'latestBanner'
+            banner.style.position = 'absolute'
+            banner.style.top = '80px'
+            banner.style.left = '0'
+            banner.style.width = '100vw'
+            banner.style.height = '70vh'
+            banner.style.backgroundImage = 'url(' + photo + ')'
+            banner.style.backgroundSize = 'cover'
+            banner.style.backgroundPosition = 'center'
+            
+            var grad = document.createElement('div')
+            grad.style.width = '100vw'
+            grad.style.height = '70vh'
+            grad.style.marginTop = '-30px'
+            grad.style.background = 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
+
+            banner.appendChild(grad)
+
+            var content = document.createElement('div')
+            content.style.display = 'flex'
+            content.style.flexDirection = 'column'
+            content.style.gap = '10px'
+            content.style.margin = '30px 20px'
+            content.style.width = '80%'
+            content.style.height = '60vh'
+            content.style.alignItems = 'start'
+            content.style.justifyContent = 'flex-end'
+            var h2 = document.createElement('h2')
+            h2.innerText = name
+            h2.style.fontWeight = 'bolder'
+            h2.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
+            h2.style.backgroundClip = 'text'
+            h2.style.webkitBackgroundClip = 'text'
+            h2.style.color = 'transparent'
+            content.appendChild(h2)
+            var p = document.createElement('p')
+            p.innerText = desc
+            p.style.fontSize = 'small'
+            p.style.margin = '0'
+            content.appendChild(p)
+
+            var row = document.createElement('div')
+            row.style.display = 'flex'
+            row.style.alignItems = 'center'
+            row.style.justifyContent = 'center'
+
+            var span = document.createElement('span')
+            span.innerText = year
+            span.style.marginRight = '10px'
+            span.style.color = 'grey'
+            row.appendChild(span)
+            var span2 = document.createElement('span')
+            span2.innerText = duration
+            span2.style.marginRight = '10px'
+            span2.style.color = 'grey'
+            row.appendChild(span2)
+            var span3 = document.createElement('span')
+            span3.innerText = quality
+            span3.style.marginRight = '10px'
+            span3.style.color = 'grey'
+            row.appendChild(span3)
+
+            content.appendChild(row)
+
+            var button = document.createElement('a')
+            button.href = url
+            button.innerText = "Watch Now"
+            button.style.textDecoration = 'none'
+            button.style.color = '#fab1ffc5'
+            button.style.fontWeight = 'bold'
+            button.style.fontSize = 'small'
+            button.style.padding = '15px 40px'
+            button.style.borderRadius = '50px'
+            button.style.border = '1px solid #2c00318b'
+            button.style.background = 'linear-gradient(120deg, #65006cc5, #1e002cc7)'
+            button.style.margin = '10px 0 20px 0'
+            button.style.zIndex = 10
+
+            // button.addEventListener('click', () => window.location.href = url)
+
+            content.append(button)
+
+            grad.appendChild(content)
+
+            document.body.appendChild(banner)
+          }
         ''');
 
-        setState(() {
-          // currentIndex = 1;
-        });
-      } else {
+        webViewController?.evaluateJavascript(source: latestJS);
+      }
+
+      if (currentUrl.contains("/movie/")) {
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+            var servers = document.querySelector('.TPlayerNv')
+            var count = 1
+            var isSel = false
+            servers.childNodes.forEach(e => {
+              e.style.backgroundColor = '#320039'
+              // if (e.childNodes[0].innerText == 'Oyohd') {
+              //   e.style.display = 'none'
+              // }
+              if (e.childNodes[0].innerText == 'Neohd') {
+                e.click()
+                isSel = true
+              }
+              // if (e.childNodes[0].innerText != 'Oyohd') {
+                e.childNodes[0].innerText = "Server " + count
+                count++
+              // }
+            })
+
+            if (!isSel) {
+              servers.childNodes[1].click()
+              isSel = true
+            }
+
+            // servers.style.display = 'none'
+            // document.querySelector('.TPlayerCn').style.display = 'none'
+            var search = document.querySelector('.Search')
+            search.style.position = 'fixed'
+            search.style.top = '0px'
+            search.style.left = '0'
+            search.style.zIndex = '10'
+            search.style.width = '100%'
+            search.style.padding = '25px 20px 0px 20px'
+            search.style.backgroundColor = '#13001c'
+            search.style.backdropFilter = 'blur(20px)'
+            var inp = document.querySelector('.Search .Form-Icon input')
+            inp.style.backgroundColor = '#3a003c'
+            inp.style.border = '1px solid #730077'
+            inp.style.borderRadius = '10px !important'
+            inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
+            document.body.appendChild(search)
+            document.querySelector('#searchsubmit').style.boxShadow = 'none'
+
+              
+          ''');
+        }
+
+        await webViewController?.evaluateJavascript(source: '''
+          // document.querySelector('.Button.STPb.Current').style.backgroundColor = '#c701ee'
+          document.querySelector('main').style.display = 'inherit'
+          document.querySelector('article').style.display = 'inherit'
+          document.querySelector('aside').style.display = 'none'
+          document.querySelector('.Footer').style.display = 'none'
+          document.querySelector('#ads_singlem_top').style.display = 'none'
+          document.querySelector('.Wdgt').style.display = 'none'
+          var wng = document.querySelectorAll('.has-wpur-alert')
+          wng.forEach(e => {
+            e.style.display = 'none'
+          })
+
+        ''');
+      }
+
+      if (currentUrl.contains("/serie/")) {
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+          ''');
+        }
+
         webViewController?.evaluateJavascript(source: '''
-          // window.addEventListener('focus', function() {
-          //   window.blur();
-          // });
-          document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
+          document.querySelector('main').style.display = 'inherit'
+          document.querySelector('article').style.display = 'inherit'
+          document.querySelector('aside').style.display = 'none'
+          document.querySelector('.ListPOpt').style.display = 'none'
+          document.querySelector('.AA-Season').style.color = 'white'
+          document.querySelector('.Footer').style.display = 'none'
+          var titles = document.querySelectorAll('.MvTbTtl a')
+          titles.forEach(e => {
+            e.style.color = 'white'
+          })
+          document.querySelector('#ads_singlem_top').style.display = 'none'
+          document.querySelector('.Wdgt').style.display = 'none'
+          var wng = document.querySelectorAll('.has-wpur-alert')
+          wng.forEach(e => {
+            e.style.display = 'none'
+          })
+        ''');
+      }
 
-          document.body.style.background = 'linear-gradient(#030a00, #0e110d)'
-          document.body.style.backgroundAttachment = 'fixed'
+      if (currentUrl.contains("/episode/")) {
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+            // var servers = document.querySelector('.TPlayerNv')
+            // servers.childNodes.forEach(e => {
+            //   if (e.childNodes[0].innerText == 'Oyohd') {
+            //     e.style.display = 'none'
+            //   }
+            //   if (e.childNodes[0].innerText == 'Ninjahd') {
+            //     e.click()
+            //     e.style.backgroundColor = '#8a00a6'
+            //   } else {
+            //     servers.childNodes[1].click()
+            //     servers.childNodes[1].style.backgroundColor = '#8a00a6'
+            //   }
+            // })
 
-          var head = document.createElement('div')
-          var header = document.querySelector('header')
-          header.append(head)
-          head.append(document.querySelector('header .container'))
-          head.style.position = 'fixed'
-          head.style.top = 0
-          head.style.left = 0
-          head.style.width = '100vw'
-          head.style.height = '0px'
-          head.style.background = '#151515'
+            // servers.style.display = 'none'
+            // document.querySelector('.TPlayerCn').style.display = 'none'
+              
+          ''');
+        }
 
-          header.style.transform = "translateX('-100%')"
-          header.style.height = '0px'
-          head.style.transform = "translateX('-100%')"
-
-          document.querySelector('.header-logo').style.display = 'none';
-          document.querySelector('.mobile-menu').style.display = 'none';
-          document.querySelector('.mobile-search').style.display = 'none'
-
-          var searchForm = document.querySelector('#searchform')
-          searchForm.style.padding = '10px'
-          searchForm.style.background = '#011818'
-          searchForm.style.borderRadius = '15px'
-          var search = document.querySelector('#search')
-          search.style.paddingTop = '15px'
-          search.style.background = '#030a00'
-          search.classList.add('active')
-          search.style.marginTop = "-50px"
-          var searchInput = document.querySelector('#search input')
-          searchInput.style.background = "#011818"
-          searchInput.style.borderRadius = "10px"
-          document.querySelector('#searchform .fa').style.color = 'white'
-
-          document.querySelector('#social_side_links').style.display = 'none'
-
-          var pagination = document.querySelector('#pagination')
-          pagination.style.marginTop = '30px'
-
-
-          document.querySelector('footer').style.display = 'none'
-
-          document.querySelector('.comentarios').style.display = 'none'   
-          
+        webViewController?.evaluateJavascript(source: '''
+          document.querySelector('main').style.display = 'inherit'
+          document.querySelector('article').style.display = 'inherit'
+          document.querySelector('aside').style.display = 'none'
+          document.querySelector('.Footer').style.display = 'none'
+          document.querySelector('.Wdgt').style.display = 'none'
+          var wng = document.querySelectorAll('.has-wpur-alert')
+          wng.forEach(e => {
+            e.style.display = 'none'
+          })
         ''');
       }
     }
 
     updateNav();
 
+    webViewController?.addJavaScriptHandler(
+        handlerName: 'homeHandler',
+        callback: (args) async {
+          print("homeeeeeeeeeeee " + args[3]);
+        });
+
+    webViewController?.addJavaScriptHandler(
+        handlerName: 'wishHandler',
+        callback: (args) async {
+          WebUri? uri = await webViewController?.getUrl();
+          String? currentUrl = uri.toString();
+          Movie movie = Movie(
+              name: args[0] ?? "",
+              photo: args[1] ?? "",
+              language: args[2] ?? "",
+              url: currentUrl,
+              duration: args[4] ?? "",
+              year: args[5] ?? "");
+
+          await addToWishList(movie);
+          wishList = await getWishList();
+          await webViewController?.evaluateJavascript(source: removeWishJS);
+        });
+
+    webViewController?.evaluateJavascript(source: '''
+      // document.body.style.pointerEvents = 'none';
+      var posts = document.querySelectorAll('.NoBrdRa .TPost .Image figure img')
+      posts.forEach(e => {
+        e.setAttribute('style', "border-radius: 20px !important;")
+      })
+      document.getElementById('tr_live_search').setAttribute('style', "border-radius: 50px  !important;")
+
+
+      document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
+      document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
+      document.body.style.backgroundAttachment = 'fixed'
+      document.body.style.backgroundColor = 'transparent'
+      document.body.style.color = 'white'
+      
+      document.querySelector('.Content').style.background = 'transparent'
+      document.querySelector('.Content').style.backgroundColor = 'transparent'
+      document.querySelector('.Header').style.display = 'none'
+      document.querySelector('.Footer').style.display = 'none'
+
+      var az = document.querySelector('.AZList')
+      if (az != null) {
+        az.style.display = 'none'
+      }
+
+      document.querySelector('.Top').style.display = 'flex'
+      document.querySelector('.Top').style.alignItems = 'center'
+      document.querySelector('.Top').style.marginTop = '60vh'
+
+      var pg = document.querySelectorAll('.page-numbers')
+      if (pg != null) {
+        pg.forEach(e => {
+          e.style.color = '#f9b8ffda'
+          e.style.fontWeight = '400'
+          e.style.backgroundColor = '#000000'
+          e.style.fontSize = 'small'
+          e.style.minWidth = '35px'
+          e.style.margin = '0px'
+          e.style.borderRadius = '3px'
+        })
+      }
+      document.querySelector('.current').style.backgroundColor = '#3c0041'
+
+      var result = document.querySelector('.Result')
+      result.style.background = "linear-gradient(120deg, #13001c, #0a000c)"
+      result.style.borderTop = 'none'
+      result.style.borderRadius = '10px'
+      result.style.width = '91%'
+      result.style.marginRight = '5%'
+      if (result.classList.contains('On')) {
+        console.log("yess")
+        result.querySelector('a.Button').style.backgroundColor = '#370039c9'
+      }
+      console.log("yess end")
+      // document.querySelector('.Button').style.backgroundColor = '#370039c9'
+      var pzew = document.querySelector('.pzeWz')
+      if (pzew) {
+        pzew.style.display = 'none'
+      }
+      var curr = document.querySelector('.Button.STPb.Current')
+      if (curr != null) {
+        curr.style.backgroundColor = '#8d0092'
+      }
+      
+      var no = document.querySelector('.Title-404')
+      if (no != null) {
+        no.style.fontSize = '20px'
+        no.style.fontWeight = '400'
+      }
+      var pop = document.querySelector('.-o50L') 
+      if (pop != null) {
+        pop.style.display = 'none'
+      }
+      var pop2 = document.querySelector('.pzeWz')
+      if (pop2 != null) {
+        pop2.style.display = 'none'
+      }
+      var obj = document.querySelectorAll('.Objf')
+      if (obj != null) {
+        obj.forEach(e => e.style.borderRadius = '20px !important')
+      }
+      
+    ''');
+
     void nav(int index) {
-      // webViewController?.stopLoading();
+      webViewController?.stopLoading();
       setState(() {
         currentIndex = index;
       });
 
-      if (index != 0) {
-        webViewController?.evaluateJavascript(
-            source: index == 1 ? genreJS : yearJS);
-      } else {
+      String urlChange = currentIndex == 0
+          ? urlHome
+          : currentIndex == 1
+              ? urlLatest
+              : "";
+      if (currentIndex < 2) {
         webViewController?.loadUrl(
             urlRequest: URLRequest(
-                url: WebUri(urlHome),
+                url: WebUri(urlChange),
                 cachePolicy:
                     URLRequestCachePolicy.RETURN_CACHE_DATA_ELSE_LOAD));
+      } else {
+        print("333333333333333333333333");
+        // webViewController?.pause();
       }
     }
 
+    print("toggleeeeeeeeeeeeeeeeeeeeeee" + serverToggle.toString());
+
     return WillPopScope(
       onWillPop: () async {
-        if (currentIndex != 0) {
-          setState(() {
-            currentIndex = 0;
-            resourceLoad = 0;
-          });
-          webViewController?.evaluateJavascript(source: closeJS);
-          return false;
-        }
         if (await webViewController!.canGoBack()) {
           webViewController!.goBack();
           return false;
         }
+        if (currentIndex > 1) {
+          setState(() {
+            currentIndex = 0;
+          });
+          return false;
+        }
         return true;
       },
-      child: SafeArea(
-          child: Scaffold(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.black,
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(255, 0, 20, 20),
-          selectedLabelStyle: const TextStyle(fontSize: 10),
-          unselectedLabelStyle: const TextStyle(fontSize: 10),
-          currentIndex: currentIndex,
-          onTap: (value) => nav(value),
-          type: BottomNavigationBarType.fixed,
-          unselectedItemColor: const Color.fromRGBO(53, 53, 53, 1),
-          selectedItemColor: Colors.white,
-          elevation: 20,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home_outlined,
+        bottomNavigationBar: Container(
+          height: 70,
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [
+            Color.fromARGB(41, 25, 1, 31),
+            Color.fromARGB(163, 47, 1, 58)
+          ])),
+          child: BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            selectedLabelStyle: const TextStyle(fontSize: 10),
+            unselectedLabelStyle: const TextStyle(fontSize: 10),
+            currentIndex: currentIndex,
+            onTap: (value) => nav(value),
+            type: BottomNavigationBarType.fixed,
+            unselectedItemColor: const Color.fromARGB(37, 219, 186, 232),
+            selectedItemColor: Colors.white,
+            elevation: 20,
+            // iconSize: 30,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home_outlined,
+                ),
+                activeIcon: Icon(
+                  Icons.home_filled,
+                ),
+                label: "Home",
               ),
-              activeIcon: Icon(
-                Icons.home_filled,
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.category_outlined,
+                ),
+                activeIcon: Icon(
+                  Icons.category_rounded,
+                ),
+                label: "New Release",
               ),
-              label: "Home",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.category_outlined,
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.playlist_play_rounded,
+                ),
+                activeIcon: Icon(
+                  Icons.playlist_play_rounded,
+                ),
+                label: "Watchlist",
               ),
-              activeIcon: Icon(
-                Icons.category_rounded,
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.translate_outlined,
+                ),
+                activeIcon: Icon(
+                  Icons.translate_rounded,
+                ),
+                label: "Language",
               ),
-              label: "Genres",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.timeline_outlined,
-              ),
-              activeIcon: Icon(
-                Icons.timeline_rounded,
-              ),
-              label: "Years",
-            ),
-          ],
+            ],
+          ),
         ),
         body: Column(children: <Widget>[
           Expanded(
@@ -390,7 +917,6 @@ class _MainState extends State<Main> {
               children: [
                 InAppWebView(
                   key: webViewKey,
-                  pullToRefreshController: pullToRefreshController,
                   initialUrlRequest: URLRequest(url: WebUri(urlHome)),
                   initialSettings: InAppWebViewSettings(
                     contentBlockers: contentBlockers,
@@ -401,65 +927,442 @@ class _MainState extends State<Main> {
                     cacheMode: CacheMode.LOAD_CACHE_ELSE_NETWORK,
                     verticalScrollBarEnabled: false,
                     horizontalScrollBarEnabled: false,
-                    iframeAllowFullscreen: false,
+                    iframeAllowFullscreen: true,
                     isTextInteractionEnabled: false,
+                    // useHybridComposition: true,
+                    hardwareAcceleration: true,
+                    useShouldOverrideUrlLoading: true,
                   ),
                   onWebViewCreated: (controller) {
                     webViewController = controller;
                   },
-                  onLoadStart: (controller, url) {
-                    setState(() {
-                      isLoading = true;
-                    });
+                  shouldOverrideUrlLoading:
+                      (controller, navigationAction) async {
+                    final uri = navigationAction.request.url!;
+                    // print('hostttttTTTTTTTTTTT' + uri.host);
+                    var whiteList = ["www.bolly2tolly.land"];
+                    if (whiteList.contains(uri.host)) {
+                      return NavigationActionPolicy.ALLOW;
+                    }
+                    return NavigationActionPolicy.CANCEL;
                   },
                   onReceivedError: (controller, request, error) {
-                    pullToRefreshController?.endRefreshing();
-                    if (error.type == WebResourceErrorType.UNSUPPORTED_SCHEME) {
+                    if (error.type == WebResourceErrorType.UNSUPPORTED_SCHEME ||
+                        error.type ==
+                            WebResourceErrorType.BAD_SERVER_RESPONSE) {
                       controller.goBack();
                     }
                   },
-                  onLoadStop: (controller, url) {
-                    setState(() {
-                      isLoading = false;
-                      resourceLoad = 0;
-                    });
-                    pullToRefreshController?.endRefreshing();
+                  onReceivedHttpError:
+                      (controller, request, errorResponse) async {
+                    WebUri? uri = await webViewController?.getUrl();
+                    String? currentUrl = uri.toString();
+                    if (currentUrl.contains("junkyadexchange") ||
+                        currentUrl.contains("exness") ||
+                        currentUrl.contains("win.pm-bet.in")) {
+                      controller.goBack();
+                    }
                   },
-                  onTitleChanged: (controller, title) {
+                  onPageCommitVisible: (controller, url) async {
+                    // WebUri? uri = await controller.getUrl();
+                    // String? currentUrl = uri.toString();
+                    // if (currentUrl.contains("/movie/") ||
+                    //     currentUrl.contains("/episode/")) {
                     setState(() {
-                      isLoading = false;
+                      serverToggle = true;
                     });
+                    await Future.delayed(
+                      const Duration(seconds: 5),
+                      () {
+                        setState(() {
+                          serverToggle = false;
+                        });
+                      },
+                    );
+                    // }
+                  },
+                  onTitleChanged: (controller, title) async {
+                    WebUri? uri = await webViewController?.getUrl();
+                    String? url = uri.toString();
+                    if (url.contains("/movie/") || url.contains("/serie/")) {
+                      if (wishList.isNotEmpty) {
+                        bool movieExists = wishList.any((movie) {
+                          // print("existtttttttttttttt" + movie.url);
+                          return movie.url == url;
+                        });
+                        // print("existtttttttttttttt" + movieExists.toString());
+
+                        if (!movieExists) {
+                          await webViewController?.evaluateJavascript(
+                              source: wishJS);
+                          // print("existtttttttttttttt DONE ");
+                        }
+                      } else {
+                        await webViewController?.evaluateJavascript(
+                            source: wishJS);
+                      }
+                    }
                   },
                   onProgressChanged: (controller, progress) {
-                    if (progress == 100) {
-                      pullToRefreshController?.endRefreshing();
-                    }
+                    if (progress == 100) {}
                     setState(() {
                       this.progress = progress;
                     });
                   },
-                  onLoadResource: (controller, resource) {
-                    if (resourceLoad < 5) {
-                      // webViewController?.evaluateJavascript(source: closeJS);
-                    }
-                  },
+                  // onEnterFullscreen: (controller) {
+                  //   setState(() {
+                  //     serverToggle = false;
+                  //   });
+                  // },
                 ),
+                currentIndex == 2
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 30, horizontal: 20),
+                        alignment: Alignment.topLeft,
+                        decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                              Color.fromARGB(255, 23, 0, 28),
+                              Colors.black
+                            ])),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const Text(
+                                "Watchlist",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              wishList.isNotEmpty
+                                  ? Wrap(
+                                      runSpacing: 20,
+                                      spacing: 20,
+                                      children: wishList.map((movie) {
+                                        return SizedBox(
+                                          width: (MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2) -
+                                              30,
+                                          height: 250,
+                                          child: Stack(children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  currentIndex = 0;
+                                                  webViewController?.loadUrl(
+                                                      urlRequest: URLRequest(
+                                                          url: WebUri(
+                                                              movie.url)));
+                                                });
+                                              },
+                                              child: Container(
+                                                width: (MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        2) -
+                                                    30,
+                                                height: 250,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        movie.photo),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                child: Container(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  decoration: const BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  15)),
+                                                      gradient: LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          colors: [
+                                                            Color.fromARGB(
+                                                                70, 66, 0, 97),
+                                                            Color.fromARGB(
+                                                                255, 19, 0, 21)
+                                                          ])),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 100,
+                                                              child: Text(
+                                                                movie.name,
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis),
+                                                              ),
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  movie
+                                                                      .language,
+                                                                  style: const TextStyle(
+                                                                      color: Color.fromARGB(
+                                                                          73,
+                                                                          255,
+                                                                          255,
+                                                                          255),
+                                                                      fontSize:
+                                                                          10),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 5,
+                                                                ),
+                                                                Text(
+                                                                  movie.year,
+                                                                  style: const TextStyle(
+                                                                      color: Color.fromARGB(
+                                                                          73,
+                                                                          255,
+                                                                          255,
+                                                                          255),
+                                                                      fontSize:
+                                                                          10),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                await removeFromWishList(movie);
+                                                List<Movie> updatedWishlist =
+                                                    await getWishList();
+                                                setState(() {
+                                                  wishList = updatedWishlist;
+                                                });
+                                              },
+                                              child: Container(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                child: Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  margin:
+                                                      const EdgeInsets.all(8),
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius.all(
+                                                              Radius.circular(
+                                                                  10)),
+                                                      color:
+                                                          const Color
+                                                              .fromARGB(95, 29,
+                                                              0, 33),
+                                                      border:
+                                                          Border.all(
+                                                              color: const Color
+                                                                  .fromARGB(255,
+                                                                  48, 0, 62),
+                                                              width: 1)),
+                                                  child: const Icon(
+                                                    Icons
+                                                        .delete_outline_rounded,
+                                                    color: Color.fromARGB(
+                                                        87, 249, 131, 255),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ]),
+                                        );
+                                      }).toList(),
+                                    )
+                                  : Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height -
+                                              200,
+                                      alignment: Alignment.center,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "lib/assets/images/wish.png",
+                                            opacity:
+                                                const AlwaysStoppedAnimation(
+                                                    .8),
+                                          ),
+                                          const Text(
+                                            "Add movies to your watchlist",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    75, 235, 199, 255)),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                            ],
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                currentIndex == 3
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        padding: const EdgeInsets.only(top: 50),
+                        alignment: Alignment.topCenter,
+                        decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                              Color.fromARGB(255, 23, 0, 28),
+                              Colors.black
+                            ])),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(30),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Language",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Wrap(
+                                spacing: 20,
+                                children: languages.map((e) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (!e['isSelected']) {
+                                        prefs.setInt("lang", e['value']);
+                                        setState(() {
+                                          lang = prefs.getInt("lang");
+                                          urlHome = url + e['path'];
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          40,
+                                      height: 120,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          gradient: e['isSelected']
+                                              ? const LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomCenter,
+                                                  colors: [
+                                                      Color.fromARGB(
+                                                          70, 86, 0, 198),
+                                                      Color.fromARGB(
+                                                          217, 134, 0, 151)
+                                                    ])
+                                              : const LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomCenter,
+                                                  colors: [
+                                                      Color.fromARGB(
+                                                          70, 42, 0, 97),
+                                                      Color.fromARGB(
+                                                          217, 31, 0, 35)
+                                                    ])),
+                                      child: Text(
+                                        e['name'],
+                                        style: TextStyle(
+                                          color: e['isSelected']
+                                              ? Colors.white
+                                              : const Color.fromARGB(
+                                                  140, 182, 144, 247),
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ))
+                    : const SizedBox(),
                 progress < 100
                     ? Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
                         alignment: Alignment.center,
                         decoration: const BoxDecoration(
-                            color: Color.fromRGBO(0, 0, 0, 1)),
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                              Color.fromARGB(255, 23, 0, 28),
+                              Colors.black
+                            ])),
                         child: const CircularProgressIndicator(
-                            color: Color.fromARGB(255, 27, 151, 5)),
+                            color: Color.fromARGB(255, 123, 2, 154)),
                       )
                     : const SizedBox()
               ],
             ),
           ),
         ]),
-      )),
+      ),
     );
   }
 }
