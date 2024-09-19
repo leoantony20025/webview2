@@ -33,7 +33,7 @@ class _WatchListComponentState extends State<WatchListComponent> {
           runSpacing: 20,
           spacing: 20,
           children: widget.watchList.map((movie) {
-            return Container(
+            return SizedBox(
               width: (MediaQuery.of(context).size.width / 2) - 40,
               height: 250,
               child: Stack(children: [
