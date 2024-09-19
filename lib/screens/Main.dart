@@ -335,35 +335,17 @@ class _MainState extends State<Main> {
           // window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
           document.querySelectorAll('.TPost').forEach(e => {e.style.position = 'relative'})
 
-          var titles = document.querySelectorAll('.TPost .Title')
-          titles.forEach(e => {
-            let mName = e.innerHTML.split('(')[0] || e.innerHTML.toString()
-            e.innerHTML = mName
-            e.style.color = 'grey'
-            e.style.textAlign = 'left'
-            // e.style.width = '150px'
-            // e.style.overflow = 'hidden'
-
-            
-          })
-
-        ''');
-        }
-
-        webViewController?.evaluateJavascript(source: '''
-          var title = document.querySelector('.Title')
-          if (title != null) {
-            title.style.color = '#fee4ff'
-            title.style.fontSize = '20px'
-            title.style.flex = 1
-            title.style.fontWeight = '400'
-            title.innerText = "$language"
-          }
-
           if (document.querySelector('#homeBanner') == null) {
-            var index = Math.floor(Math.random() * 20)
+            var index = Math.floor(Math.random() * 20) || 0
             var post = document.querySelectorAll('.TPostMv')[index]
-            var name = post.querySelector('.Title').innerHTML.toString().split('(')[0]
+            var splitName = post.querySelector('.Title').innerText
+            console.log("postttttt", splitName)
+            if (splitName != null) {
+              var name = splitName.split('(')[0]
+            } else {
+              var name = post.querySelector('.Title').innerText
+            }
+            // var name = post.querySelector('.Title').innerText.split('(')[0] || post.querySelector('.Title').innerText
             var photo = post.querySelector('.attachment-thumbnail').src
             var url = post.querySelector('a').href
             var duration = post.querySelector('.Time').innerText
@@ -404,7 +386,7 @@ class _MainState extends State<Main> {
             var h2 = document.createElement('span')
             h2.innerText = name
             h2.style.fontWeight = '800'
-            h2.style.fontSize = '22px'
+            h2.style.fontSize = '24px'
             h2.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
             h2.style.backgroundClip = 'text'
             h2.style.webkitBackgroundClip = 'text'
@@ -462,6 +444,30 @@ class _MainState extends State<Main> {
             document.body.appendChild(banner)
           }
 
+          var titles = document.querySelectorAll('.TPost .Title')
+          titles.forEach(e => {
+            let mName = e.innerHTML.split('(')[0] || e.innerHTML.toString()
+            e.innerHTML = mName
+            e.style.color = 'grey'
+            e.style.textAlign = 'left'
+            // e.style.width = '150px'
+            // e.style.overflow = 'hidden'
+
+            
+          })
+
+        ''');
+        }
+
+        webViewController?.evaluateJavascript(source: '''
+          var title = document.querySelector('.Top .Title')
+          if (title != null) {
+            title.style.color = '#fee4ff'
+            title.style.fontSize = '20px'
+            title.style.flex = 1
+            title.style.fontWeight = '400'
+            title.innerText = "$language"
+          }
         ''');
       }
 
@@ -509,9 +515,10 @@ class _MainState extends State<Main> {
             content.style.height = '60vh'
             content.style.alignItems = 'start'
             content.style.justifyContent = 'flex-end'
-            var h2 = document.createElement('h2')
+            var h2 = document.createElement('span')
             h2.innerText = name
-            h2.style.fontWeight = 'bolder'
+            h2.style.fontWeight = '800'
+            h2.style.fontSize = '24px'
             h2.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
             h2.style.backgroundClip = 'text'
             h2.style.webkitBackgroundClip = 'text'
@@ -598,31 +605,18 @@ class _MainState extends State<Main> {
               servers.childNodes[1].click()
               isSel = true
             }
-
-            // servers.style.display = 'none'
-            // document.querySelector('.TPlayerCn').style.display = 'none'
-            var search = document.querySelector('.Search')
-            search.style.position = 'fixed'
-            search.style.top = '0px'
-            search.style.left = '0'
-            search.style.zIndex = '10'
-            search.style.width = '100%'
-            search.style.padding = '25px 20px 0px 20px'
-            search.style.backgroundColor = '#13001c'
-            search.style.backdropFilter = 'blur(20px)'
-            var inp = document.querySelector('.Search .Form-Icon input')
-            inp.style.backgroundColor = '#3a003c'
-            inp.style.border = '1px solid #730077'
-            inp.style.borderRadius = '10px !important'
-            inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
-            document.body.appendChild(search)
-            document.querySelector('#searchsubmit').style.boxShadow = 'none'
-
-              
+            
           ''');
         }
 
         await webViewController?.evaluateJavascript(source: '''
+          var servers = document.querySelector('.TPlayerNv')
+          document.querySelector('.Search').style.display = 'none'
+          // servers.style.display = 'none'
+          // document.querySelector('.TPlayerCn').style.display = 'none'
+          document.querySelector('.Search').style.diplay = 'none'
+
+           
           // document.querySelector('.Button.STPb.Current').style.backgroundColor = '#c701ee'
           document.querySelector('main').style.display = 'inherit'
           document.querySelector('article').style.display = 'inherit'
@@ -634,6 +628,45 @@ class _MainState extends State<Main> {
           wng.forEach(e => {
             e.style.display = 'none'
           })
+
+          var bg = document.querySelector('.TPostBg img').src
+          console.log("conttttttt", bg)
+          var body = document.body
+          body.style.backgroundImage = 'url(' + bg + ')'
+          // body.style.backgroundAttachment = 'none'
+          body.style.backgroundRepeat = 'no-repeat'
+          body.style.backgroundPosition = 'center'
+          body.style.backgroundSize = 'cover'
+          
+          var grad = document.createElement('div')
+          grad.style.position = 'fixed'
+          grad.style.top = '0'
+          grad.style.left = '0'
+          grad.style.width = '100vw'
+          grad.style.height = '100vh'
+          grad.style.background = 'linear-gradient(transparent, #0a000c)'
+
+          body.appendChild(grad)
+
+          document.querySelector('.Objf').style.display = 'none'
+          document.querySelector('.Image').style.display = 'none'
+
+          document.querySelector('.Title').style.display = 'none'
+          var sub = document.querySelector('.SubTitle')
+          sub.style.fontSize = '24px'
+          sub.style.fontWeight = '800'
+          sub.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
+          sub.style.backgroundClip = 'text'
+          sub.style.webkitBackgroundClip = 'text'
+          sub.style.color = 'transparent'
+          sub.style.width = 'max-content'
+          document.querySelector('.SubTitle').style.marginTop = '10vh'
+          document.querySelector('.Description').style.marginBottom = '0'
+          // document.querySelector('.Content').style.padding = '0'
+          // var cont = document.querySelector('.Content .Container')
+          // cont.style.padding = '0'
+          // cont.style.margin = '0'
+          // cont.style.width = '100vw'
 
         ''');
       }
@@ -701,12 +734,10 @@ class _MainState extends State<Main> {
       }
     }
 
-    updateNav();
-
     webViewController?.addJavaScriptHandler(
         handlerName: 'homeHandler',
         callback: (args) async {
-          print("homeeeeeeeeeeee " + args[3]);
+          // print("homeeeeeeeeeeee " + args[3]);
         });
 
     webViewController?.addJavaScriptHandler(
@@ -736,11 +767,13 @@ class _MainState extends State<Main> {
       document.getElementById('tr_live_search').setAttribute('style', "border-radius: 50px  !important;")
 
 
-      document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
-      document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
-      document.body.style.backgroundAttachment = 'fixed'
-      document.body.style.backgroundColor = 'transparent'
-      document.body.style.color = 'white'
+      // if (!window.location.href.includes('/movie/')) {
+        document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
+        document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
+        document.body.style.backgroundAttachment = 'fixed'
+        document.body.style.backgroundColor = 'transparent'
+        document.body.style.color = 'white'
+      // }
       
       document.querySelector('.Content').style.background = 'transparent'
       document.querySelector('.Content').style.backgroundColor = 'transparent'
@@ -810,6 +843,7 @@ class _MainState extends State<Main> {
       }
       
     ''');
+    updateNav();
 
     void nav(int index) {
       webViewController?.stopLoading();
