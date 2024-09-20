@@ -193,6 +193,12 @@ class _MainState extends State<Main> {
     String urlHome = url + languages[(lang ?? 1) - 1]['path'];
     String language = languages[(lang ?? 1) - 1]['name'];
     String urlLatest = "https://www.bolly2tolly.land";
+    String wlName = "";
+    String wlPhoto = "";
+    String wlUrl = "";
+    String wlLanguage = "";
+    String wlyear = "";
+    String wlDuration = "";
 
     String latestJS = '''
 
@@ -256,8 +262,11 @@ class _MainState extends State<Main> {
       var isMovie = currentUrl.includes('/movie/')
       var isSeries = currentUrl.includes('/serie/')
 
+      console.log("serieeeeeeeee no")
+
       if (isMovie){
-        var name = document.querySelector('.SubTitle').innerHTML.toString()
+        var name = ""
+        if (document.querySelector('.SubTitle') != null) name = document.querySelector('.SubTitle').innerText.toString()
         var photo = document.querySelector('.attachment-thumbnail').src
         var language = document.querySelectorAll('td')[3].querySelector('span').innerText
         var url = window.location.href
@@ -266,15 +275,19 @@ class _MainState extends State<Main> {
       }
 
       if (isSeries) {
-        var name = document.querySelector('.Title').innerHTML.toString()
-        var photo = document.querySelector('.attachment-thumbnail').src
+        console.log("serieeeeeeeee st")
+        var name = ""
+        if (document.querySelector('.Title') != null) name = document.querySelector('.Title').innerText
+        console.log("serieeeeeeeee name", name )
+        var photo = document.querySelector('.attachment-thumbnail').src || ""
         var language = ""
         var url = window.location.href
         var duration = ""
         var year = ""
       }
+        console.log("serieeeeeeeee name", name )
+        console.log("serieeeeeeeee ph", photo)
 
-      // AAIco-adjust
 
       wl.addEventListener('click', () => {
         window.flutter_inappwebview.callHandler('wishHandler', name, photo, language, url, duration, year);
@@ -288,6 +301,8 @@ class _MainState extends State<Main> {
     String removeWishJS = '''
       document.querySelector('#addToWishList').style.display = 'none'
     ''';
+
+    print("serieee length " + wishList!.length.toString());
 
     void updateNav() async {
       WebUri? uri = await webViewController?.getUrl();
@@ -334,7 +349,7 @@ class _MainState extends State<Main> {
           document.querySelectorAll('.TPost').forEach(e => {e.style.position = 'relative'})
 
           if (document.querySelector('#homeBanner') == null) {
-            var postCount = document.querySelectorAll('.TPostMv').length - 1
+            var postCount = new URLSearchParams(window.location.search).get("s") ? 0 : document.querySelectorAll('.TPostMv').length - 1
             var index = Math.floor(Math.random() * postCount) || 0
             var post = document.querySelectorAll('.TPostMv')[index]
             const queryString = new URLSearchParams(window.location.search).get("tr_post_type");
@@ -467,7 +482,17 @@ class _MainState extends State<Main> {
             title.style.fontSize = '20px'
             title.style.flex = 1
             title.style.fontWeight = '400'
-            title.innerText = "$language"
+            title.innerText = new URLSearchParams(window.location.search).get("s") ? "Search" : "$language"
+          }
+        ''');
+
+        webViewController?.evaluateJavascript(source: '''
+          if (new URLSearchParams(window.location.search).get("s") != null) {
+            // console.log("searchhhhhhhh", queryStringSearch)
+            var banner = document.querySelector('#homeBanner')
+            // banner.style.width = '90vw'
+            // banner.style.height = '50vw'
+            // banner.style.margin = '10vh auto'
           }
         ''');
       }
@@ -645,8 +670,14 @@ class _MainState extends State<Main> {
           body.style.backgroundPosition = 'top'
           body.style.backgroundSize = 'cover'
 
-          document.querySelector('.Objf').style.display = 'none'
-          document.querySelector('.Image').style.display = 'none'
+          document.querySelector('.Objf').style.opacity = '0'
+          document.querySelector('.Objf').style.width = '0'
+          document.querySelector('.Objf').style.height = '0'
+          document.querySelector('.Objf').style.zIndex = '-10'
+          document.querySelector('.Image').style.opacity = '0'
+          document.querySelector('.Image').style.width = '0'
+          document.querySelector('.Image').style.height = '0'
+          document.querySelector('.Image').style.zIndex = '-10'
           
           if (document.querySelector('#movieGrad') == null) {
             var grad = document.createElement('div')
@@ -717,7 +748,10 @@ class _MainState extends State<Main> {
             body.style.backgroundPosition = 'top'
             body.style.backgroundSize = 'cover'
 
-            document.querySelector('.Image').style.display = 'none'
+            document.querySelector('.Image').style.opacity = '0'
+            document.querySelector('.Image').style.width = '0'
+            document.querySelector('.Image').style.height = '0'
+            document.querySelector('.Image').style.zIndex = '-10'
             
             if (document.querySelector('#movieGrad') == null) {
               var grad = document.createElement('div')
@@ -901,23 +935,19 @@ class _MainState extends State<Main> {
     }
 
     webViewController?.addJavaScriptHandler(
-        handlerName: 'homeHandler',
-        callback: (args) async {
-          // print("homeeeeeeeeeeee " + args[3]);
-        });
-
-    webViewController?.addJavaScriptHandler(
         handlerName: 'wishHandler',
         callback: (args) async {
           WebUri? uri = await webViewController?.getUrl();
           String? currentUrl = uri.toString();
           Movie movie = Movie(
-              name: args[0] ?? "",
+              name: args[0],
               photo: args[1] ?? "",
               language: args[2] ?? "",
               url: currentUrl,
               duration: args[4] ?? "",
               year: args[5] ?? "");
+
+          print("serieeee final " + movie.name);
 
           await addToWishList(movie);
           wishList = await getWishList();
@@ -1149,21 +1179,17 @@ class _MainState extends State<Main> {
                       controller.goBack();
                     }
                   },
-                  onReceivedHttpError:
-                      (controller, request, errorResponse) async {
-                    WebUri? uri = await webViewController?.getUrl();
-                    String? currentUrl = uri.toString();
-                    if (currentUrl.contains("junkyadexchange") ||
-                        currentUrl.contains("exness") ||
-                        currentUrl.contains("win.pm-bet.in")) {
-                      controller.goBack();
-                    }
-                  },
+                  // onReceivedHttpError:
+                  //     (controller, request, errorResponse) async {
+                  //   WebUri? uri = await webViewController?.getUrl();
+                  //   String? currentUrl = uri.toString();
+                  //   if (currentUrl.contains("junkyadexchange") ||
+                  //       currentUrl.contains("exness") ||
+                  //       currentUrl.contains("win.pm-bet.in")) {
+                  //     controller.goBack();
+                  //   }
+                  // },
                   onPageCommitVisible: (controller, url) async {
-                    // WebUri? uri = await controller.getUrl();
-                    // String? currentUrl = uri.toString();
-                    // if (currentUrl.contains("/movie/") ||
-                    //     currentUrl.contains("/episode/")) {
                     setState(() {
                       serverToggle = true;
                     });
@@ -1175,7 +1201,6 @@ class _MainState extends State<Main> {
                         });
                       },
                     );
-                    // }
                   },
                   onTitleChanged: (controller, title) async {
                     WebUri? uri = await webViewController?.getUrl();
