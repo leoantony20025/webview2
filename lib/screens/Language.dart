@@ -133,7 +133,7 @@ class _LanguageState extends State<Language> {
                   GestureDetector(
                     onTap: () {
                       prefs.setInt("lang", lang!);
-                      Navigator.pushNamed(context, "/");
+                      Navigator.pushNamed(context, "/main");
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width,
