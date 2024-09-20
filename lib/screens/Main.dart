@@ -192,13 +192,7 @@ class _MainState extends State<Main> {
     String url = "https://www.bolly2tolly.land";
     String urlHome = url + languages[(lang ?? 1) - 1]['path'];
     String language = languages[(lang ?? 1) - 1]['name'];
-    String urlLatest = "https://www.bolly2tolly.land";
-    String wlName = "";
-    String wlPhoto = "";
-    String wlUrl = "";
-    String wlLanguage = "";
-    String wlyear = "";
-    String wlDuration = "";
+    String urlLatest = "https://www.bolly2tolly.land/?s=";
 
     String latestJS = '''
 
@@ -238,63 +232,60 @@ class _MainState extends State<Main> {
     ''';
 
     String wishJS = '''
-      var wl = document.createElement('div')
-      wl.id = 'addToWishList'
-      wl.style.width = '100%'
-      wl.style.height = '50px'
-      wl.style.background = 'linear-gradient(120deg, #36014e8b, #2c00318b)'
-      wl.style.display = 'flex'
-      wl.style.alignItems = 'center'
-      wl.style.justifyContent = 'center'
-      wl.style.marginBottom = '30px'
-      wl.style.borderRadius = '10px'
-      
-      var img = document.createElement('img');
-      img.src = "https://img.icons8.com/ios-glyphs/20/FFEFFF/plus-math.png"
-      img.style.margin = '0 10px'
-      var h6 = document.createElement('h5');
-      h6.innerText = "Add To Watchlist"
-      h6.style.margin = '0'
-      wl.appendChild(img)
-      wl.appendChild(h6)
+      const wish = async () => {
+        var wl = document.createElement('div')
+        wl.id = 'addToWishList'
+        wl.style.width = '100%'
+        wl.style.height = '50px'
+        wl.style.background = 'linear-gradient(120deg, #36014e8b, #2c00318b)'
+        wl.style.display = 'flex'
+        wl.style.alignItems = 'center'
+        wl.style.justifyContent = 'center'
+        wl.style.marginBottom = '30px'
+        wl.style.borderRadius = '10px'
+        
+        var img = document.createElement('img');
+        img.src = "https://img.icons8.com/ios-glyphs/20/FFEFFF/plus-math.png"
+        img.style.margin = '0 10px'
+        var h6 = document.createElement('h5');
+        h6.innerText = "Add To Watchlist"
+        h6.style.margin = '0'
+        wl.appendChild(img)
+        await wl.appendChild(h6)
 
-      var currentUrl = document.location.href
-      var isMovie = currentUrl.includes('/movie/')
-      var isSeries = currentUrl.includes('/serie/')
+        var currentUrl = document.location.href
+        var isMovie = currentUrl.includes('/movie/')
+        var isSeries = currentUrl.includes('/serie/')
 
-      console.log("serieeeeeeeee no")
+        if (isMovie){
+          var name = document.querySelector('.SubTitle').innerText
+          console.log("serieeeeeeeee name ", name)
+          var photo = document.querySelector('.attachment-thumbnail').src
+          var language = document.querySelectorAll('td')[3].querySelector('span').innerText
+          var url = window.location.href
+          var duration = document.querySelector('.Time').innerText
+          var year = document.querySelector('.Date').innerText
+        }
 
-      if (isMovie){
-        var name = ""
-        if (document.querySelector('.SubTitle') != null) name = document.querySelector('.SubTitle').innerText.toString()
-        var photo = document.querySelector('.attachment-thumbnail').src
-        var language = document.querySelectorAll('td')[3].querySelector('span').innerText
-        var url = window.location.href
-        var duration = document.querySelector('.Time').innerText
-        var year = document.querySelector('.Date').innerText
+        if (isSeries) {
+          var name = document.querySelector('.Title').innerText
+          var photo = document.querySelector('.attachment-thumbnail').src || ""
+          var language = ""
+          var url = window.location.href
+          var duration = ""
+          var year = document.querySelector('.InfoList').children[4].querySelector('a').innerText.split(' ')[0] || ""
+        }
+          console.log("serieeeeeeeee ph", photo)
+
+        await wl.addEventListener('click', () => {
+          window.flutter_inappwebview.callHandler('wishHandler', name, photo, language, url, duration, year);
+        })
+
+        var article = document.querySelector('article')
+        article.append(wl)
       }
 
-      if (isSeries) {
-        console.log("serieeeeeeeee st")
-        var name = ""
-        if (document.querySelector('.Title') != null) name = document.querySelector('.Title').innerText
-        console.log("serieeeeeeeee name", name )
-        var photo = document.querySelector('.attachment-thumbnail').src || ""
-        var language = ""
-        var url = window.location.href
-        var duration = ""
-        var year = ""
-      }
-        console.log("serieeeeeeeee name", name )
-        console.log("serieeeeeeeee ph", photo)
-
-
-      wl.addEventListener('click', () => {
-        window.flutter_inappwebview.callHandler('wishHandler', name, photo, language, url, duration, year);
-      })
-
-      var article = document.querySelector('article')
-      article.append(wl)
+      wish()
 
     ''';
 
@@ -302,7 +293,23 @@ class _MainState extends State<Main> {
       document.querySelector('#addToWishList').style.display = 'none'
     ''';
 
-    print("serieee length " + wishList!.length.toString());
+    webViewController?.addJavaScriptHandler(
+        handlerName: 'wishHandler',
+        callback: (args) async {
+          WebUri? uri = await webViewController?.getUrl();
+          String? currentUrl = uri.toString();
+          Movie movie = Movie(
+              name: args[0],
+              photo: args[1] ?? "",
+              language: args[2] ?? "",
+              url: currentUrl,
+              duration: args[4] ?? "",
+              year: args[5] ?? "");
+
+          await addToWishList(movie);
+          wishList = await getWishList();
+          await webViewController?.evaluateJavascript(source: removeWishJS);
+        });
 
     void updateNav() async {
       WebUri? uri = await webViewController?.getUrl();
@@ -325,6 +332,8 @@ class _MainState extends State<Main> {
         if (serverToggle) {
           await webViewController?.evaluateJavascript(source: '''
           document.querySelector('aside').style.display = 'none'
+
+          var isSearch = new URLSearchParams(window.location.search).get("s") != null
           
           var search = document.querySelector('.Search')
           search.style.position = 'fixed'
@@ -333,7 +342,7 @@ class _MainState extends State<Main> {
           search.style.zIndex = '10'
           search.style.width = '100%'
           search.style.padding = '25px 20px 0px 20px'
-          search.style.backgroundColor = '#13001c'
+          search.style.backgroundColor = 'transparent'
           search.style.backdropFilter = 'blur(20px)'
           var inp = document.querySelector('.Search .Form-Icon input')
           inp.style.backgroundColor = '#1b001eda'
@@ -345,11 +354,10 @@ class _MainState extends State<Main> {
 
           document.querySelector('.NoBrdRa input').style.borderRadius = '50px'
 
-          // window.flutter_inappwebview.callHandler('homeHandler', name, photo, url, duration, quality, desc);
           document.querySelectorAll('.TPost').forEach(e => {e.style.position = 'relative'})
 
           if (document.querySelector('#homeBanner') == null) {
-            var postCount = new URLSearchParams(window.location.search).get("s") ? 0 : document.querySelectorAll('.TPostMv').length - 1
+            var postCount = isSearch ? 0 : document.querySelectorAll('.TPostMv').length - 1
             var index = Math.floor(Math.random() * postCount) || 0
             var post = document.querySelectorAll('.TPostMv')[index]
             const queryString = new URLSearchParams(window.location.search).get("tr_post_type");
@@ -361,31 +369,32 @@ class _MainState extends State<Main> {
               name = post.querySelector('.Title').innerText.split('(')[0] || post.querySelector('.Title').innerText
               var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
             }
-            console.log("postttttt", name)
             var photo = post.querySelector('.attachment-thumbnail').src
             var url = post.querySelector('a').href
             var duration = post.querySelector('.Time').innerText
             var quality = post.querySelector('.Qlty').innerText
             var desc = post.querySelector('.Description').childNodes[0].innerText
 
-            console.log("homeeeeeeeeeeeee ", url)
-            
             var banner = document.createElement('div')
             banner.id = 'homeBanner'
             banner.style.position = 'absolute'
-            banner.style.top = '80px'
-            banner.style.left = '0'
-            banner.style.width = '100vw'
-            banner.style.height = '70vh'
+            banner.style.top = isSearch ? '100px' : '90px'
+            banner.style.left = isSearch ? '5vw' : '0'
+            banner.style.width = isSearch ? '90vw' : '100vw'
+            banner.style.height = isSearch ? '40vh' : '70vh'
             banner.style.backgroundImage = 'url(' + photo + ')'
             banner.style.backgroundSize = 'cover'
-            banner.style.backgroundPosition = 'center'
+            banner.style.backgroundPosition = isSearch ? 'top' : 'center'
+            banner.style.borderRadius = isSearch ? '30px' : '0'
+            banner.style.boxShadow = isSearch ? 'none' : '5px 10px 40px 0e00114c #1800204c'
+
             
             var grad = document.createElement('div')
-            grad.style.width = '100vw'
-            grad.style.height = '70vh'
-            grad.style.marginTop = '-30px'
-            grad.style.background = 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
+            grad.style.width = isSearch ? '90vw' : '100vw'
+            grad.style.height = isSearch ? '40vh' : '70vh'
+            grad.style.marginTop = isSearch ? '-20px' : '-30px'
+            grad.style.borderRadius = isSearch ? '30px' : '0'
+            grad.style.background = isSearch ? 'linear-gradient(transparent, #17001ca8, #0a000cdd,  #0a000c)' : 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
 
             banner.appendChild(grad)
 
@@ -395,7 +404,7 @@ class _MainState extends State<Main> {
             content.style.gap = '10px'
             content.style.margin = '30px 20px'
             content.style.width = '80%'
-            content.style.height = '60vh'
+            content.style.height = isSearch ? '40vh' : '60vh'
             content.style.alignItems = 'start'
             content.style.justifyContent = 'flex-end'
             var h2 = document.createElement('span')
@@ -468,8 +477,6 @@ class _MainState extends State<Main> {
             e.style.textAlign = 'left'
             // e.style.width = '150px'
             // e.style.overflow = 'hidden'
-
-            
           })
 
         ''');
@@ -700,6 +707,7 @@ class _MainState extends State<Main> {
           var sub = document.querySelector('.SubTitle')
           sub.style.fontSize = '24px'
           sub.style.lineHeight = '26px'
+          sub.style.margin = '0'
           sub.style.fontWeight = '800'
           sub.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
           sub.style.backgroundClip = 'text'
@@ -707,6 +715,7 @@ class _MainState extends State<Main> {
           sub.style.color = 'transparent'
           sub.style.width = 'max-content'
           document.querySelector('.SubTitle').style.marginTop = '10vh'
+          document.querySelector('.SubTitle').style.maxWidth = '90vw'
           document.querySelector('.ClFx').style.paddingTop = '10px'
           document.querySelector('article').style.margin = '0'
           document.querySelector('article').style.padding = '0'
@@ -736,7 +745,6 @@ class _MainState extends State<Main> {
 
             document.body.style.background = 'linear-gradient(#0a000c, #000000)'
             var bg = document.querySelector('.attachment-thumbnail').src
-            console.log("posttttttttt ", bg)
             var body = document.createElement('div')
             body.style.backgroundImage = 'url(' + bg + ')'
             body.style.width = '100vw'
@@ -766,7 +774,6 @@ class _MainState extends State<Main> {
               var desc = document.querySelector('.Description')
               desc.style.marginBottom = '-20px'
               var descri = document.querySelector('.Description p').innerText
-              console.log("desccccccccccccccccc", descri)
               document.querySelector('.Description p').innerText = descri.split(',').slice(1).join()
               descri.style.margin = '20px 0'
             }
@@ -934,26 +941,6 @@ class _MainState extends State<Main> {
       }
     }
 
-    webViewController?.addJavaScriptHandler(
-        handlerName: 'wishHandler',
-        callback: (args) async {
-          WebUri? uri = await webViewController?.getUrl();
-          String? currentUrl = uri.toString();
-          Movie movie = Movie(
-              name: args[0],
-              photo: args[1] ?? "",
-              language: args[2] ?? "",
-              url: currentUrl,
-              duration: args[4] ?? "",
-              year: args[5] ?? "");
-
-          print("serieeee final " + movie.name);
-
-          await addToWishList(movie);
-          wishList = await getWishList();
-          await webViewController?.evaluateJavascript(source: removeWishJS);
-        });
-
     webViewController?.evaluateJavascript(source: '''
       // document.body.style.pointerEvents = 'none';
       var posts = document.querySelectorAll('.NoBrdRa .TPost .Image figure img')
@@ -961,6 +948,7 @@ class _MainState extends State<Main> {
         e.setAttribute('style', "border-radius: 20px !important;")
       })
       document.getElementById('tr_live_search').setAttribute('style', "border-radius: 50px  !important;")
+      var isSearch = new URLSearchParams(window.location.search).get("s")
 
 
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
@@ -981,7 +969,7 @@ class _MainState extends State<Main> {
 
       document.querySelector('.Top').style.display = 'flex'
       document.querySelector('.Top').style.alignItems = 'center'
-      document.querySelector('.Top').style.marginTop = '60vh'
+      document.querySelector('.Top').style.marginTop = isSearch ? '45vh' : '60vh'
 
       var pg = document.querySelectorAll('.page-numbers')
       if (pg != null) {
@@ -1056,9 +1044,6 @@ class _MainState extends State<Main> {
                 url: WebUri(urlChange),
                 cachePolicy:
                     URLRequestCachePolicy.RETURN_CACHE_DATA_ELSE_LOAD));
-      } else {
-        print("333333333333333333333333");
-        // webViewController?.pause();
       }
     }
 
