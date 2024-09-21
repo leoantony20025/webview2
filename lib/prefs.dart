@@ -33,10 +33,12 @@ Future<void> saveWishList(List<Movie> wishList) async {
 
 Future<void> addToWishList(Movie movie) async {
   final List<Movie> wishList = await getWishList();
-  if (!wishList.any((m) => m.name == movie.name)) {
-    wishList.add(movie);
-    await saveWishList(wishList);
-  }
+  // if (!wishList.any((m) => m.name == movie.name)) {
+  wishList.add(movie);
+  await saveWishList(wishList);
+  // } else {
+  //   print("serieeee NOOOOOOOOOOOOOO " + wishList.length.toString());
+  // }
 }
 
 Future<void> removeFromWishList(Movie movie) async {

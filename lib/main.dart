@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:theater/prefs.dart';
 import 'package:theater/screens/Language.dart';
+import 'package:theater/screens/Splash.dart';
 import 'screens/Main.dart';
 
 void main() async {
@@ -41,10 +42,11 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: const Color.fromARGB(255, 21, 0, 23),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/home',
       routes: {
         "/language": (context) => const Language(),
-        "/": (context) => const Main()
+        '/home': (context) => const SplashScreen(),
+        "/main": (context) => const Main()
       },
     );
   }
