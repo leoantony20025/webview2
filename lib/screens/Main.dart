@@ -195,18 +195,9 @@ class _MainState extends State<Main> {
     String urlLatest = "https://www.bolly2tolly.land/?s=";
 
     String latestJS = '''
-
-      var tle = document.querySelector('.Title')
-      tle.style.marginTop = '-30px'
-
       document.querySelector('.Header').style.display = 'none'
       document.querySelector('.MovieListTopCn').style.display = 'none'
-      document.querySelector('.wp-pagenavi').style.display = 'none'
-      // document.querySelector('.Search').style.display = 'none'
       var aside = document.querySelector('aside').style.display = 'none'
-
-      var title = document.querySelector('.Title')
-      title.style.display = 'none'
 
       var list = document.querySelector('.TpSbList')
       list.style.maxWidth = '100%'
@@ -320,7 +311,7 @@ class _MainState extends State<Main> {
           setState(() {
             currentIndex = 0;
           });
-        } else if (currentUrl == urlLatest) {
+        } else if (currentUrl.contains("/?s=")) {
           setState(() {
             currentIndex = 1;
           });
@@ -332,32 +323,30 @@ class _MainState extends State<Main> {
         if (serverToggle) {
           await webViewController?.evaluateJavascript(source: '''
           document.querySelector('aside').style.display = 'none'
-
-          var isSearch = new URLSearchParams(window.location.search).get("s") != null
           
           var search = document.querySelector('.Search')
-          search.style.position = 'fixed'
-          search.style.top = '0px'
-          search.style.left = '0'
-          search.style.zIndex = '10'
-          search.style.width = '100%'
-          search.style.padding = '25px 20px 0px 20px'
-          search.style.backgroundColor = 'transparent'
-          search.style.backdropFilter = 'blur(20px)'
-          var inp = document.querySelector('.Search .Form-Icon input')
-          inp.style.backgroundColor = '#1b001eda'
-          inp.style.border = '1px solid #730077'
-          inp.style.borderRadius = '10px !important'
-          inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
-          document.body.appendChild(search)
-          document.querySelector('#searchsubmit').style.boxShadow = 'none'
+          // search.style.position = 'fixed'
+          // search.style.top = '0px'
+          // search.style.left = '0'
+          // search.style.zIndex = '10'
+          // search.style.width = '100%'
+          // search.style.padding = '25px 20px 0px 20px'
+          // search.style.backgroundColor = 'transparent'
+          // search.style.backdropFilter = 'blur(20px)'
+          // var inp = document.querySelector('.Search .Form-Icon input')
+          // inp.style.backgroundColor = '#1b001eda'
+          // inp.style.border = '1px solid #730077'
+          // inp.style.borderRadius = '10px !important'
+          // inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
+          // document.body.appendChild(search)
+          // document.querySelector('#searchsubmit').style.boxShadow = 'none'
 
           document.querySelector('.NoBrdRa input').style.borderRadius = '50px'
 
           document.querySelectorAll('.TPost').forEach(e => {e.style.position = 'relative'})
 
           if (document.querySelector('#homeBanner') == null) {
-            var postCount = isSearch ? 0 : document.querySelectorAll('.TPostMv').length - 1
+            var postCount = document.querySelectorAll('.TPostMv').length - 1
             var index = Math.floor(Math.random() * postCount) || 0
             var post = document.querySelectorAll('.TPostMv')[index]
             const queryString = new URLSearchParams(window.location.search).get("tr_post_type");
@@ -378,23 +367,23 @@ class _MainState extends State<Main> {
             var banner = document.createElement('div')
             banner.id = 'homeBanner'
             banner.style.position = 'absolute'
-            banner.style.top = isSearch ? '100px' : '90px'
-            banner.style.left = isSearch ? '5vw' : '0'
-            banner.style.width = isSearch ? '90vw' : '100vw'
-            banner.style.height = isSearch ? '40vh' : '70vh'
+            banner.style.top = '0'
+            banner.style.left = '0'
+            banner.style.width = '100vw'
+            banner.style.height = '80vh'
             banner.style.backgroundImage = 'url(' + photo + ')'
             banner.style.backgroundSize = 'cover'
-            banner.style.backgroundPosition = isSearch ? 'top' : 'center'
-            banner.style.borderRadius = isSearch ? '30px' : '0'
-            banner.style.boxShadow = isSearch ? 'none' : '5px 10px 40px 0e00114c #1800204c'
+            banner.style.backgroundPosition = 'center'
+            banner.style.borderRadius = '0'
+            banner.style.boxShadow = '5px 10px 40px 0e00114c #1800204c'
 
             
             var grad = document.createElement('div')
-            grad.style.width = isSearch ? '90vw' : '100vw'
-            grad.style.height = isSearch ? '40vh' : '70vh'
-            grad.style.marginTop = isSearch ? '-20px' : '-30px'
-            grad.style.borderRadius = isSearch ? '30px' : '0'
-            grad.style.background = isSearch ? 'linear-gradient(transparent, #17001ca8, #0a000cdd,  #0a000c)' : 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
+            grad.style.width = '100vw'
+            grad.style.height = '80vh'
+            grad.style.marginTop = '-30px'
+            grad.style.borderRadius = '0'
+            grad.style.background = 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
 
             banner.appendChild(grad)
 
@@ -404,7 +393,7 @@ class _MainState extends State<Main> {
             content.style.gap = '10px'
             content.style.margin = '30px 20px'
             content.style.width = '80%'
-            content.style.height = isSearch ? '40vh' : '60vh'
+            content.style.height = '70vh'
             content.style.alignItems = 'start'
             content.style.justifyContent = 'flex-end'
             var h2 = document.createElement('span')
@@ -479,6 +468,8 @@ class _MainState extends State<Main> {
             // e.style.overflow = 'hidden'
           })
 
+          document.querySelector('.Top').style.marginTop = '60vh'
+
         ''');
         }
 
@@ -492,48 +483,79 @@ class _MainState extends State<Main> {
             title.innerText = new URLSearchParams(window.location.search).get("s") ? "Search" : "$language"
           }
         ''');
-
-        webViewController?.evaluateJavascript(source: '''
-          if (new URLSearchParams(window.location.search).get("s") != null) {
-            // console.log("searchhhhhhhh", queryStringSearch)
-            var banner = document.querySelector('#homeBanner')
-            // banner.style.width = '90vw'
-            // banner.style.height = '50vw'
-            // banner.style.margin = '10vh auto'
-          }
-        ''');
       }
 
       if (currentIndex == 1) {
-        webViewController?.evaluateJavascript(source: '''
+        if (serverToggle) {
+          await webViewController?.evaluateJavascript(source: '''
+          document.querySelector('aside').style.display = 'none'
+
+          var isSearch = new URLSearchParams(window.location.search).get("s") != null
+          
+          var search = document.querySelector('.Search')
+          search.style.position = 'fixed'
+          search.style.top = '0px'
+          search.style.left = '0'
+          search.style.zIndex = '10'
+          search.style.width = '100%'
+          search.style.padding = '25px 20px 0px 20px'
+          search.style.backgroundColor = 'transparent'
+          search.style.backdropFilter = 'blur(20px)'
+          var inp = document.querySelector('.Search .Form-Icon input')
+          inp.style.backgroundColor = '#1b001eda'
+          inp.style.border = '1px solid #730077'
+          inp.style.borderRadius = '10px !important'
+          inp.style.boxShadow = '5px 10px 20px 0e00114c #1800204c'
+          document.body.appendChild(search)
+          document.querySelector('#searchsubmit').style.boxShadow = 'none'
+
+          document.querySelector('.NoBrdRa input').style.borderRadius = '50px'
+
+          document.querySelectorAll('.TPost').forEach(e => {e.style.position = 'relative'})
+
           if (document.querySelector('#latestBanner') == null) {
-            var index = Math.floor(Math.random() * 7) + 8
-            console.log("homeeee randommm ", index)
-            var post = document.querySelectorAll('.TPostMv')[index]
-            var name = post.querySelector('.Title').innerHTML.toString().split('(')[0]
+            document.querySelector('.Top').style.marginTop = '45vh' 
+
+            var post = document.querySelectorAll('.TPostMv')[0]
+            const isMovie = post.querySelector(".TpTv") == null
+            var name = "";
+            var year = "";
+            console.log("searchhhhhhh isMo ", post.querySelector('.Title').innerText)
+            if (isMovie) {
+              name = post.querySelector('.Title').innerText
+              var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
+            } else {
+              name = post.querySelector('.Title').innerText
+            }
             var photo = post.querySelector('.attachment-thumbnail').src
             var url = post.querySelector('a').href
             var duration = post.querySelector('.Time').innerText
             var quality = post.querySelector('.Qlty').innerText
             var desc = post.querySelector('.Description').childNodes[0].innerText
-            var year = post.querySelector('.Title').innerHTML.toString().split('(')[1].split(')')[0] || ""
+
+            console.log("searchhhhhhh desc ", desc)
+
 
             var banner = document.createElement('div')
             banner.id = 'latestBanner'
             banner.style.position = 'absolute'
-            banner.style.top = '80px'
-            banner.style.left = '0'
-            banner.style.width = '100vw'
-            banner.style.height = '70vh'
+            banner.style.top = '100px'
+            banner.style.left = '5vw'
+            banner.style.width = '90vw'
+            banner.style.height = '40vh'
             banner.style.backgroundImage = 'url(' + photo + ')'
             banner.style.backgroundSize = 'cover'
-            banner.style.backgroundPosition = 'center'
+            banner.style.backgroundPosition = 'top'
+            banner.style.borderRadius = '30px'
+            banner.style.boxShadow = 'none'
+
             
             var grad = document.createElement('div')
-            grad.style.width = '100vw'
-            grad.style.height = '70vh'
-            grad.style.marginTop = '-30px'
-            grad.style.background = 'linear-gradient(#13001c, #17001ca8, #17001c8b, #0a000cdd,  #0a000c)'
+            grad.style.width = '90vw'
+            grad.style.height = '40vh'
+            grad.style.marginTop = '-20px'
+            grad.style.borderRadius = '30px'
+            grad.style.background = 'linear-gradient(transparent, #17001ca8, #0a000cdd,  #0a000c)' 
 
             banner.appendChild(grad)
 
@@ -543,13 +565,14 @@ class _MainState extends State<Main> {
             content.style.gap = '10px'
             content.style.margin = '30px 20px'
             content.style.width = '80%'
-            content.style.height = '60vh'
+            content.style.height = '40vh'
             content.style.alignItems = 'start'
             content.style.justifyContent = 'flex-end'
             var h2 = document.createElement('span')
             h2.innerText = name
             h2.style.fontWeight = '800'
             h2.style.fontSize = '24px'
+            h2.style.lineHeight = '37px'
             h2.style.background = 'linear-gradient(120deg, #f782ff, #8000cf)'
             h2.style.backgroundClip = 'text'
             h2.style.webkitBackgroundClip = 'text'
@@ -598,15 +621,39 @@ class _MainState extends State<Main> {
             button.style.margin = '10px 0 20px 0'
             button.style.zIndex = 10
 
-            // button.addEventListener('click', () => window.location.href = url)
-
             content.append(button)
 
             grad.appendChild(content)
 
             document.body.appendChild(banner)
           }
+
+          var titles = document.querySelectorAll('.TPost .Title')
+          titles.forEach(e => {
+            let mName = e.innerHTML.split('(')[0] || e.innerHTML.toString()
+            e.innerHTML = mName
+            e.style.color = 'grey'
+            e.style.textAlign = 'left'
+          })
+          var title = document.querySelector('.Top .Title')
+          if (title != null) {
+            title.style.color = '#fee4ff'
+            title.style.fontSize = '20px'
+            title.style.flex = 1
+            title.style.fontWeight = '400'
+            title.innerText = new URLSearchParams(window.location.search).get("s") !== "" ? "Search" : "New Releases"
+          }
+          document.querySelector('.wp-pagenavi').style.display = 'none'
+
+          // if (new URLSearchParams(window.location.search).get("s") == "") {
+          //   console.log("tiiiiiiiiiii ")
+          //   var list = document.querySelector('ul.MovieList')
+          //   list.style.flexWrap = 'nowrap'
+          //   list.style.overflowX = 'auto'
+          // }
+
         ''');
+        }
 
         webViewController?.evaluateJavascript(source: latestJS);
       }
@@ -948,8 +995,6 @@ class _MainState extends State<Main> {
         e.setAttribute('style', "border-radius: 20px !important;")
       })
       document.getElementById('tr_live_search').setAttribute('style', "border-radius: 50px  !important;")
-      var isSearch = new URLSearchParams(window.location.search).get("s")
-
 
       document.documentElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
       document.body.style.background = 'linear-gradient(#13001c, #0a000c)'
@@ -961,6 +1006,7 @@ class _MainState extends State<Main> {
       document.querySelector('.Content').style.backgroundColor = 'transparent'
       document.querySelector('.Header').style.display = 'none'
       document.querySelector('.Footer').style.display = 'none'
+      document.querySelector('.Result').style.display = 'none'
 
       var az = document.querySelector('.AZList')
       if (az != null) {
@@ -969,7 +1015,6 @@ class _MainState extends State<Main> {
 
       document.querySelector('.Top').style.display = 'flex'
       document.querySelector('.Top').style.alignItems = 'center'
-      document.querySelector('.Top').style.marginTop = isSearch ? '45vh' : '60vh'
 
       var pg = document.querySelectorAll('.page-numbers')
       if (pg != null) {
@@ -1094,12 +1139,12 @@ class _MainState extends State<Main> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.category_outlined,
+                  Icons.search_outlined,
                 ),
                 activeIcon: Icon(
-                  Icons.category_rounded,
+                  Icons.search_rounded,
                 ),
-                label: "New Release",
+                label: "Explore",
               ),
               BottomNavigationBarItem(
                 icon: Icon(
