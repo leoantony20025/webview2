@@ -9,8 +9,7 @@ initPref() async {
   prefs = await SharedPreferences.getInstance();
 }
 
-Future<List<Movie>> getWishList() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
+List<Movie> getWishList() {
   final String? jsonString = prefs.getString('wishList');
 
   if (jsonString != null) {
@@ -32,7 +31,7 @@ Future<void> saveWishList(List<Movie> wishList) async {
 }
 
 Future<void> addToWishList(Movie movie) async {
-  final List<Movie> wishList = await getWishList();
+  final List<Movie> wishList = getWishList();
   // if (!wishList.any((m) => m.name == movie.name)) {
   wishList.add(movie);
   await saveWishList(wishList);
@@ -42,7 +41,7 @@ Future<void> addToWishList(Movie movie) async {
 }
 
 Future<void> removeFromWishList(Movie movie) async {
-  final List<Movie> wishList = await getWishList();
+  final List<Movie> wishList = getWishList();
   wishList.removeWhere((e) => e.url == movie.url);
   await saveWishList(wishList);
 }

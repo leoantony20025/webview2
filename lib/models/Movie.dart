@@ -1,5 +1,6 @@
 class Movie {
   String name;
+  String description;
   String photo;
   String language;
   String url;
@@ -8,6 +9,7 @@ class Movie {
 
   Movie({
     required this.name,
+    required this.description,
     required this.photo,
     required this.language,
     required this.url,
@@ -20,6 +22,7 @@ class Movie {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
+      'description': description,
       'photo': photo,
       'language': language,
       'url': url,
@@ -33,6 +36,7 @@ class Movie {
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       name: json['name'],
+      description: json['description'],
       photo: json['photo'],
       language: json['language'],
       url: json['url'],

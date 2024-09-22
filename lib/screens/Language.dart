@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:theater/prefs.dart';
+import 'package:provider/provider.dart';
+import 'package:theater/providers/AppProvider.dart';
 
 class Language extends StatefulWidget {
   const Language({super.key});
@@ -11,7 +12,9 @@ class Language extends StatefulWidget {
 class _LanguageState extends State<Language> {
   @override
   Widget build(BuildContext context) {
-    int? lang = prefs.getInt("lang") ?? 1;
+    // int? lang = prefs.getInt("lang") ?? 1;
+    final appProvider = Provider.of<AppProvider>(context);
+    int? lang = appProvider.lang;
 
     List languages = [
       {
@@ -88,9 +91,10 @@ class _LanguageState extends State<Language> {
                       return GestureDetector(
                         onTap: () {
                           if (!e['isSelected']) {
-                            prefs.setInt("lang", e['value']);
+                            // prefs.setInt("lang", e['value']);
+                            appProvider.updateLang(e['value']);
                             setState(() {
-                              lang = prefs.getInt("lang");
+                              // lang = prefs.getInt("lang");
                             });
                           }
                         },
@@ -132,7 +136,8 @@ class _LanguageState extends State<Language> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      prefs.setInt("lang", lang!);
+                      // prefs.setInt("lang", lang!);
+                      appProvider.updateLang(lang!);
                       Navigator.pushNamed(context, "/main");
                     },
                     child: Container(
