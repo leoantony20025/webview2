@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:theater/models/Movie.dart';
 import 'package:theater/providers/AppProvider.dart';
 
@@ -71,6 +72,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height / 1.7,
                             fit: BoxFit.fitWidth,
+                            placeholder: (context, url) => Shimmer.fromColors(
+                              baseColor:
+                                  const Color.fromARGB(71, 224, 224, 224),
+                              highlightColor:
+                                  const Color.fromARGB(70, 245, 245, 245),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height / 1.7,
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ),
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width,
@@ -101,12 +114,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text(
-                                  banner?.description ?? "",
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w300),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width - 120,
+                                  child: Text(
+                                    banner?.description ?? "",
+                                    style: const TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300),
+                                  ),
                                 ),
                                 Row(
                                   children: [
@@ -140,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 GestureDetector(
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
+                                        vertical: 15, horizontal: 25),
                                     decoration: const BoxDecoration(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(20)),
@@ -155,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       "Watch Now",
                                       style: TextStyle(
                                           color: Color.fromARGB(
-                                              241, 255, 255, 255)),
+                                              221, 246, 229, 255)),
                                     ),
                                   ),
                                 )
@@ -163,7 +181,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           )
                         ],
-                      )
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
                     ],
                   ),
                 ),
