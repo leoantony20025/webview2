@@ -87,7 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height / 1.7,
+                            height:
+                                MediaQuery.of(context).size.height / 1.7 + 5,
                             decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                     begin: Alignment.topCenter,
@@ -95,7 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     colors: [
                                   Color.fromARGB(219, 30, 0, 31),
                                   Color.fromARGB(75, 52, 0, 56),
-                                  Color.fromARGB(213, 27, 0, 25),
+                                  Color.fromARGB(188, 25, 0, 23),
+                                  Color.fromARGB(229, 25, 0, 23),
                                   Colors.black
                                 ])),
                           ),
@@ -161,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         vertical: 15, horizontal: 25),
                                     decoration: const BoxDecoration(
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(20)),
+                                            Radius.circular(30)),
                                         gradient: LinearGradient(
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
