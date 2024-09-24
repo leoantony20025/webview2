@@ -100,7 +100,7 @@ class _MainState extends State<Main> {
           currentIndex: currentIndex,
           onTap: (value) => nav(value),
           type: BottomNavigationBarType.fixed,
-          unselectedItemColor: const Color.fromARGB(37, 219, 186, 232),
+          unselectedItemColor: const Color.fromARGB(90, 219, 186, 232),
           selectedItemColor: Colors.white,
           elevation: 20,
           // iconSize: 30,

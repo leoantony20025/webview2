@@ -63,132 +63,185 @@ class _HomeScreenState extends State<HomeScreen> {
                     ])),
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 30),
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl: banner?.photo ?? "",
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height / 1.7,
-                            fit: BoxFit.fitWidth,
-                            placeholder: (context, url) => Shimmer.fromColors(
-                              baseColor:
-                                  const Color.fromARGB(71, 224, 224, 224),
-                              highlightColor:
-                                  const Color.fromARGB(70, 245, 245, 245),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height:
-                                    MediaQuery.of(context).size.height / 1.7,
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            height:
-                                MediaQuery.of(context).size.height / 1.7 + 5,
-                            decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                  Color.fromARGB(219, 30, 0, 31),
-                                  Color.fromARGB(75, 52, 0, 56),
-                                  Color.fromARGB(188, 25, 0, 23),
-                                  Color.fromARGB(229, 25, 0, 23),
-                                  Colors.black
-                                ])),
-                          ),
-                          Container(
-                            height: MediaQuery.of(context).size.height / 1.7,
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                  child: currentContents['movies']!.isNotEmpty
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
                               children: [
-                                Text(
-                                  banner?.name ?? "",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.bold,
+                                CachedNetworkImage(
+                                  imageUrl: banner?.photo ?? "",
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.height / 1.7,
+                                  fit: BoxFit.fitWidth,
+                                  placeholder: (context, url) =>
+                                      Shimmer.fromColors(
+                                    baseColor:
+                                        const Color.fromARGB(71, 224, 224, 224),
+                                    highlightColor:
+                                        const Color.fromARGB(70, 245, 245, 245),
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              1.7,
+                                      color: const Color.fromARGB(255, 0, 0, 0),
+                                    ),
                                   ),
                                 ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width - 120,
-                                  child: Text(
-                                    banner?.description ?? "",
-                                    style: const TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w300),
-                                  ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.height / 1.7 +
+                                          5,
+                                  decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                        Color.fromARGB(219, 30, 0, 31),
+                                        Color.fromARGB(75, 52, 0, 56),
+                                        Color.fromARGB(188, 25, 0, 23),
+                                        Color.fromARGB(229, 25, 0, 23),
+                                        Colors.black
+                                      ])),
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      banner?.year ?? "",
-                                      style: const TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 74, 74, 74),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      banner?.language ?? "",
-                                      style: const TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 74, 74, 74),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                GestureDetector(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 25),
-                                    decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30)),
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Color.fromARGB(255, 44, 0, 70),
-                                              Color.fromARGB(255, 39, 0, 41)
-                                            ])),
-                                    child: const Text(
-                                      "Watch Now",
-                                      style: TextStyle(
-                                          color: Color.fromARGB(
-                                              221, 246, 229, 255)),
-                                    ),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 1.7,
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        banner?.name ?? "",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                120,
+                                        child: Text(
+                                          banner?.description ?? "",
+                                          style: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w300),
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            banner?.year ?? "",
+                                            style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 74, 74, 74),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            banner?.language ?? "",
+                                            style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 74, 74, 74),
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      GestureDetector(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 15, horizontal: 25),
+                                          decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30)),
+                                              gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    Color.fromARGB(
+                                                        255, 44, 0, 70),
+                                                    Color.fromARGB(
+                                                        255, 39, 0, 41)
+                                                  ])),
+                                          child: const Text(
+                                            "Watch Now",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    221, 246, 229, 255)),
+                                          ),
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 )
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                    ],
-                  ),
+                            const Text(
+                              "Latest Movies",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: currentContents['movies']!
+                                    .map<Widget>((movie) {
+                                  return Container(
+                                      child: movie?.photo != ""
+                                          ? CachedNetworkImage(
+                                              imageUrl: movie?.photo ?? "",
+                                              width: 150,
+                                              height: 250,
+                                              fit: BoxFit.fitWidth,
+                                              placeholder: (context, url) =>
+                                                  Shimmer.fromColors(
+                                                baseColor: const Color.fromARGB(
+                                                    71, 224, 224, 224),
+                                                highlightColor:
+                                                    const Color.fromARGB(
+                                                        70, 245, 245, 245),
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      1.7,
+                                                  color: const Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                ),
+                                              ),
+                                            )
+                                          : SizedBox());
+                                }).toList(),
+                              ),
+                            )
+                          ],
+                        )
+                      : const SizedBox(),
                 ),
               ));
   }
