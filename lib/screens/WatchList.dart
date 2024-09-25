@@ -10,7 +10,7 @@ class WatchList extends StatefulWidget {
 }
 
 class _WatchListState extends State<WatchList> {
-  List<Movie> watchlist = getWishList();
+  List<Movie> watchlist = getWatchhList();
 
   @override
   void initState() {
@@ -142,8 +142,8 @@ class _WatchListState extends State<WatchList> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              await removeFromWishList(movie);
-                              List<Movie> updatedWishlist = getWishList();
+                              await removeFromWatchhList(movie);
+                              List<Movie> updatedWishlist = getWatchhList();
                               setState(() {
                                 watchlist = updatedWishlist;
                               });

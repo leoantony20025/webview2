@@ -20,12 +20,13 @@ Future<Map<String, List<Movie?>>> fetchContents(int lang) async {
   final res = await dio.get(url);
 
   var document = HtmlParser(res.data).parse();
-  var ul = document.querySelectorAll('.MovieList li');
+  var ul = document.querySelector('.MovieList');
+  var lis = ul?.querySelectorAll('li');
   List<Movie> movies = [];
 
-  for (var li in ul) {
+  for (var li in lis!) {
     var desc = li.querySelector('.Description p')?.text.split(',') ?? [""];
-    var rem = desc.removeAt(0);
+    desc.removeAt(0);
     var movie = Movie(
       name: li.querySelector('.Title')?.text.split('(')[0] ?? "",
       description: desc.join(),
@@ -33,7 +34,7 @@ Future<Map<String, List<Movie?>>> fetchContents(int lang) async {
               .querySelector('.attachment-thumbnail')
               ?.attributes['src']
               .toString() ??
-          "",
+          "", // No Image Found -------------------------------------------
       language: "Tamil",
       url: li.querySelector('a')?.attributes['href'].toString() ?? "",
       duration: li.querySelector('.Time')?.text ?? "",
@@ -42,9 +43,38 @@ Future<Map<String, List<Movie?>>> fetchContents(int lang) async {
     movies.add(movie);
   }
 
-  print(movies[0].description);
+  String urlSeries = lang == 0
+      ? baseUrl
+      : '${baseUrl + languages[lang - 1]['path']}?tr_post_type=2';
+  final res2 = await dio.get(urlSeries);
 
-  return {"movies": movies, "series": movies};
+  var documentSeries = HtmlParser(res2.data).parse();
+  var ulSeries = documentSeries.querySelector('.MovieList');
+  var liseries = ulSeries?.querySelectorAll('li');
+  List<Movie> series = [];
+
+  if (liseries != null) {
+    for (var li in liseries) {
+      var serie = Movie(
+        name: li.querySelector('.Title')?.text ?? "",
+        description: li.querySelector('.Description p')!.text,
+        photo: li
+                .querySelector('.attachment-thumbnail')
+                ?.attributes['src']
+                .toString() ??
+            "", // No Image Found -------------------------------------------
+        language: "Tamil",
+        url: li.querySelector('a')?.attributes['href'].toString() ?? "",
+        duration: li.querySelector('.Time')?.text ?? "",
+        year: li.querySelector('.Title')?.text ?? "",
+      );
+      series.add(serie);
+    }
+  }
+
+  print(series.isNotEmpty ? series[0].name : "No");
+
+  return {"movies": movies, "series": series};
 }
 
 Future<Map<String, List<Movie?>>> fetchLatestContents() async {
