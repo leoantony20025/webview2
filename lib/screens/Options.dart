@@ -53,6 +53,8 @@ class _OptionsState extends State<Options> {
       }
     ];
     String language = languages[(lang ?? 1) - 1]['name'];
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isDesktop = screenWidth > 800;
 
     return Scaffold(
       body: Container(
@@ -60,11 +62,16 @@ class _OptionsState extends State<Options> {
           height: MediaQuery.of(context).size.height,
           padding: const EdgeInsets.only(top: 50),
           alignment: Alignment.topCenter,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
               gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color.fromARGB(255, 23, 0, 28), Colors.black])),
+                  begin: isDesktop ? Alignment.centerLeft : Alignment.topCenter,
+                  end: isDesktop
+                      ? Alignment.centerRight
+                      : Alignment.bottomCenter,
+                  colors: const [
+                Color.fromARGB(255, 17, 0, 17),
+                Colors.black
+              ])),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(30),
             child: Column(
@@ -96,7 +103,9 @@ class _OptionsState extends State<Options> {
                         }
                       },
                       child: Container(
-                        width: MediaQuery.of(context).size.width - 40,
+                        width: isDesktop
+                            ? MediaQuery.of(context).size.width / 2 - 100
+                            : MediaQuery.of(context).size.width - 40,
                         height: 120,
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         alignment: Alignment.center,

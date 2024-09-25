@@ -50,6 +50,7 @@ class _MainState extends State<Main> {
     }
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 17, 0, 17),
       bottomNavigationBar: MediaQuery.of(context).size.width < 800
           ? Container(
               height: 70,
@@ -119,12 +120,143 @@ class _MainState extends State<Main> {
                   width: 100,
                   decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                          begin: Alignment.centerRight,
-                          end: Alignment.centerLeft,
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
                           colors: [
-                        Color.fromARGB(255, 17, 0, 17),
-                        Color.fromARGB(255, 28, 0, 28)
+                        Color.fromARGB(255, 23, 0, 24),
+                        Color.fromARGB(0, 17, 0, 17),
                       ])),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentIndex = 0;
+                          });
+                        },
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          alignment: Alignment.center,
+                          decoration: currentIndex == 0
+                              ? const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80)),
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color.fromARGB(60, 81, 0, 118),
+                                        Color.fromARGB(59, 115, 0, 113)
+                                      ]))
+                              : null,
+                          child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedHome01,
+                              color: currentIndex == 0
+                                  ? Colors.white
+                                  : const Color.fromARGB(93, 217, 4, 228)),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentIndex = 1;
+                          });
+                        },
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          alignment: Alignment.center,
+                          decoration: currentIndex == 1
+                              ? const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80)),
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color.fromARGB(60, 81, 0, 118),
+                                        Color.fromARGB(59, 115, 0, 113)
+                                      ]))
+                              : null,
+                          child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedSearch01,
+                              color: currentIndex == 1
+                                  ? Colors.white
+                                  : const Color.fromARGB(93, 217, 4, 228)),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentIndex = 2;
+                          });
+                        },
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          alignment: Alignment.center,
+                          decoration: currentIndex == 2
+                              ? const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80)),
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color.fromARGB(60, 81, 0, 118),
+                                        Color.fromARGB(59, 115, 0, 113)
+                                      ]))
+                              : null,
+                          child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedPlayList,
+                              color: currentIndex == 2
+                                  ? Colors.white
+                                  : const Color.fromARGB(93, 217, 4, 228)),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentIndex = 3;
+                          });
+                        },
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          alignment: Alignment.center,
+                          decoration: currentIndex == 3
+                              ? const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80)),
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color.fromARGB(60, 81, 0, 118),
+                                        Color.fromARGB(59, 115, 0, 113)
+                                      ]))
+                              : null,
+                          child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedLanguageSkill,
+                              color: currentIndex == 3
+                                  ? Colors.white
+                                  : const Color.fromARGB(93, 217, 4, 228)),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 content
               ],

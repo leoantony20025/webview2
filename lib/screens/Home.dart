@@ -10,7 +10,6 @@ import 'package:theater/components/HorizontalScrollList.dart';
 import 'package:theater/models/Movie.dart';
 import 'package:theater/prefs.dart';
 import 'package:theater/providers/AppProvider.dart';
-import 'package:theater/screens/WatchList.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,27 +24,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final appProvider = Provider.of<AppProvider>(context, listen: true);
     Map<String, List<Movie?>> currentContents = appProvider.currentContents;
     bool isLoading = false;
-    int? lang = appProvider.lang;
-    List languages = [
-      {"name": "Tamil", "value": 1, "path": "/category/tamil-movies"},
-      {"name": "English", "value": 2, "path": "/category/english-movies"},
-      {"name": "Malayalam", "value": 3, "path": "/category/malayalam-movies"},
-      {"name": "Telugu", "value": 4, "path": "/category/telugu-movies"},
-      {"name": "Kannada", "value": 5, "path": "/category/kannada-movies"},
-      {"name": "Hindi", "value": 6, "path": "/category/hindi-movies"}
-    ];
-    String language = languages[(lang ?? 1) - 1]['name'];
     Random random = Random();
     Movie? banner = currentContents['movies']
         ?[random.nextInt(currentContents['movies']?.length ?? 4)];
     double screenWidth = MediaQuery.of(context).size.width;
     bool isDesktop = screenWidth > 800;
-
-    List<Movie> watchList = getWatchhList();
     bool isWatchList = checkMovieInWatchList(banner?.name ?? "");
-
-    print(watchList.length);
-    print(isWatchList);
 
     return Scaffold(
         body: Container(
@@ -186,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           height: 10,
                                         ),
                                         Container(
-                                          padding: EdgeInsets.only(),
+                                          padding: const EdgeInsets.only(),
                                           transform: Matrix4.skewX(-0.1),
                                           child: GradientText(
                                             banner?.description ?? "",
@@ -271,6 +255,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Row(
                                           children: [
                                             GestureDetector(
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context, '/play');
+                                              },
                                               child: Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -290,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           Color.fromARGB(
                                                               255, 158, 0, 164),
                                                           Color.fromARGB(
-                                                              255, 84, 0, 88)
+                                                              255, 48, 0, 63)
                                                         ])),
                                                 child: const GradientText(
                                                   "Watch Now",
@@ -305,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         Color.fromARGB(
                                                             255, 254, 245, 255),
                                                         Color.fromARGB(
-                                                            255, 120, 82, 125)
+                                                            153, 120, 82, 125)
                                                       ]),
                                                 ),
                                               ),
@@ -319,13 +307,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       await addToWatchhList(
                                                           banner!);
                                                       setState(() {
-                                                        watchList =
-                                                            getWatchhList();
+                                                        isWatchList = true;
                                                       });
                                                     },
                                                     child: Container(
                                                         padding:
-                                                            const EdgeInsets.symmetric(
+                                                            const EdgeInsets
+                                                                .symmetric(
                                                                 vertical: 13,
                                                                 horizontal: 13),
                                                         decoration:
@@ -338,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     Border.all(
                                                                   color: const Color
                                                                       .fromARGB(
-                                                                      118,
+                                                                      52,
                                                                       137,
                                                                       0,
                                                                       158),
@@ -346,19 +334,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 ),
                                                                 color: const Color
                                                                     .fromARGB(
-                                                                    31,
-                                                                    59,
-                                                                    0,
-                                                                    61)),
+                                                                    70,
+                                                                    83,
+                                                                    2,
+                                                                    117)),
                                                         child: const HugeIcon(
                                                             icon: HugeIcons
-                                                                .strokeRoundedAdd01,
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    109,
-                                                                    0,
-                                                                    115))),
+                                                                .strokeRoundedPlayListAdd,
+                                                            color: Color.fromARGB(
+                                                                255, 140, 0, 175))),
                                                   )
                                                 : const SizedBox()
                                           ],

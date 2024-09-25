@@ -8,6 +8,7 @@ import 'package:theater/screens/Home.dart';
 import 'package:theater/screens/Language.dart';
 import 'package:theater/screens/Search.dart';
 import 'package:theater/screens/Splash.dart';
+import 'package:theater/screens/Play.dart';
 import 'package:theater/screens/WatchList.dart';
 import 'screens/Main.dart';
 
@@ -55,6 +56,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/splash',
       routes: {
         "/search": (context) => const SearchScreen(),
+        "/play": (context) => const Play(),
         "/home": (context) => const HomeScreen(),
         "/watch": (context) => const WatchList(),
         "/language": (context) => const Language(),
