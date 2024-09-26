@@ -2,16 +2,24 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:theater/components/GradientText.dart';
 import 'package:theater/models/Movie.dart';
 import 'package:theater/prefs.dart';
+import 'package:theater/screens/Play.dart';
+import 'package:theater/services/appService.dart';
 
 class HorizontalScrollList extends StatefulWidget {
-  final List<Movie?> currentContents;
-  const HorizontalScrollList({super.key, required this.currentContents});
+  List<Movie?> currentContents;
+  bool isLoading;
+  final Function(bool) setIsLoading;
+
+  HorizontalScrollList(
+      {super.key,
+      required this.currentContents,
+      required this.isLoading,
+      required this.setIsLoading});
 
   @override
-  _HorizontalScrollListState createState() => _HorizontalScrollListState();
+  State<HorizontalScrollList> createState() => _HorizontalScrollListState();
 }
 
 class _HorizontalScrollListState extends State<HorizontalScrollList> {
@@ -21,6 +29,17 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isDesktop = screenWidth > 800;
+
+    fetchContent(String url) async {
+      widget.setIsLoading(true);
+      Map<String, dynamic> content = await fetchMovieContent(url);
+      widget.setIsLoading(false);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => Play(
+          content: content,
+        ),
+      ));
+    }
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -33,9 +52,11 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
 
           return movie?.photo != ""
               ? GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     if (activeIndex == index) {
-                      print("Tap");
+                      if (movie?.url != null) {
+                        await fetchContent(movie!.url);
+                      }
                     } else {
                       setState(() {
                         activeIndex = index;
@@ -61,8 +82,14 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       padding: const EdgeInsets.only(left: 20),
-                      width: activeIndex == index ? 500 : 150,
-                      height: 250,
+                      width: activeIndex == index
+                          ? isDesktop
+                              ? 500
+                              : 300
+                          : isDesktop
+                              ? 200
+                              : 150,
+                      height: isDesktop ? 270 : 250,
                       child: Stack(
                         children: [
                           CachedNetworkImage(
@@ -97,8 +124,14 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                           if (activeIndex == index)
                             Positioned(
                               bottom: 0,
-                              width: activeIndex == index ? 480 : 150,
-                              height: 250,
+                              width: activeIndex == index
+                                  ? isDesktop
+                                      ? 480
+                                      : 280
+                                  : isDesktop
+                                      ? 200
+                                      : 150,
+                              height: isDesktop ? 270 : 250,
                               child: Container(
                                 alignment: Alignment.bottomLeft,
                                 decoration: BoxDecoration(
@@ -121,13 +154,13 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      width: 350,
+                                      width: isDesktop ? 350 : 250,
                                       child: Text(
                                         movie?.name ?? "",
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                                          fontSize: isDesktop ? 20 : 16,
                                         ),
                                       ),
                                     ),
@@ -135,15 +168,15 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                                       height: 5,
                                     ),
                                     Container(
-                                      width: 300,
+                                      width: isDesktop ? 350 : 250,
                                       padding: const EdgeInsets.only(),
                                       transform: Matrix4.skewX(-0.1),
                                       child: Text(
                                         movie?.description ?? "",
-                                        style: const TextStyle(
-                                            color: Color.fromARGB(
+                                        style: TextStyle(
+                                            color: const Color.fromARGB(
                                                 181, 255, 255, 255),
-                                            fontSize: 14,
+                                            fontSize: isDesktop ? 16 : 12,
                                             fontWeight: FontWeight.w300),
                                       ),
                                     ),
@@ -153,6 +186,11 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                                     Row(
                                       children: [
                                         GestureDetector(
+                                          onTap: () async {
+                                            if (movie?.url != null) {
+                                              await fetchContent(movie!.url);
+                                            }
+                                          },
                                           child: Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -168,12 +206,12 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                                                     width: 1,
                                                   ),
                                                   color: const Color.fromARGB(
-                                                      70, 83, 2, 117)),
+                                                      113, 59, 0, 67)),
                                               child: const HugeIcon(
                                                   icon: HugeIcons
                                                       .strokeRoundedPlay,
                                                   color: Color.fromARGB(
-                                                      255, 140, 0, 175))),
+                                                      255, 163, 0, 175))),
                                         ),
                                         const SizedBox(
                                           width: 10,
@@ -187,10 +225,11 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                                                   });
                                                 },
                                                 child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 13,
-                                                        horizontal: 13),
+                                                    padding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            vertical: 13,
+                                                            horizontal: 13),
                                                     decoration: BoxDecoration(
                                                         borderRadius:
                                                             const BorderRadius
@@ -203,14 +242,17 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                                                               52, 137, 0, 158),
                                                           width: 1,
                                                         ),
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            70, 83, 2, 117)),
+                                                        color:
+                                                            const Color.fromARGB(
+                                                                113,
+                                                                59,
+                                                                0,
+                                                                67)),
                                                     child: const HugeIcon(
                                                         icon: HugeIcons
                                                             .strokeRoundedPlayListAdd,
                                                         color: Color.fromARGB(
-                                                            255, 140, 0, 175))),
+                                                            255, 163, 0, 175))),
                                               )
                                             : const SizedBox()
                                       ],

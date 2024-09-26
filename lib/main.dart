@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/splash',
       routes: {
         "/search": (context) => const SearchScreen(),
-        "/play": (context) => const Play(),
+        // "/play": (context) => const Play(),
         "/home": (context) => const HomeScreen(),
         "/watch": (context) => const WatchList(),
         "/language": (context) => const Language(),

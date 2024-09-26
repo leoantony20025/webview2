@@ -112,6 +112,41 @@ Future<Map<String, List<Movie?>>> fetchLatestContents() async {
   return {"movies": movies, "series": movies};
 }
 
+Future fetchMovieContent(String url) async {
+  var res = await dio.get(url);
+  if (res.statusCode == 200) {
+    var data = HtmlParser(res.data).parse();
+    var desc = data.querySelector('.Description p')?.text.split(',') ?? [""];
+    Iterable<Map<String, String?>> cast =
+        data.querySelectorAll(".ListCast li").asMap().entries.map(
+      (e) {
+        return {
+          "name": e.value.querySelector("figcaption")?.text ?? "No",
+          "photo": e.value.querySelector("img")?.attributes['src'],
+          "url": e.value.querySelector("a")?.attributes['href']
+        };
+      },
+    );
+    Iterable<String> servers =
+        data.querySelectorAll(".TPlayerTb").asMap().entries.map(
+      (e) {
+        return e.value.innerHtml.toString().split("src=\"")[1].split("\"")[0] ??
+            "No Server";
+      },
+    );
+
+    Map<String, dynamic> content = {
+      "poster": data.querySelector(".TPostBg")?.attributes['src'],
+      "description": desc.join(),
+      "cast": cast,
+      "servers": servers
+    };
+
+    print("serverrrrrrrrr " + content!['servers'].toString());
+
+    return content;
+  }
+}
 
 // Future<dynamic> fetchLatestMovies() async {
 //   return await fetchMovies("https://bolly2tolly.land");

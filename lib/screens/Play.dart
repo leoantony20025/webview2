@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class Play extends StatefulWidget {
-  const Play({super.key});
+  Map<String, dynamic> content;
+  Play({super.key, required this.content});
 
   @override
   State<Play> createState() => _PlayState();
@@ -44,7 +45,11 @@ class _PlayState extends State<Play> {
                         icon: HugeIcons.strokeRoundedArrowLeft02,
                         color: Colors.white),
                   ),
-                )
+                ),
+                Text(
+                  widget.content?['description'] ?? "Desc",
+                  style: TextStyle(color: Colors.white),
+                ),
               ],
             ),
           )),
