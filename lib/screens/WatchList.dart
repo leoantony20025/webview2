@@ -52,7 +52,7 @@ class _WatchListState extends State<WatchList> {
               height: 30,
             ),
             watchlist.isNotEmpty
-                ? Container(
+                ? SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Wrap(
                       runSpacing: isDesktop ? 50 : 20,
@@ -72,7 +72,7 @@ class _WatchListState extends State<WatchList> {
                                 setState(() {});
                               },
                               child: Container(
-                                padding: EdgeInsets.only(bottom: 0),
+                                padding: const EdgeInsets.only(bottom: 0),
                                 width: isDesktop
                                     ? 350
                                     : (MediaQuery.of(context).size.width / 2) -

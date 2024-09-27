@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:theater/models/Movie.dart';
 
@@ -127,25 +128,60 @@ Future fetchMovieContent(String url) async {
         };
       },
     );
+
+    var videos = [];
     Iterable<String> servers =
-        data.querySelectorAll(".TPlayerTb").asMap().entries.map(
-      (e) {
-        return e.value.innerHtml.toString().split("src=\"")[1].split("\"")[0] ??
-            "No Server";
-      },
-    );
+        data.querySelectorAll(".TPlayerTb").asMap().entries.map((e) {
+      return e.value.innerHtml
+          .toString()
+          .split("src=\"")[1]
+          .split("\"")[0]
+          .replaceAll("&amp;", "&")
+          .replaceAll("&#038;", "&");
+    });
+
+    for (var i = 0; i < servers.length; i++) {
+      // print("videoooo  ----- ${servers.elementAt(i).toString()}");
+      var e = servers.elementAt(i);
+      var sRes = await dio.get(e);
+      var sData = HtmlParser(sRes.data).parse();
+      var serverBaseUrl = sData.querySelector('iframe')?.attributes['src'];
+      // print("videoooo sbu " + serverBaseUrl.toString());
+
+      if (!serverBaseUrl.toString().contains("oyohd")) {
+        var sRes2 = await dio.get(serverBaseUrl.toString());
+        var sData2 = HtmlParser(sRes2.data).parse();
+        var baseUrl = sData2.querySelector('base')?.attributes['href'];
+        var token = extractJsVariable(sData2.outerHtml, "kaken");
+        var serverUrl = "https:${baseUrl}api/?$token&_=1727408604055";
+        var vRes = await dio.get(serverUrl);
+        videos.add(vRes.data['sources']?[0]?['file']);
+        print("videoooooooooooo ${vRes.data['sources'].toString()}");
+      }
+    }
 
     Map<String, dynamic> content = {
-      "poster": data.querySelector(".TPostBg")?.attributes['src'],
+      "poster": data.querySelector(".TPostBg img")?.attributes['src'],
       "description": desc.join(),
       "cast": cast,
-      "servers": servers
+      "servers": videos
     };
 
-    print("serverrrrrrrrr " + content!['servers'].toString());
+    print("serverrrrrrrrr ${content!['servers'].toString()}");
 
     return content;
   }
+}
+
+String? extractJsVariable(String html, String variableName) {
+  // Regular expression to match a specific variable assignment
+  final regex = RegExp('$variableName\\s*=\\s*[\'"]([^\'"]*)[\'"]');
+  final match = regex.firstMatch(html);
+
+  if (match != null && match.groupCount >= 1) {
+    return match.group(1); // Extract the variable's value
+  }
+  return null;
 }
 
 // Future<dynamic> fetchLatestMovies() async {

@@ -30,13 +30,13 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isDesktop = screenWidth > 800;
 
-    fetchContent(String url) async {
+    fetchContent(Movie movie) async {
       widget.setIsLoading(true);
-      Map<String, dynamic> content = await fetchMovieContent(url);
+      Map<String, dynamic> content = await fetchMovieContent(movie.url);
       widget.setIsLoading(false);
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Play(
-          content: content,
+          content: {...content, "movie": movie},
         ),
       ));
     }
@@ -47,7 +47,7 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
         children: widget.currentContents.asMap().entries.map<Widget>((entry) {
           int index = entry.key;
           Movie? movie = entry.value;
-          movie?.description = movie!.description.trimLeft();
+          movie?.description = movie.description.trimLeft();
           bool isWatchList = checkMovieInWatchList(movie?.name ?? "");
 
           return movie?.photo != ""
@@ -55,7 +55,7 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                   onTap: () async {
                     if (activeIndex == index) {
                       if (movie?.url != null) {
-                        await fetchContent(movie!.url);
+                        await fetchContent(movie!);
                       }
                     } else {
                       setState(() {
@@ -188,7 +188,7 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
                                         GestureDetector(
                                           onTap: () async {
                                             if (movie?.url != null) {
-                                              await fetchContent(movie!.url);
+                                              await fetchContent(movie!);
                                             }
                                           },
                                           child: Container(

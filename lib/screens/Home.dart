@@ -34,13 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
     bool isWatchList = checkMovieInWatchList(banner?.name ?? "");
 
     void setIsLoading(bool load) {
-      print("loaddddddddddddddddd " + load.toString());
+      print("loaddddddddddddddddd $load");
       setState(() {
         isLoading = load;
       });
     }
 
-    print("loaddddddd " + isLoading.toString());
+    print("loaddddddd $isLoading");
 
     return Scaffold(
         body: Stack(children: [

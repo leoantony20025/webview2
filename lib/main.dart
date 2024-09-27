@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:provider/provider.dart';
 import 'package:theater/prefs.dart';
 import 'package:theater/providers/AppProvider.dart';
@@ -8,7 +9,6 @@ import 'package:theater/screens/Home.dart';
 import 'package:theater/screens/Language.dart';
 import 'package:theater/screens/Search.dart';
 import 'package:theater/screens/Splash.dart';
-import 'package:theater/screens/Play.dart';
 import 'package:theater/screens/WatchList.dart';
 import 'screens/Main.dart';
 
@@ -17,6 +17,7 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await initPref();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  MediaKit.ensureInitialized();
 
   runApp(
     MultiProvider(
