@@ -36,7 +36,16 @@ class _HorizontalScrollListState extends State<HorizontalScrollList> {
       widget.setIsLoading(false);
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Play(
-          content: {...content, "movie": movie},
+          content: {
+            'name': movie.name,
+            'desc': movie.description,
+            'photo': movie.photo,
+            'url': movie.url,
+            'year': movie.year,
+            'duration': movie.duration,
+            'language': movie.language,
+            ...content
+          },
         ),
       ));
     }

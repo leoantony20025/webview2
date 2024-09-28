@@ -11,6 +11,8 @@ import 'package:theater/components/HorizontalScrollList.dart';
 import 'package:theater/models/Movie.dart';
 import 'package:theater/prefs.dart';
 import 'package:theater/providers/AppProvider.dart';
+import 'package:theater/screens/Play.dart';
+import 'package:theater/services/appService.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,13 +36,30 @@ class _HomeScreenState extends State<HomeScreen> {
     bool isWatchList = checkMovieInWatchList(banner?.name ?? "");
 
     void setIsLoading(bool load) {
-      print("loaddddddddddddddddd $load");
       setState(() {
         isLoading = load;
       });
     }
 
-    print("loaddddddd $isLoading");
+    fetchContent(Movie movie) async {
+      setIsLoading(true);
+      Map<String, dynamic> content = await fetchMovieContent(movie.url);
+      setIsLoading(false);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => Play(
+          content: {
+            'name': movie.name,
+            'desc': movie.description,
+            'photo': movie.photo,
+            'url': movie.url,
+            'year': movie.year,
+            'duration': movie.duration,
+            'language': movie.language,
+            ...content
+          },
+        ),
+      ));
+    }
 
     return Scaffold(
         body: Stack(children: [
@@ -259,8 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         children: [
                                           GestureDetector(
                                             onTap: () {
-                                              Navigator.pushNamed(
-                                                  context, '/play');
+                                              fetchContent(banner!);
                                             },
                                             child: Container(
                                               padding:
