@@ -6,7 +6,7 @@
         android:label="Theater"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:banner="@drawable/bannerTV"
+        android:banner="@drawable/banner"
         >
         <activity
             android:name=".MainActivity"

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:theater/models/Movie.dart';
 
@@ -149,7 +148,12 @@ Future fetchMovieContent(String url) async {
       // print("videoooo sbu " + serverBaseUrl.toString());
 
       if (!serverBaseUrl.toString().contains("oyohd")) {
+        // var chn = serverBaseUrl!.replaceAll("neohd.xyz", "45.143.220.143");
+        // print("videoooo sbu chn " + chn.toString());
+
         var sRes2 = await dio.get(serverBaseUrl.toString());
+        // print("videoooo sbu " + sRes.toString());
+
         var sData2 = HtmlParser(sRes2.data).parse();
         var baseUrl = sData2.querySelector('base')?.attributes['href'];
         var token = extractJsVariable(sData2.outerHtml, "kaken");

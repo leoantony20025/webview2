@@ -19,6 +19,8 @@ void main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   MediaKit.ensureInitialized();
 
+  WidgetsApp.debugAllowBannerOverride = true;
+
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => AppProvider())],
@@ -43,27 +45,32 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Theater',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 26, 0, 26)),
-        useMaterial3: true,
-        highlightColor: const Color.fromARGB(255, 31, 1, 46),
-        splashColor: const Color.fromARGB(255, 22, 0, 24),
-        scaffoldBackgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      ),
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/splash',
-      routes: {
-        "/search": (context) => const SearchScreen(),
-        // "/play": (context) => const Play(),
-        "/home": (context) => const HomeScreen(),
-        "/watch": (context) => const WatchList(),
-        "/language": (context) => const Language(),
-        '/splash': (context) => const SplashScreen(),
-        "/main": (context) => const Main()
+    return Shortcuts(
+      shortcuts: <LogicalKeySet, Intent>{
+        LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent()
       },
+      child: MaterialApp(
+        title: 'Theater',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 26, 0, 26)),
+          useMaterial3: true,
+          highlightColor: const Color.fromARGB(255, 31, 1, 46),
+          splashColor: const Color.fromARGB(255, 22, 0, 24),
+          scaffoldBackgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        ),
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/splash',
+        routes: {
+          "/search": (context) => const SearchScreen(),
+          // "/play": (context) => const Play(),
+          "/home": (context) => const HomeScreen(),
+          "/watch": (context) => const WatchList(),
+          "/language": (context) => const Language(),
+          '/splash': (context) => const SplashScreen(),
+          "/main": (context) => const Main()
+        },
+      ),
     );
   }
 }

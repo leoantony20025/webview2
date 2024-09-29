@@ -2,25 +2,20 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
 import 'package:theater/AppColors.dart';
 import 'package:theater/components/GradientText.dart';
-import 'package:theater/components/VideoPlayer.dart';
 import 'package:theater/models/Movie.dart';
 import 'package:theater/prefs.dart';
 
-class Play extends StatefulWidget {
+class PlayAndroid extends StatefulWidget {
   Map<String, dynamic> content;
-  Play({super.key, required this.content});
+  PlayAndroid({super.key, required this.content});
 
   @override
-  State<Play> createState() => _PlayState();
+  State<PlayAndroid> createState() => _PlayAndroidState();
 }
 
-class _PlayState extends State<Play> {
-  late final player = Player();
-  late final controller = VideoController(player);
+class _PlayAndroidState extends State<PlayAndroid> {
   int currentServerIndex = 0;
   late FocusNode fnPlayer;
   late FocusNode fnBackButton;
@@ -28,15 +23,15 @@ class _PlayState extends State<Play> {
   late FocusNode fnPlayPauseButton;
   late FocusNode fnFullscreenButton;
 
+  //widget.content['servers'][currentServerIndex]
+
   @override
   void initState() {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
     fnPlayer = FocusNode();
-    player.open(Media(widget.content['servers'][currentServerIndex]));
     fnBackButton = FocusNode();
-    fnServerButtons =
-        List.generate(widget.content['servers'].length, (_) => FocusNode());
+    fnServerButtons = List.generate(4, (_) => FocusNode());
     fnPlayPauseButton = FocusNode();
     fnFullscreenButton = FocusNode();
   }
@@ -50,16 +45,7 @@ class _PlayState extends State<Play> {
     }
     fnPlayPauseButton.dispose();
     fnFullscreenButton.dispose();
-    player.dispose();
     super.dispose();
-  }
-
-  void togglePlayPause() {
-    if (player.state.playing) {
-      player.pause();
-    } else {
-      player.play();
-    }
   }
 
   @override
@@ -162,10 +148,7 @@ class _PlayState extends State<Play> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      VideoPlayer(
-                          url: widget.content['servers'][currentServerIndex],
-                          controller: controller,
-                          player: player),
+                      // Video Player
                       const SizedBox(
                         width: 50,
                       ),
@@ -288,20 +271,11 @@ class _PlayState extends State<Play> {
                                     return KeyEventResult.ignored;
                                   },
                                   child: InkWell(
-                                    focusColor: Colors.black,
-                                    onTap: () async {
+                                    onTap: () {
                                       setState(() {
                                         currentServerIndex = e.key;
-                                        player.open(Media(
-                                            widget.content['servers'][e.key]));
+                                        // Change
                                       });
-                                      print("serverrrr key${e.key}");
-                                      print("serverrrr media " +
-                                          widget.content['servers'][e.key]);
-                                      // await player.stop();
-
-                                      print(
-                                          "serverrrr current ${controller.player.state.playlist.medias}");
                                     },
                                     child: Container(
                                         width: 80,
